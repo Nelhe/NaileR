@@ -1,0 +1,12 @@
+Package: NaileR
+Title: Interpreting Latent Variables with AI
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Nel", "Hervé", role = 'aut'),
+    person('Sébastien', 'Lê', role = 'cre', email = 'sebastien.le@agrocampus-ouest.fr')
+    )
+Description: A small package designed for interpreting continuous or categorical latent variables. It links FactoMineR's description functions (catdes, condes, descfreq) and ollamar.
+License: GPL (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1

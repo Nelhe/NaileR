@@ -15,5 +15,6 @@ Imports:
     stringr,
     FactoMineR,
     glue,
-    ollamar
+    ollamar,
+    magrittr
 Config/testthat/edition: 3

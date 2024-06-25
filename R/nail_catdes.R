@@ -1,4 +1,9 @@
 
+#' @importFrom stringr str_split_i
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_squish
+#' @importFrom stringr str_count
+
 tidy_answer_catdes = function(texte){
 
   if (str_count(texte, '\\.') == 0){
@@ -14,6 +19,11 @@ tidy_answer_catdes = function(texte){
   return(c(qu, ans))
 }
 
+
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr case_when
+#' @importFrom glue glue
 
 get_sentences_quali = function(res_cd, isolate.groups){
 
@@ -56,6 +66,7 @@ get_sentences_quali = function(res_cd, isolate.groups){
   if (isolate.groups == T) return(ppts) else return(paste(ppts, sep = '', collapse = ' ') |> str_squish())
 }
 
+#' @importFrom dplyr select
 
 get_sentences_quanti = function(res_cd, isolate.groups){
 
@@ -112,11 +123,28 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups){
            str_squish())
 }
 
+#' Analyze a categorical latent variable
+#'
+#' Generate a LLM response to analyze a categorical latent variable.
+#'
+#' @param dataset a data frame made up of at least one categorical variable and a set of quantitative variables and/or categorical variables.
+#' @param num.var the number of the variable to characterized.
+#' @param introduction the introduction for the LLM prompt.
+#' @param request the request made to the LLM.
+#' @param model the model name ('llama3' by default).
+#' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended if the categorical variable has several categories.
+#' @param proba the significance threshold considered to characterized the category (by default 0.05).
+#' @param row.w a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)
+#'
+#' @return A data frame, or a list of data frames, containing the LLM's response.
+#' @export
+#'
+#' @examples
+#'
 
 nail_catdes = function(dataset, num.var,
                        introduction = '',
-                       request = 'Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups.
-                       Then, based on these characteristics, give each group a new name.',
+                       request = 'Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.',
                        model = 'llama3', isolate.groups = F,
                        proba = 0.05, row.w = NULL){
 

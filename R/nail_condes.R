@@ -97,27 +97,9 @@ get_sentences_condes = function(res_cd){
 #' @examples
 #' data(decathlon)
 #'
-#' names(decathlon) = c('Time taken to complete the 100m',
-#' 'Distance reached for the long jump',
-#' 'Distance reached for the shot put',
-#' 'Height reached for the high jump',
-#' 'Time taken to complete the 400m',
-#' 'Time taken to complete the 110m hurdle',
-#' 'Distance reached for the discus',
-#' 'Height reached for the pole vault',
-#' 'Distance reached for the javeline',
-#' 'Time taken to complete the 1500 m',
-#' 'Rank',
-#' 'Points',
-#' 'Competition')
+#' names(decathlon) = c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank', 'Points', 'Competition')
 #'
-#' res1 = nail_condes(deca_work, 1, recode = 2,
-#'
-#' introduction = "A study was led on athletes participating to a decathlon event.
-#' Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.
-#' You will analyze what sets apart individuals from either side of the scale.
-#' Please note that if an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.",
-#' request = paste(ppt_qu, "You may not exceed three sentences in total."))
+#' res1 = nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
 #'
 #' cat(res1$response)
 

@@ -65,7 +65,10 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #'
 #' @examples
 #' data(beard)
-#' nail_descfreq(beard, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = TRUE)
+#'
+#' res = nail_descfreq(beard, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = TRUE)
+#'
+#' cat(res$response)
 
 nail_descfreq = function(dataset,
                          introduction = '',

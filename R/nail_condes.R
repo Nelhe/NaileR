@@ -95,9 +95,14 @@ get_sentences_condes = function(res_cd){
 #' @export
 #'
 #' @examples
+#' library(FactoMineR)
 #' data(decathlon)
 #'
 #' names(decathlon) = c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank', 'Points', 'Competition')
+#'
+#' res_pca_deca = PCA(decathlon, quanti.sup = 1:12, quali.sup = 13)
+#' deca_work = res_pca_deca$ind$coord |> as.data.frame()
+#' deca_work = deca_work[1:3] |> cbind(decathlon)
 #'
 #' res1 = nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
 #'

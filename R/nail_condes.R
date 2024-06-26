@@ -104,9 +104,9 @@ get_sentences_condes = function(res_cd){
 #' deca_work = res_pca_deca$ind$coord |> as.data.frame()
 #' deca_work = deca_work[1:3] |> cbind(decathlon)
 #'
-#' res1 = nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
+#' res_deca = nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
 #'
-#' cat(res1$response)
+#' cat(res_deca$response)
 #' ## a really interesting thing to note is that depending on the variable names and the exact prompt, the LLM sometimes confuses a "below average time" in speed-based events with a "bad performance".
 #' ## This shows how important the prompt is, and how the LLM's response should be double-checked.
 

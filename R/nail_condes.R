@@ -126,5 +126,6 @@ nail_condes = function(dataset, num.var,
               request) |> str_squish()
 
   res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
+  res_llm$prompt = ppt
   return(res_llm)
 }

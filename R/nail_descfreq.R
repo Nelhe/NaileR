@@ -84,11 +84,13 @@ nail_descfreq = function(dataset,
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
+    res_llm$prompt = ppt
     return(res_llm)
   } else {
     list_rep = list()
     for (prpt in ppt){
       res_llm = ollamar::generate(model = model, prompt = prpt, output = 'df')
+      res_llm$prompt = prpt
       list_rep[[length(list_rep) + 1]] = res_llm
     }
     return(list_rep)

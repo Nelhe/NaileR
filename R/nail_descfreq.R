@@ -56,10 +56,16 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' @param by.quali a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized
 #'
 #' @return A data frame, or a list of data frames, containing the LLM's response.
+#'
+#' @details This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM.
+#'
+#' Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
+#'
 #' @export
 #'
 #' @examples
-#'
+#' data(beard)
+#' nail_descfreq(beard, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = T)
 
 nail_descfreq = function(dataset,
                          introduction = '',

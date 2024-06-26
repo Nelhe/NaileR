@@ -89,10 +89,38 @@ get_sentences_condes = function(res_cd){
 #' @param proba the significance threshold considered to characterized the category (by default 0.05).
 #'
 #' @return A data frame containing the LLM's response.
+#'
+#' @details This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+#'
 #' @export
 #'
 #' @examples
+#' data(decathlon)
 #'
+#' names(decathlon) = c('Time taken to complete the 100m',
+#' 'Distance reached for the long jump',
+#' 'Distance reached for the shot put',
+#' 'Height reached for the high jump',
+#' 'Time taken to complete the 400m',
+#' 'Time taken to complete the 110m hurdle',
+#' 'Distance reached for the discus',
+#' 'Height reached for the pole vault',
+#' 'Distance reached for the javeline',
+#' 'Time taken to complete the 1500 m',
+#' 'Rank',
+#' 'Points',
+#' 'Competition')
+#'
+#' res1 = nail_condes(deca_work, 1, recode = 2,
+#'
+#' introduction = "A study was led on athletes participating to a decathlon event.
+#' Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.
+#' You will analyze what sets apart individuals from either side of the scale.
+#' Please note that if an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.",
+#' request = paste(ppt_qu, "You may not exceed three sentences in total."))
+#'
+#' cat(res1$response)
+
 
 nail_condes = function(dataset, num.var,
                        introduction = '',

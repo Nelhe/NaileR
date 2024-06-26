@@ -39,3 +39,17 @@ A data frame, or a list of data frames, containing the LLM's response.
 \description{
 Generate a LLM response to analyze a categorical latent variable.
 }
+\details{
+This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+
+Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
+}
+\examples{
+data(iris)
+
+res = nail_catdes(iris, num.var = 5,
+introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.",
+request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
+
+cat(res2$response)
+}

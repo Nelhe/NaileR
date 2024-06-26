@@ -46,13 +46,13 @@ This function directly sends a prompt to a LLM. Therefore, to get a consistent a
 library(FactoMineR)
 data(decathlon)
 
-names(decathlon) = c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank', 'Points', 'Competition')
+names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank', 'Points', 'Competition')
 
-res_pca_deca = PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
-deca_work = res_pca_deca$ind$coord |> as.data.frame()
-deca_work = deca_work[1:3] |> cbind(decathlon)
+res_pca_deca <- PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
+deca_work <- res_pca_deca$ind$coord |> as.data.frame()
+deca_work <- deca_work[1:3] |> cbind(decathlon)
 
-res_deca = nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
+res_deca <- nail_condes(deca_work, 1, recode = 2, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
 
 cat(res_deca$response)
 ## a really interesting thing to note is that depending on the variable names and the exact prompt, the LLM sometimes confuses a "below average time" in speed-based events with a "bad performance".

@@ -149,7 +149,7 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups){
 #'
 #' res = nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
 #'
-#' cat(res2$response)
+#' cat(res$response)
 
 nail_catdes = function(dataset, num.var,
                        introduction = '',

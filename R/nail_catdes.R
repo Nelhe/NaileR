@@ -1,14 +1,18 @@
 
 #' @importFrom stringr str_split_1
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_replace
+#' @importFrom stringr str_squish
 
 tidy_answer_catdes = function(texte){
   split_mid = str_split_1(texte, '=')
 
-  if (str_detect(split_mid[2], '_')){
+  if ((length(split_mid)) > 1 & str_detect(split_mid[length(split_mid)], '_')){
     split_right = str_split_1(split_mid[2], '_')
     return(split_right)
+
   } else {
+    split_mid[1] = str_replace(split_mid[1], '\\.', ' ') |> str_squish()
     return(split_mid)
   }
 }

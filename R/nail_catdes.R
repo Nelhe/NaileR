@@ -1,8 +1,6 @@
 
-#' @importFrom stringr str_split_i
-#' @importFrom stringr str_replace
-#' @importFrom stringr str_squish
-#' @importFrom stringr str_count
+#' @importFrom stringr str_split_1
+#' @importFrom stringr str_detect
 
 tidy_answer_catdes = function(texte){
   split_mid = str_split_1(texte, '=')

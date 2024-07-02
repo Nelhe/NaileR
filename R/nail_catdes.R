@@ -22,105 +22,144 @@ tidy_answer_catdes = function(texte){
 
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
-#' @importFrom dplyr case_when
 #' @importFrom glue glue
 
-get_sentences_quali = function(res_cd, isolate.groups){
-
+get_sentences_quali = function(res_cd, drop.negative){
   res_cd = res_cd$category
-  ppts = c()
+  ppts = list()
 
   for (i in c(1:length(names(res_cd)))){
     res_cd2 = res_cd[[i]]
 
-    res_cd_work = rownames(res_cd2) |>
-      sapply(tidy_answer_catdes) |>
-      t() |>
-      cbind(res_cd2) |>
-      as.data.frame() |>
-      select(V1, V2, v.test)
+    if (!is.null(res_cd2)){
 
-    colnames(res_cd_work) = c('Variable', 'Level', 'v.test')
+      res_cd_work = rownames(res_cd2) |>
+        sapply(tidy_answer_catdes) |>
+        t() |>
+        cbind(res_cd2) |>
+        as.data.frame() |>
+        select(V1, V2, v.test)
 
-    more = res_cd_work |>
-      filter(v.test > 0) |>
-      mutate(Variable = glue('"{Variable}"')) |>
-      mutate(Sentence = tolower(paste(Level, 'to', Variable)))
+      colnames(res_cd_work) = c('Variable', 'Level', 'v.test')
 
-    less = res_cd_work |>
-      filter(v.test < 0) |>
-      mutate(Variable = glue('"{Variable}"')) |>
-      mutate(Sentence = tolower(paste(Level, 'to', Variable)))
+      more = res_cd_work |>
+        filter(v.test > 0) |>
+        mutate(Variable = glue('"{Variable}"')) |>
+        mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
 
-    ppt1 = ifelse(nrow(more) == 0,
-                  "",
-                  glue('Individuals from group "{names(res_cd)[i]}" gave the following answers significantly more often: {paste(more$Sentence, sep = "", collapse = ", ")}'))
-    ppt2 = case_when(nrow(less) == 0 & nrow(more) == 0 ~ "",
-                     nrow(less) == 0 ~ ".",
-                     nrow(more) == 0 ~ glue('Individuals from group "{names(res_cd)[i]}" gave the following answers significantly less often: {paste(less$Sentence, sep = "", collapse = ", ")}.'),
-                     .default = glue('; they also gave the following answers significantly less often: {paste(less$Sentence, sep = "", collapse = ", ")}.'))
+      if (!drop.negative){
+        less = res_cd_work |>
+          filter(v.test < 0) |>
+          mutate(Variable = glue('"{Variable}"')) |>
+          mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
+      } else less = ''
 
-    ppts = c(ppts, paste(ppt1, ppt2))
+      ppt1 = ifelse(nrow(more) == 0,
+                    "",
+                    glue('The following answers appear *more* often:
+{paste(more$Sentence, collapse = "\n")}'))
+
+      ppt2 = ifelse(nrow(less) == 0,
+                    "",
+                    glue('The following answers appear *less* often:
+{paste(less$Sentence, collapse = "\n")}'))
+
+      ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
+
+    } else ppts[[names(res_cd)[i]]] = ''
 
   }
-  if (isolate.groups == T) return(ppts) else return(paste(ppts, sep = '', collapse = ' ') |> str_squish())
+  return(ppts)
 }
+
 
 #' @importFrom dplyr select
 
-get_sentences_quanti = function(res_cd, isolate.groups){
+get_sentences_quanti = function(res_cd, drop.negative){
 
   res_cd = res_cd$quanti
-  ppts = c()
+  ppts = list()
 
   for (i in c(1:length(names(res_cd)))){
-    res_cd_work = res_cd[[i]] |>
-      as.data.frame() |>
-      select(v.test, p.value) |>
-      mutate(Variable = rownames(res_cd[[i]])) |>
-      mutate(Variable = glue('"{Variable}"'))
+    if (!is.null(res_cd[[i]])){
 
-    left = res_cd_work$Variable[res_cd_work$v.test > 0] |>
-      paste(collapse = ', ')
-    right = res_cd_work$Variable[res_cd_work$v.test < 0] |>
-      paste(collapse = ', ')
+      res_cd_work = res_cd[[i]] |>
+        as.data.frame() |>
+        select(v.test, p.value) |>
+        mutate(Variable = rownames(res_cd[[i]])) |>
+        mutate(Variable = glue('* {Variable}'))
 
-    ppt = case_when(
-      nchar(left) == 0 & nchar(right) == 0 ~ '',
-      nchar(left) == 0 ~ glue('In individuals from group "{names(res_cd)[i]}", variables {right} are significantly lower.'),
-      nchar(right) == 0 ~ glue('In individuals from group "{names(res_cd)[i]}", variables {left} are significantly higher.'),
-      .default = glue('In individuals from group "{names(res_cd)[i]}", variables {left} are significantly higher, and variables {right} are significantly lower.'))
+      left = res_cd_work$Variable[res_cd_work$v.test > 0] |>
+        paste(collapse = '\n')
 
-    ppts = c(ppts, ppt)
+      if (!drop.negative){
+        right = res_cd_work$Variable[res_cd_work$v.test < 0] |>
+          paste(collapse = '\n')
+      } else right = ''
+
+      ppt1 = ifelse(nchar(left) == 0,
+                    '',
+                    glue('The following variables are *higher*:
+                       {left}'))
+
+      ppt2 = ifelse(nchar(right) == 0,
+                    '',
+                    glue('The following variables are *lower*:
+                       {right}'))
+
+      ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
+
+    } else ppts[[names(res_cd)[i]]] = ''
   }
 
-  if (isolate.groups == T) return(ppts) else return(paste(ppts, sep = '', collapse = ' ') |> str_squish())
+  return(ppts)
 }
 
 
-get_prompt_catdes = function(res_cd, introduction, request, isolate.groups){
+get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop.negative){
 
   if ("category" %in% names(res_cd)){
-    stces_quali = get_sentences_quali(res_cd, isolate.groups)
-  } else stces_quali = ''
+    stces_quali = get_sentences_quali(res_cd, drop.negative)
+  } else stces_quali = list()
 
   if ("quanti" %in% names(res_cd)){
-    stces_quanti = get_sentences_quanti(res_cd, isolate.groups)
-  } else stces_quanti = ''
+    stces_quanti = get_sentences_quanti(res_cd, drop.negative)
+  } else stces_quanti = list()
 
   if (nchar(stces_quali[1]) == 0 & nchar(stces_quanti[1]) == 0) stop('No significant differences between groups, execution was halted.')
 
-  stces = case_when(
-    nchar(stces_quali[1]) == 0 ~ stces_quanti,
-    nchar(stces_quanti[1]) == 0 ~ stces_quali,
-    .default = paste('First, here are the results for numeric variables.',
-                     stces_quanti,
-                     'Second, here are the results for categorical variables.',
-                     stces_quali)
-  )
+  all_groups = union(names(stces_quali), names(stces_quanti))
 
-  return(paste(introduction, stces, request) |>
-           str_squish())
+  stces = c()
+
+  for (grp in all_groups){
+    qual = ifelse(is.null(stces_quali[[grp]]), '', stces_quali[[grp]])
+    quant = ifelse(is.null(stces_quanti[[grp]]), '', stces_quanti[[grp]])
+
+    ppt_grp = glue('## Group "{grp}":
+
+                   {qual}
+
+                   {quant}')
+
+    stces = c(stces, ppt_grp)
+  }
+
+  if (!isolate.groups) stces = paste(stces, collapse = '\n\n')
+
+  deb = glue('# Introduction
+
+             {introduction}
+
+             # Task
+
+             {request}
+
+             # Data
+
+             ')
+
+  return(paste(deb, stces, sep = ''))
 }
 
 #' Analyze a categorical latent variable
@@ -132,7 +171,8 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups){
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
-#' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended if the categorical variable has several categories.
+#' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.
+#' @param drop.negative a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.
 #' @param proba the significance threshold considered to characterized the category (by default 0.05).
 #' @param row.w a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)
 #'
@@ -154,13 +194,13 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups){
 nail_catdes = function(dataset, num.var,
                        introduction = '',
                        request = 'Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.',
-                       model = 'llama3', isolate.groups = F,
+                       model = 'llama3', isolate.groups = F, drop.negative = F,
                        proba = 0.05, row.w = NULL){
 
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
-                          isolate.groups = isolate.groups)
+                          isolate.groups = isolate.groups, drop.negative = drop.negative)
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

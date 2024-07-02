@@ -12,6 +12,7 @@ nail_catdes(
     "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.",
   model = "llama3",
   isolate.groups = F,
+  drop.negative = F,
   proba = 0.05,
   row.w = NULL
 )
@@ -27,7 +28,9 @@ nail_catdes(
 
 \item{model}{the model name ('llama3' by default).}
 
-\item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended if the categorical variable has several categories.}
+\item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.}
+
+\item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.}
 
 \item{proba}{the significance threshold considered to characterized the category (by default 0.05).}
 

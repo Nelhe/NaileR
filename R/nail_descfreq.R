@@ -30,18 +30,23 @@ get_sentences_descfreq = function(res_df, isolate.groups){
     right = res_df_work$Variable[res_df_work$v.test < 0] |>
       paste(collapse = ', ')
 
-    ppt = dplyr::case_when(
-      nchar(left) == 0 & nchar(right) == 0 ~ '',
-      nchar(left) == 0 ~ glue('For the object "{names(res_df)[i]}", the words {right} are used significantly less often.'),
-      nchar(right) == 0 ~ glue('For the object "{names(res_df)[i]}", the words {left} are used significantly more often.'),
-      .default = glue('For the object "{names(res_df)[i]}", the words {left} are used significantly more often;
-                      and the words {right} are used significantly less often.'))
+    res = dplyr::case_when(
+      nchar(left) == 0 & nchar(right) == 0 ~ '*no information*',
+      nchar(left) == 0 ~ glue('* Least used words: {right}'),
+      nchar(right) == 0 ~ glue('* Most used words: {left}'),
+      .default = glue('* Most used words: {left}
+      * Least used words: {right}'))
+
+    ppt = glue("## {names(res_df)[i]}
+
+               {res}")
 
     ppts = c(ppts, ppt)
   }
 
-  if (isolate.groups == T) return(ppts) else return(paste(ppts, sep = '', collapse = ' ') |> stringr::str_squish())
+  if (isolate.groups == T) return(ppts) else return(paste(ppts, collapse = '\n\n'))
 }
+
 
 #' Analyze a latent variable in a contingency table
 #'
@@ -72,15 +77,23 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 
 nail_descfreq = function(dataset,
                          introduction = '',
-                         request = 'Based on the results, please describe what characterizes the individuals of each group. Then, based on these characteristics, give each group a new name..',
+                         request = 'Based on the results, please describe what characterizes the individuals of each group. Then, based on these characteristics, give each group a new name.',
                          model = 'llama3', isolate.groups = F,
                          by.quali = NULL, proba = 0.05){
 
   res_df = FactoMineR::descfreq(dataset, by.quali = by.quali, proba = proba)
 
-  ppt = paste(introduction,
-              get_sentences_descfreq(res_df, isolate.groups = isolate.groups),
-              request) |> str_squish()
+  ppt = glue("# Introduction
+
+             {introduction}
+
+             # Task
+
+             {request}
+
+             # Data
+
+             {get_sentences_descfreq(res_df, isolate.groups = isolate.groups)}")
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

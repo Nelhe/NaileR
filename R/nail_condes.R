@@ -31,7 +31,7 @@ get_bins = function(dataset, keep, recode = 1){
   if (recode == 1){
     dta = dta |>
       mutate(across(where(is.numeric),
-                      ~as.factor(ifelse(. >= 0, "Above average", "Below average"))))
+                    ~as.factor(ifelse(. >= 0, "Above average", "Below average"))))
   } else if (recode == 2){
     dta = dta |>
       mutate(across(where(is.numeric), ~as.factor(case_when(
@@ -64,16 +64,24 @@ get_sentences_condes = function(res_cd){
 
   left = res_cd_work |>
     filter(Estimate > 0) |>
-    mutate(Sentence = tolower(paste(Variable, 'is', Level)))
+    mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
   right = res_cd_work |>
     filter(Estimate < 0) |>
-    mutate(Sentence = tolower(paste(Variable, 'is', Level)))
+    mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
 
-  ppt1 = glue('On one side of the scale, the individuals have the following characteristics : {paste(left$Sentence, sep = "", collapse = ", ")}.')
-  ppt2 = glue('On the other side of the scale, the individuals have the following characteristics : {paste(right$Sentence, sep = "", collapse = ", ")}.')
+  ppt1 = glue('## Left side of the scale
 
-  return(paste(ppt1, ppt2))
+The individuals have the following characteristics:
+{paste(left$Sentence, collapse = "\n")}')
+
+  ppt2 = glue('## Right side of the scale
+
+The individuals have the following characteristics:
+{paste(right$Sentence, collapse = "\n")}')
+
+  return(paste(ppt1, ppt2, sep = '\n\n'))
 }
+
 
 #' Analyze a continuous latent variable
 #'
@@ -121,9 +129,17 @@ nail_condes = function(dataset, num.var,
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)
 
-  ppt = paste(introduction,
-              get_sentences_condes(res_cd),
-              request) |> str_squish()
+  ppt = glue("# Introduction
+
+             {introduction}
+
+             # Task
+
+             {request}
+
+             # Data
+
+             {get_sentences_condes(res_cd)}")
 
   res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
   res_llm$prompt = ppt

@@ -5,18 +5,14 @@
 #' @importFrom stringr str_count
 
 tidy_answer_catdes = function(texte){
+  split_mid = str_split_1(texte, '=')
 
-  if (str_count(texte, '\\.') == 0){
-    qu = str_split_i(texte, '=', 1)
-    ans = str_split_i(texte, '=', -1)
-
+  if (str_detect(split_mid[2], '_')){
+    split_right = str_split_1(split_mid[2], '_')
+    return(split_right)
   } else {
-    texte_cut = str_split_i(texte, '=', -1)
-
-    ans = str_split_i(texte_cut, '_', -1)
-    qu = str_replace(texte_cut, paste('_', ans, sep = ''), '')
+    return(split_mid)
   }
-  return(c(qu, ans))
 }
 
 

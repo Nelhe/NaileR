@@ -42,9 +42,9 @@ This function directly sends a prompt to a LLM. Therefore, to get a consistent a
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }
 \examples{
-data(beard)
+data(beard_cont)
 
-res_beard <- nail_descfreq(beard, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = TRUE)
+res_beard <- nail_descfreq(beard_cont, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = TRUE)
 
 cat(res_beard$response)
 }

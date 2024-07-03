@@ -37,4 +37,15 @@ library(NaileR)
 
 NaileR currently features 3 datasets and 3 functions.
 
+### Datasets
 
+* beard and beard_cont: contain the results of a sensometrics experiment on beards
+* local_food: contains the results of a Q method-like survey on sustainable food systems
+
+### Functions
+
+* nail_catdes: performs a catdes analysis on a dataset and describes each category
+* nail_condes: performs a condes analysis on a dataset and describes the chosen continuous variable
+* nail_descfreq: performs a descfreq analysis on a contingency table and describes the rows
+
+## Examples

@@ -193,8 +193,10 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' data(local_food)
 #'
 #' set.seed(1)
-#' res_mca <- FactoMineR::MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05)
-#' res_hcpc <- FactoMineR::HCPC(res_mca, nb.clust = 3)
+#' res_mca <- MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05, graph = F)
+#' plot.MCA(res_mca, choix = "ind", invisible = c("var", "quali.sup"), label = "none")
+#' res_hcpc <- HCPC(res_mca, nb.clust = 3, graph = F)
+#' plot.HCPC(res_hcpc, choice = "map", draw.tree = F, ind.names = F)
 #' don_clust <- res_hcpc$data.clust
 #'
 #' res_food <- nail_catdes(don_clust, ncol(don_clust), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)

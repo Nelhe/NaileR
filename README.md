@@ -35,7 +35,7 @@ library(NaileR)
 
 ## Usage
 
-NaileR currently features 3 datasets and 3 functions.
+NaileR currently features 3 datasets and 6 functions.
 
 ### Datasets
 
@@ -47,6 +47,9 @@ NaileR currently features 3 datasets and 3 functions.
 * nail_catdes: performs a catdes analysis on a dataset and describes each category
 * nail_condes: performs a condes analysis on a dataset and describes the chosen continuous variable
 * nail_descfreq: performs a descfreq analysis on a contingency table and describes the rows
+* sim_llm: computes the simularity between texts
+* dist_mat_llm: computes a distance matrix based on sim_llm
+* dist_ref_llm: computes a distance vector based on sim_llm
 
 ## Example
 
@@ -84,7 +87,7 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 ## Roadmap
 
-- [ ] Implement a validation function to test the consistency of a response
-- [ ] Implement a function to generate multiple responses and pick the most "central"
+- [X] Implement a validation function to test the consistency of a response
+- [X] Implement a function to generate multiple responses and pick the most "central"
 - [ ] Consider adding a nail_decat
 - [ ] Implement a way to generate reports (pptx)

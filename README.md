@@ -48,4 +48,43 @@ NaileR currently features 3 datasets and 3 functions.
 * nail_condes: performs a condes analysis on a dataset and describes the chosen continuous variable
 * nail_descfreq: performs a descfreq analysis on a contingency table and describes the rows
 
-## Examples
+## Example
+
+Let's have a look at how we can interpret HCPC clusters:
+
+``` r
+library(FactoMineR)
+data(local_food)
+
+set.seed(1)
+res.mca = MCA(local_food, quali.sup = 46:63, level.ventil = 0.05, ncp = 100)
+res.hcpc = HCPC(res.mca, nb.clust = 3)
+don_clust = res.hcpc$data.clust
+```
+
+Due to the very long and explicit variable names, the category description result is practically illegible. Let's provide clear context and see how a LLM can make sense of it:
+
+``` r
+res = nail_catdes(don_clust, ncol(don_clust),
+                   
+                   introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. 
+                   In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them.
+                   In the second part, they had to say if they agreed or disagreed with some statements.',
+                   
+                   request = 'I will give you the answers from one group.
+                   Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name.',
+                   
+                   isolate.groups = T, drop.negative = T)
+```
+
+Out comes a list of results, for each group.
+
+In the same fashion, nail_condes can be used to interpret axis from a PCA - although a bit more work is needed, to bind the original data frame with the coordinates on the PCA axis.
+
+
+## Roadmap
+
+- [ ] Implement a validation function to test the consistency of a response
+- [ ] Implement a function to generate multiple responses and pick the most "central"
+- [ ] Add a nail_decat?
+- [ ] Implement a way to generate reports (pptx)

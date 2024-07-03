@@ -48,9 +48,23 @@ This function directly sends a prompt to a LLM. Therefore, to get a consistent a
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }
 \examples{
+# With Fishers' iris
 data(iris)
 
 res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
-
 cat(res_iris$response)
+
+\dontrun{# With local_food
+data(local_food)
+
+set.seed(1)
+res_mca <- MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05)
+res_hcpc <- HCPC(res_mca, nb.clust = 3)
+don_clust <- res_hcpc$data.clust
+
+res_food <- nail_catdes(don_clust, ncol(don_clust), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
+res4[[1]]$response |> cat()
+res4[[2]]$response |> cat()
+res4[[3]]$response |> cat()
+}
 }

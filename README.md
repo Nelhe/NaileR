@@ -48,6 +48,7 @@ NaileR currently features 3 datasets and 6 functions.
 * sim_llm: computes the simularity between texts
 * dist_mat_llm: computes a distance matrix based on sim_llm
 * dist_ref_llm: computes a distance vector based on sim_llm
+* nail_sort: perfoms clustering on textual data from sensometrics experiments
 
 ## Example
 
@@ -90,6 +91,6 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 - [X] Implement a validation function to test the consistency of a response
 - [X] Implement a function to generate multiple responses and pick the most "central"
-- [ ] Add a nail_textual for textual data
+- [X] Add a <s>nail_textual</s> (nail_sort) for textual data
 - [ ] Consider adding a nail_decat
 - [ ] Implement a way to generate reports (pptx)

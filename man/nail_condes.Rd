@@ -48,7 +48,7 @@ data(decathlon)
 
 names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank', 'Points', 'Competition')
 
-res_pca_deca <- PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
+res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
 deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 deca_work <- deca_work[1:3] |> cbind(decathlon)
 

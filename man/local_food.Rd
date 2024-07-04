@@ -5,14 +5,11 @@
 \alias{local_food}
 \title{Q method data}
 \format{
-\subsection{\code{local_food}}{
-
-A data frame with 573 rows and 63 columns:
+A data frame with 573 rows (participants) and 63 columns (questions):
 \describe{
 \item{columns 1-45}{statements about food systems}
 \item{columns 46-59}{opinions}
 \item{columns 60-63}{personal information}
-}
 }
 }
 \source{
@@ -22,12 +19,11 @@ Applied mathematics department, Institut Agro Rennes-Angers
 local_food
 }
 \description{
-This data was collected after a Q-method-like survey on sustainable food systems.
-Participants had to rank how acceptable they found 45 statements about a sustainable food system; then, they were asked if they agreed with 14 statements.
+These data were collected after a Q-method-like survey on sustainable food systems.
+Participants had to rank how acceptable they found 45 statements about a sustainable food system; then, they were asked if they agreed with 14 other statements.
 }
 \examples{
 data(local_food)
 local_food[1:5, c(1,2,46,47,60)]
-
 }
 \keyword{datasets}

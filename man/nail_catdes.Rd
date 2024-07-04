@@ -2,7 +2,7 @@
 % Please edit documentation in R/nail_catdes.R
 \name{nail_catdes}
 \alias{nail_catdes}
-\title{Analyze a categorical latent variable}
+\title{Interpret a categorical latent variable}
 \usage{
 nail_catdes(
   dataset,
@@ -20,7 +20,7 @@ nail_catdes(
 \arguments{
 \item{dataset}{a data frame made up of at least one categorical variable and a set of quantitative variables and/or categorical variables.}
 
-\item{num.var}{the number of the variable to characterized.}
+\item{num.var}{the number of the variable to be characterized.}
 
 \item{introduction}{the introduction for the LLM prompt.}
 
@@ -32,7 +32,7 @@ nail_catdes(
 
 \item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.}
 
-\item{proba}{the significance threshold considered to characterized the category (by default 0.05).}
+\item{proba}{the significance threshold considered to characterize the categories (by default 0.05).}
 
 \item{row.w}{a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)}
 }
@@ -40,10 +40,10 @@ nail_catdes(
 A data frame, or a list of data frames, containing the LLM's response.
 }
 \description{
-Generate a LLM response to analyze a categorical latent variable.
+Generate an LLM response to analyze a categorical latent variable.
 }
 \details{
-This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }

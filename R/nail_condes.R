@@ -83,22 +83,22 @@ The individuals have the following characteristics:
 }
 
 
-#' Analyze a continuous latent variable
+#' Interpret a continuous latent variable
 #'
-#' Generate a LLM response to analyze a continuous latent variable
+#' Generate an LLM response to analyze a continuous latent variable.
 #'
 #' @param dataset a data frame made up of at least one quantitative variable and a set of quantitative variables and/or categorical variables.
-#' @param num.var the number of the variable to characterized.
+#' @param num.var the number of the variable to be characterized.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
 #' @param recode an integer specifying how continuous variables are converted to categorical, for the analysis. recode = 1 (default) converts values to "more/less than average"; recode = 2 adds the categories "significantly more/less than average" when a value is more/less than 2 standard deviations away from the average.
 #' @param weights weights for the individuals (see [FactoMineR::condes()]).
-#' @param proba the significance threshold considered to characterized the category (by default 0.05).
+#' @param proba the significance threshold considered to characterize the category (by default 0.05).
 #'
 #' @return A data frame containing the LLM's response.
 #'
-#' @details This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+#' @details This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 #'
 #' @export
 #'

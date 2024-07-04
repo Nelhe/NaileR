@@ -2,25 +2,29 @@
 % Please edit documentation in R/distance.R
 \name{dist_mat_llm}
 \alias{dist_mat_llm}
-\title{LLM Distance Matrix}
+\title{LLM distance matrix}
 \usage{
 dist_mat_llm(ppt, n, per_miss = 0)
 }
 \arguments{
-\item{ppt}{a LLM prompt.}
+\item{ppt}{an LLM prompt.}
 
-\item{n}{the number of responses to generate.}
+\item{n}{the number of responses to be generated.}
 
-\item{per_miss}{the percentage of missing values in the final matrix (0 by default).}
+\item{per_miss}{the proportion of missing values in the final matrix (between 0 and 1; 0 by default).}
 }
 \value{
-A list containing the LLM results for each response, and the distance matrix.
+A list containing:
+\itemize{
+\item a list of the LLM results for each iteration;
+\item a distance matrix.
+}
 }
 \description{
-Compute a distance matrix between randomly-generated responses to a LLM prompt.
+Compute a distance matrix between randomly-generated responses to an LLM prompt.
 }
 \details{
-The final percentage of missing values might differ from the per_miss parameter; rather than a percentage of values being turned to NA, each value has a per_miss probability of being NA.
+The final percentage of missing values might differ from the per_miss parameter value; rather than a percentage of values being turned to NA, each value has a per_miss probability of being NA.
 }
 \examples{
 data(iris)

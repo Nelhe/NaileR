@@ -160,23 +160,23 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
   return(paste(deb, stces, sep = ''))
 }
 
-#' Analyze a categorical latent variable
+#' Interpret a categorical latent variable
 #'
-#' Generate a LLM response to analyze a categorical latent variable.
+#' Generate an LLM response to analyze a categorical latent variable.
 #'
 #' @param dataset a data frame made up of at least one categorical variable and a set of quantitative variables and/or categorical variables.
-#' @param num.var the number of the variable to characterized.
+#' @param num.var the number of the variable to be characterized.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
 #' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.
 #' @param drop.negative a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.
-#' @param proba the significance threshold considered to characterized the category (by default 0.05).
+#' @param proba the significance threshold considered to characterize the categories (by default 0.05).
 #' @param row.w a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)
 #'
 #' @return A data frame, or a list of data frames, containing the LLM's response.
 #'
-#' @details This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+#' @details This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 #'
 #' Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 #'

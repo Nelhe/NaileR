@@ -2,7 +2,7 @@
 % Please edit documentation in R/nail_condes.R
 \name{nail_condes}
 \alias{nail_condes}
-\title{Analyze a continuous latent variable}
+\title{Interpret a continuous latent variable}
 \usage{
 nail_condes(
   dataset,
@@ -19,7 +19,7 @@ nail_condes(
 \arguments{
 \item{dataset}{a data frame made up of at least one quantitative variable and a set of quantitative variables and/or categorical variables.}
 
-\item{num.var}{the number of the variable to characterized.}
+\item{num.var}{the number of the variable to be characterized.}
 
 \item{introduction}{the introduction for the LLM prompt.}
 
@@ -31,16 +31,16 @@ nail_condes(
 
 \item{weights}{weights for the individuals (see \code{\link[FactoMineR:condes]{FactoMineR::condes()}}).}
 
-\item{proba}{the significance threshold considered to characterized the category (by default 0.05).}
+\item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
 }
 \value{
 A data frame containing the LLM's response.
 }
 \description{
-Generate a LLM response to analyze a continuous latent variable
+Generate an LLM response to analyze a continuous latent variable.
 }
 \details{
-This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns to clear, unshortened and unambiguous names.
+This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 }
 \examples{
 library(FactoMineR)

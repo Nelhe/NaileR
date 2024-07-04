@@ -2,22 +2,26 @@
 % Please edit documentation in R/distance.R
 \name{dist_ref_llm}
 \alias{dist_ref_llm}
-\title{LLM Response Consistency}
+\title{LLM response consistency}
 \usage{
 dist_ref_llm(ppt, ref, n)
 }
 \arguments{
-\item{ppt}{a LLM prompt.}
+\item{ppt}{an LLM prompt.}
 
 \item{ref}{the reference response.}
 
-\item{n}{the number of new responses to generate.}
+\item{n}{the number of new responses to be generated.}
 }
 \value{
-A list containing the newly-generated prompts and a vector of their distances to the reference reponse.
+A list containing:
+\itemize{
+\item a list with the newly-generated prompts;
+\item a vector of distances to the reference response.
+}
 }
 \description{
-Compute distances between a LLM response and other responses to the same prompt.
+Compute distances between an LLM response of interest and some other responses to the same prompt.
 }
 \examples{
 data(iris)

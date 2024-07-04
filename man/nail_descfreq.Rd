@@ -2,7 +2,7 @@
 % Please edit documentation in R/nail_descfreq.R
 \name{nail_descfreq}
 \alias{nail_descfreq}
-\title{Analyze a latent variable in a contingency table}
+\title{Interpret the rows of a contingency table}
 \usage{
 nail_descfreq(
   dataset,
@@ -16,7 +16,7 @@ nail_descfreq(
 )
 }
 \arguments{
-\item{dataset}{a data frame corresponding to a contingency table (quantitative data).}
+\item{dataset}{a data frame corresponding to a contingency table.}
 
 \item{introduction}{the introduction for the LLM prompt.}
 
@@ -26,18 +26,18 @@ nail_descfreq(
 
 \item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per row. Recommended if the contingency table has several rows.}
 
-\item{by.quali}{a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized}
+\item{by.quali}{a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized.}
 
-\item{proba}{the significance threshold considered to characterized the category (by default 0.05).}
+\item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
 }
 \value{
-A data frame, or a list of data frames, containing the LLM's response.
+A data frame, or a list of data frames (if isolate.groups = TRUE), containing the LLM's response.
 }
 \description{
-Generate a LLM response to analyze a latent variable in a contingency table.
+Describes the rows of a contingency table. For each row, this description is based on the columns of the contingency table that are significantly related to it.
 }
 \details{
-This function directly sends a prompt to a LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM.
+This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM.
 
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }

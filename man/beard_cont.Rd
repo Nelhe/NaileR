@@ -3,11 +3,12 @@
 \docType{data}
 \name{beard_cont}
 \alias{beard_cont}
-\title{Beards data}
+\title{Beard descriptions (data)}
 \format{
-\subsection{\code{beard_cont}}{
-
-A contingency table (data frame) with 8 rows and 337 columns: rows are the types of beard, columns are the words used to describe them at least once.
+A contingency table (data frame) with 8 rows and 337 columns:
+\itemize{
+\item rows are the types of beards;
+\item columns are the words used at least once to describe them.
 }
 }
 \source{
@@ -17,12 +18,11 @@ Applied mathematics department, Institut Agro Rennes-Angers
 beard_cont
 }
 \description{
-This data refers to 8 types of beard.
-Each beard was evaluated, in a few words, by 62 panelists (except beard 8 which only had 60 evaluations) in a sensometrics experiment.
+These data refer to 8 types of beards.
+Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
 }
 \examples{
 data(beard_cont)
 FactoMineR::descfreq(beard_cont)
-
 }
 \keyword{datasets}

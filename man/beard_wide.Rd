@@ -3,11 +3,12 @@
 \docType{data}
 \name{beard_wide}
 \alias{beard_wide}
-\title{Beards data}
+\title{Beard descriptions (data)}
 \format{
-\subsection{\code{beard_wide}}{
-
-A data frame with 8 rows and 24 columns: rows are the types of beards, columns are the panelists' opinions.
+A data frame with 8 rows and 24 columns:
+\itemize{
+\item rows are the types of beards;
+\item columns are the assessors' opinions.
 }
 }
 \source{
@@ -17,13 +18,12 @@ Applied mathematics department, Institut Agro Rennes-Angers
 beard_wide
 }
 \description{
-This data refers to 8 types of beard. It comes from a subset of the original "beard" dataset.
-Each beard was evaluated, in a few words, by 24 panelists in a sensometrics experiment.
+These data refer to 8 types of beards. They come from a subset of the original "beard" dataset.
+Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
 }
 \examples{
 
 data(beard_wide)
 beard_wide
-
 }
 \keyword{datasets}

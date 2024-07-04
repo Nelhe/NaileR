@@ -2,42 +2,46 @@
 % Please edit documentation in R/nail_sort.R
 \name{nail_sort}
 \alias{nail_sort}
-\title{Sort sensometrics textual data}
+\title{Sort textual data}
 \usage{
 nail_sort(
   dta_text,
   name_size = 3,
-  stimulus_id = "",
-  ppt_intro = "stimulus",
+  stimulus_id = "stimulus",
+  introduction = "",
   measure = "",
   nb_max = 6
 )
 }
 \arguments{
-\item{dta_text}{a data frame where each row is a stimulus and each column is a judge.}
+\item{dta_text}{a data frame where each row is a stimulus and each column is an assessor.}
 
-\item{name_size}{the maximum number of words in a new group name created by the LLM.}
+\item{name_size}{the maximum number of words in a group name created by the LLM.}
 
-\item{stimulus_id}{the name of the stimulus. Customizing it is highly recommended.}
+\item{stimulus_id}{the nature of the stimulus. Customizing it is highly recommended.}
 
-\item{ppt_intro}{the introduction to the LLM prompt.}
+\item{introduction}{the introduction to the LLM prompt.}
 
 \item{measure}{the type of measure used in the experiment.}
 
-\item{nb_max}{the maximum number of clusters the LLM can form.}
+\item{nb_max}{the maximum number of clusters the LLM can form per assessor.}
 }
 \value{
-A data frame where each column has been sorted independently into groups.
+A list consisting of:
+\itemize{
+\item a list of prompts (one per assessor);
+\item a data frame with the group names.
+}
 }
 \description{
-Performs clustering on textual data from a sensometrics experiment, with an LLM.
+Group textual data according to their similarity, in a context in which the assessors have commented on a set of stimuli.
 }
 \details{
 This function uses a while loop to ensure that the LLM gives the right number of groups. Therefore, customizing the stimulus ID, prompt introduction and measure is highly recommended; a clear prompt can help the LLM finish its task faster.
 }
 \examples{
-res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", ppt_intro = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
+res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", introduction = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
 
 res$dta_sort
-res$prompt_llm
+res$prompt_llm[[1]]
 }

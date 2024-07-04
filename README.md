@@ -14,9 +14,7 @@
 
 ## Overview
 
-NaileR is a R package developed during my internship at l'Institut Agro Rennes-Angers as a tool to help describe latent variables in a multidimensional analysis.
-
-NaileR uses convenience functions offered by the <a href="https://cran.r-project.org/web/packages/FactoMineR/index.html">FactoMineR package</a> (condes, catdes, descfreq) in conjunction with the <a href="https://cran.r-project.org/web/packages/ollamar/index.html">ollamar package</a>, to generate latent variables descriptions with the help of AI.
+NaileR in an R package that uses convenience functions offered by the <a href="https://cran.r-project.org/web/packages/FactoMineR/index.html">FactoMineR package</a> (condes, catdes, descfreq) in conjunction with the <a href="https://cran.r-project.org/web/packages/ollamar/index.html">ollamar package</a>, to generate latent variables descriptions with the help of AI.
 
 
 
@@ -59,10 +57,13 @@ Let's have a look at how we can interpret HCPC clusters:
 library(FactoMineR)
 data(local_food)
 
-set.seed(1)
-res.mca = MCA(local_food, quali.sup = 46:63, level.ventil = 0.05, ncp = 100)
-res.hcpc = HCPC(res.mca, nb.clust = 3)
-don_clust = res.hcpc$data.clust
+set.seed(1)      # for consistency
+
+res_mca <- MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05, graph = F)
+plot.MCA(res_mca, choix = "ind", invisible = c("var", "quali.sup"), label = "none")
+res_hcpc <- HCPC(res_mca, nb.clust = 3, graph = F)
+plot.HCPC(res_hcpc, choice = "map", draw.tree = F, ind.names = F)
+don_clust <- res_hcpc$data.clust
 ```
 
 Due to the very long and explicit variable names, the category description result is practically illegible. Let's provide clear context and see how a LLM can make sense of it:
@@ -89,5 +90,6 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 - [X] Implement a validation function to test the consistency of a response
 - [X] Implement a function to generate multiple responses and pick the most "central"
+- [ ] Add a nail_textual for textual data
 - [ ] Consider adding a nail_decat
 - [ ] Implement a way to generate reports (pptx)

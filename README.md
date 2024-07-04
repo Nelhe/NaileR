@@ -91,6 +91,6 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 - [X] Implement a validation function to test the consistency of a response
 - [X] Implement a function to generate multiple responses and pick the most "central"
-- [X] Add a <s>nail_textual</s> (nail_sort) for textual data
+- [X] Add a <s>nail_textual</s> nail_sort for textual data
 - [ ] Consider adding a nail_decat
 - [ ] Implement a way to generate reports (pptx)

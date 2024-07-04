@@ -27,7 +27,7 @@
 #' A contingency table (data frame) with 8 rows and 337 columns: rows are the types of beard, columns are the words used to describe them at least once.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' data(beards)
+#' data(beard_cont)
 #' FactoMineR::descfreq(beard_cont)
 #'
 "beard_cont"

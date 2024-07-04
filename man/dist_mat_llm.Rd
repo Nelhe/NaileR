@@ -14,7 +14,7 @@ dist_mat_llm(ppt, n, per_miss = 0)
 \item{per_miss}{the percentage of missing values in the final matrix (0 by default).}
 }
 \value{
-A n x n matrix.
+A list containing the LLM results for each response, and the distance matrix.
 }
 \description{
 Compute a distance matrix between randomly-generated responses to a LLM prompt.
@@ -26,8 +26,6 @@ The final percentage of missing values might differ from the per_miss parameter;
 data(iris)
 
 res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
-ppt <- res_iris$prompt
 
-res_iris$response
 dist_mat_llm(res_iris$prompt, n = 5, per_miss = 0)
 }

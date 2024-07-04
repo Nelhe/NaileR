@@ -33,11 +33,11 @@ library(NaileR)
 
 ## Usage
 
-NaileR currently features 3 datasets and 6 functions.
+NaileR currently features 4 datasets and 7 functions.
 
 ### Datasets
 
-* beard and beard_cont: contain the results of a sensometrics experiment on beards
+* beard, beard_cont and beard_wide: contain the results of a sensometrics experiment on beards
 * local_food: contains the results of a Q method-like survey on sustainable food systems
 
 ### Functions

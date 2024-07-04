@@ -94,3 +94,14 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 - [X] Add a <s>nail_textual</s> nail_sort for textual data
 - [ ] Consider adding a nail_decat
 - [ ] Implement a way to generate reports (pptx)
+
+
+## License
+
+This package is under the GPL (>= 2) License. Details may be found [here](https://cran.r-project.org/web/licenses).
+
+## Contact
+
+Sébastien Lê - sebastien.le@agrocampus-ouest.fr
+
+Project link: [https://github.com/Nelhe/NaileR](https://github.com/Nelhe/NaileR)

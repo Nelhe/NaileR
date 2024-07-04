@@ -21,7 +21,7 @@ This data refers to 8 types of beard.
 Each beard was evaluated, in a few words, by 62 panelists (except beard 8 which only had 60 evaluations) in a sensometrics experiment.
 }
 \examples{
-data(beards)
+data(beard_cont)
 FactoMineR::descfreq(beard_cont)
 
 }

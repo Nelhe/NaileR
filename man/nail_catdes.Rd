@@ -65,8 +65,8 @@ plot.HCPC(res_hcpc, choice = "map", draw.tree = F, ind.names = F)
 don_clust <- res_hcpc$data.clust
 
 res_food <- nail_catdes(don_clust, ncol(don_clust), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
-res4[[1]]$response |> cat()
-res4[[2]]$response |> cat()
-res4[[3]]$response |> cat()
+res_food[[1]]$response |> cat()
+res_food[[2]]$response |> cat()
+res_food[[3]]$response |> cat()
 }
 }

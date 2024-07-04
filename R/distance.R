@@ -3,7 +3,7 @@
 #'
 #' Compute a similarity score, on a scale ranging from 0 to 100, between two character strings.
 #'
-#' @param resA,resB two character strings
+#' @param textA,textB two character strings
 #'
 #' @return An integer between 0 and 100.
 #'
@@ -12,30 +12,30 @@
 #' @export
 #'
 #' @examples
-#' textA <- 'Participant A was described as a nice, outgoing man, with a friendly attitude.'
+#' textA <- "Participant A was described as a nice, outgoing man, with a friendly attitude."
 #' textB <- "Participant A was an extroverted and caring individual."
 #'
 #' sim_llm(textA, textB)
 
 
-sim_llm <- function(resA, resB){
+sim_llm <- function(textA, textB){
 
   ppt <- glue::glue('Two experts have each provided a short report. Please identify only the similarities in meaning between the two reports and give a score for the similarity between the two reports: 0, the two reports are totally different, 100 the two reports are identical.
 
             ',
               '# The first report is:
-            {resA}',
+            {textA}',
               '
 
             ',
               '# The second report is:
-            {resB}',
+            {textB}',
               '
 
             At the very very end of your answer, write the score of similarity accordingly to this exact format:',
               '
-            The similarity between the two report is: ...')
-  number=NA
+            The similarity between the two reports is: ...')
+  number <- NA
 
   while(is.na(number) != FALSE){
     res_comparison <- ollamar::generate('llama3', ppt, output = 'df')
@@ -116,7 +116,7 @@ dist_ref_llm <- function(ppt, ref, n){
 
   distance_matrix <- matrix(0, n, 1)
 
-  for (i in 1:n) distance_matrix[i, 1] <- 100 - dist_llm(ref, res_llm[[i]]$response)
+  for (i in 1:n) distance_matrix[i, 1] <- 100 - sim_llm(ref, res_llm[[i]]$response)
 
   return(list(boot_llm = res_llm, dist_llm = distance_matrix))
 }

@@ -33,6 +33,23 @@
 "beard_cont"
 
 
+#' Beards data
+#'
+#' This data refers to 8 types of beard. It comes from a subset of the original "beard" dataset.
+#' Each beard was evaluated, in a few words, by 24 panelists in a sensometrics experiment.
+#'
+#' @docType data
+#'
+#' @format ## `beard_wide`
+#' A data frame with 8 rows and 24 columns: rows are the types of beards, columns are the panelists' opinions.
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#'
+#' data(beard_wide)
+#' beard_wide
+#'
+"beard_wide"
+
 #' Q method data
 #'
 #' This data was collected after a Q-method-like survey on sustainable food systems.

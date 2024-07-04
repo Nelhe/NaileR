@@ -102,7 +102,7 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 ## License
 
-This package is under the GPL (>= 2) License. Details may be found [here](https://cran.r-project.org/web/licenses).
+This package is under the GPL (>= 2) License. Details can be found [here](https://cran.r-project.org/web/licenses).
 
 ## Contact
 

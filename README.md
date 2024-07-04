@@ -106,6 +106,6 @@ This package is under the GPL (>= 2) License. Details may be found [here](https:
 
 ## Contact
 
-Sébastien Lê - sebastien.le@agrocampus-ouest.fr
+Sébastien Lê - sebastien.le@institut-agro.fr
 
 Project link: [https://github.com/Nelhe/NaileR](https://github.com/Nelhe/NaileR)

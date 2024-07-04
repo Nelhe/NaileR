@@ -1,7 +1,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/Nelhe/NaileR">
-    <img src="images/Nailer_final.png" alt="Logo" width="122" height="142">
+    <img src="images/Nailer_final.png" alt="Logo" width="244" height="284">
   </a>
 
   <h3 align="center">NaileR</h3>

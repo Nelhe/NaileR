@@ -18,30 +18,19 @@
 #' sim_llm(textA, textB)
 
 
-sim_llm <- function(textA, textB){
-
-  ppt <- glue::glue('Two experts have each provided a short report. Please identify only the similarities in meaning between the two reports and give a score for the similarity between the two reports: 0, the two reports are totally different, 100 the two reports are identical.
-
-            ',
-              '# The first report is:
-            {textA}',
-              '
-
-            ',
-              '# The second report is:
-            {textB}',
-              '
-
-            At the very very end of your answer, write the score of similarity accordingly to this exact format:',
-              '
-            The similarity between the two reports is: ...')
-  number <- NA
-
-  while(is.na(number) != FALSE){
-    res_comparison <- ollamar::generate('llama3', ppt, output = 'df')
+sim_llm <- function (textA, textB) {
+  ppt <- glue::glue("Two experts have each provided a short report. Please identify only the similarities in meaning between the two reports and give a score for the similarity between the two reports: 0, the two reports are totally different, 100 the two reports are identical.\n\n            ",
+                    "# The first report is:\n            {textA}",
+                    "\n\n            ",
+                    "# The second report is:\n            {textB}",
+                    "\n\n            At the very very end of your answer, write the score of similarity accordingly to this exact format:",
+                    "\n            The similarity between the two reports is: ...")
+  number <- numeric(0)
+  while (length(number) == 0){
+    res_comparison <- ollamar::generate("llama3", ppt, output = "df")
     last_sentence <- sub(".*\\.\\s*", "", res_comparison$response)
     matches <- gregexpr("[0-9]+", last_sentence)
-    number <- as.numeric(regmatches(last_sentence, matches))
+    number <- as.numeric(regmatches(last_sentence, matches)[[1]][length(regmatches(last_sentence, matches)[[1]])])
   }
   return(number)
 }

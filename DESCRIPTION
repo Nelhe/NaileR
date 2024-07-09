@@ -1,6 +1,6 @@
 Package: NaileR
 Title: Interpreting Latent Variables with AI
-Version: 0.9.3
+Version: 1.0.0
 Authors@R: c(
     person("Nel", "Hervé", role = 'aut'),
     person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',

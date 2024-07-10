@@ -12,7 +12,7 @@ tidy_answer_catdes = function(texte){
     return(split_right)
 
   } else {
-    split_mid[1] = str_replace(split_mid[1], '\\.', ' ') |> str_squish()
+    split_mid[1] = str_replace_all(split_mid[1], '\\.', ' ') |> str_squish()
     return(split_mid)
   }
 }
@@ -84,7 +84,8 @@ get_sentences_quanti = function(res_cd, drop.negative){
       res_cd_work = res_cd[[i]] |>
         as.data.frame() |>
         select(v.test, p.value) |>
-        mutate(Variable = rownames(res_cd[[i]])) |>
+        mutate(Variable = rownames(res_cd[[i]]) |>
+                 sapply(tidy_answer_catdes)) |>
         mutate(Variable = glue('* {Variable}'))
 
       left = res_cd_work$Variable[res_cd_work$v.test > 0] |>

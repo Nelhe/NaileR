@@ -5,7 +5,7 @@
 tidy_answer_descfreq = function(texte){
 
   return(texte |>
-           str_replace('\\.', ' ') |>
+           str_replace_all('\\.', ' ') |>
            str_squish())
 }
 

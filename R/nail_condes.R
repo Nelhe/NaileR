@@ -12,7 +12,7 @@ tidy_answer_condes = function(texte){
     str_squish()
 
   qu = texte_cut[1] |>
-    str_replace('\\.', ' ') |>
+    str_replace_all('\\.', ' ') |>
     str_squish()
 
   return(c(qu, ans))

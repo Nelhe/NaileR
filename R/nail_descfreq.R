@@ -1,5 +1,5 @@
 
-#' @importFrom stringr str_replace
+#' @importFrom stringr str_replace_all
 #' @importFrom stringr str_squish
 
 tidy_answer_descfreq = function(texte){

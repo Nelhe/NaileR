@@ -1,7 +1,7 @@
 
 #' @importFrom stringr str_split_1
 #' @importFrom stringr str_split_i
-#' @importFrom stringr str_replace
+#' @importFrom stringr str_replace_all
 #' @importFrom stringr str_squish
 
 tidy_answer_condes = function(texte){

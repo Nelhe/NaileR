@@ -26,7 +26,7 @@ tidy_answer_condes = function(texte){
 get_bins = function(dataset, keep, recode = 1){
 
   dta = dataset |>
-    mutate(across(where(is.numeric), scale), .keep = 'none')
+    mutate(across(where(is.numeric), scale), .keep = 'unused')
 
   if (recode == 1){
     dta = dta |>

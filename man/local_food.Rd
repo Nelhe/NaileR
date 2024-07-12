@@ -3,7 +3,7 @@
 \docType{data}
 \name{local_food}
 \alias{local_food}
-\title{Q method data}
+\title{Local food systems survey}
 \format{
 A data frame with 573 rows (participants) and 63 columns (questions):
 \describe{

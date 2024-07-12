@@ -1,5 +1,5 @@
 
-#' Beard descriptions (data)
+#' Beard descriptions
 #'
 #' These data refer to 8 types of beards.
 #' Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
@@ -17,7 +17,7 @@
 "beard"
 
 
-#' Beard descriptions (data)
+#' Beard descriptions
 #'
 #' These data refer to 8 types of beards.
 #' Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
@@ -35,7 +35,7 @@
 "beard_cont"
 
 
-#' Beard descriptions (data)
+#' Beard descriptions
 #'
 #' These data refer to 8 types of beards. They come from a subset of the original "beard" dataset.
 #' Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
@@ -53,7 +53,7 @@
 #' beard_wide
 "beard_wide"
 
-#' Q method data
+#' Local food systems survey
 #'
 #' These data were collected after a Q-method-like survey on sustainable food systems.
 #' Participants had to rank how acceptable they found 45 statements about a sustainable food system; then, they were asked if they agreed with 14 other statements.
@@ -72,3 +72,76 @@
 #' data(local_food)
 #' local_food[1:5, c(1,2,46,47,60)]
 "local_food"
+
+
+#' Ideal boss survey
+#'
+#' These data were collected after a Q-method-like survey on participants' perception of an "ideal boss".
+#' Participants had to rank how much they agreed with 30 statements about an ideal boss; then, they were asked personal questions.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 73 rows (participants) and 39 columns (questions):
+#' \describe{
+#'  \item{columns 1-30}{statements about the ideal boss}
+#'  \item{columns 31-39}{personal information}
+#'  }
+#' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
+#' @examples
+#' data(boss)
+#' boss[1:5, c(1,2,31,33,34)]
+"boss"
+
+#' Agribusiness studies survey
+#'
+#' These data were collected after a Q-method-like survey on students' expectations of agribusiness studies.
+#' Participants had to rank how much they agreed with 38 statements about possible benefits from agribusiness studies; then, they were asked personal questions.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 53 rows (participants) and 42 columns (questions):
+#' \describe{
+#'  \item{columns 1-39}{statements about agribusiness studies}
+#'  \item{columns 31-39}{personal information}
+#'  }
+#' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
+#' @examples
+#' data(agri_studies)
+#' agri_studies[1:5, c(1,2,40,41)]
+"agri_studies"
+
+#' Glossophobia survey
+#'
+#' These data were collected after a Q-method-like survey on participants' feelings about speaking in public.
+#' Participants had to rank how much they agreed with 25 descriptions of speaking in public; then, they were asked personal questions.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 139 rows (participants) and 41 columns (questions):
+#' \describe{
+#'  \item{columns 1-25}{descriptions of speaking in public}
+#'  \item{columns 25-41}{personal information}
+#'  }
+#' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
+#' @examples
+#' data(glossophobia)
+#' glossophobia[1:5, c(1,2,26,31,37)]
+"glossophobia"
+
+#' Food waste survey
+#'
+#' These data were collected after a survey on food waste, with participants describing their habits.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 180 rows (participants) and 77 columns (questions).
+#'
+#' @source Héloïse BILLES and Amélie RATEAU, students at l'Institut Agro Rennes-Angers
+#' @examples
+#' data(waste)
+#' waste[1:5, 1:5]
+"waste"

@@ -1,0 +1,32 @@
+---
+title: "Introduction to NaileR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to NaileR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(NaileR)
+```
+
+NaileR in an R package that uses convenience functions offered by the FactoMineR package (condes, catdes, descfreq) in conjunction with the ollamar package.
+
+Its two main goals are to:
+
+* generate latent variables descriptions with the help of AI;
+* offer similarity measure tools for textual data.
+
+In this document, we will focus on the main functions NaileR offers to help interpret latent variables.
+
+
+
+*WIP*

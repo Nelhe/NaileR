@@ -16,7 +16,7 @@
 
 NaileR in an R package that uses convenience functions offered by the <a href="https://cran.r-project.org/web/packages/FactoMineR/index.html">FactoMineR package</a> (condes, catdes, descfreq) in conjunction with the <a href="https://cran.r-project.org/web/packages/ollamar/index.html">ollamar package</a>.
 
-Its two main goal are to:
+Its two main goals are to:
 * generate latent variables descriptions with the help of AI
 * offer similarity measure tools for textual data
 

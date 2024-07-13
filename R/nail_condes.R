@@ -63,10 +63,10 @@ get_sentences_condes = function(res_cd){
   colnames(res_cd_work) = c('Variable', 'Level', 'Estimate', 'p.value')
 
   left = res_cd_work |>
-    filter(Estimate > 0) |>
+    filter(Estimate < 0) |>
     mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
   right = res_cd_work |>
-    filter(Estimate < 0) |>
+    filter(Estimate > 0) |>
     mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
 
   ppt1 = glue('## Left side of the scale

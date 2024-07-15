@@ -21,7 +21,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
   for (i in c(1:length(names(res_df)))){
 
     if (is.null(res_df[[i]])) {
-      res = '*no information*'
+      res = '* *This row is not characterised by any particular modality/column.*'
 
     } else {
 
@@ -37,7 +37,6 @@ get_sentences_descfreq = function(res_df, isolate.groups){
         paste(collapse = ', ')
 
       res = dplyr::case_when(
-        nchar(left) == 0 & nchar(right) == 0 ~ '*no information*',
         nchar(left) == 0 ~ glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'),
         nchar(right) == 0 ~ glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.'),
         .default = glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.

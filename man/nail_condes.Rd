@@ -11,7 +11,8 @@ nail_condes(
   request =
     "Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.",
   model = "llama3",
-  recode = 1,
+  quanti.threshold = 0,
+  quanti.mod = c("Significantly above average", "Significantly below average", "Average"),
   weights = NULL,
   proba = 0.05,
   generate = T
@@ -28,7 +29,9 @@ nail_condes(
 
 \item{model}{the model name ('llama3' by default).}
 
-\item{recode}{an integer specifying how continuous variables are converted to categorical, for the analysis. recode = 1 (default) converts values to "more/less than average"; recode = 2 adds the categories "significantly more/less than average" when a value is more/less than 2 standard deviations away from the average.}
+\item{quanti.threshold}{the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical.}
+
+\item{quanti.mod}{a vector of the 3 possible modalities for continuous variables converted to categorical according to the threshold. Default is "above average", "below average" and "average".}
 
 \item{weights}{weights for the individuals (see \code{\link[FactoMineR:condes]{FactoMineR::condes()}}).}
 
@@ -51,11 +54,9 @@ names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for t
 
 res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
 deca_work <- res_pca_deca$ind$coord |> as.data.frame()
-deca_work <- deca_work[1:3] |> cbind(decathlon)
+deca_work <- deca_work[1,] |> cbind(decathlon)
 
-res_deca <- nail_condes(deca_work, 1, recode = 1, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
+res_deca <- nail_condes(deca_work, 1, quanti.threshold = 1, quanti.mod = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
 
 cat(res_deca$response)
-## A really interesting thing to note is that depending on the variable names and the exact prompt, the LLM sometimes confuses a "below average time" in speed-based events with a "bad performance".
-## This shows how important the prompt is, and how the LLM's response should be double-checked.
 }

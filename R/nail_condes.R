@@ -23,24 +23,18 @@ tidy_answer_condes = function(texte){
 #' @importFrom dplyr where
 #' @importFrom dplyr case_when
 
-get_bins = function(dataset, keep, recode = 1){
+get_bins = function(dataset, keep, quanti.threshold, quanti.mod){
 
   dta = dataset |>
     mutate(across(where(is.numeric), scale), .keep = 'unused')
 
-  if (recode == 1){
-    dta = dta |>
-      mutate(across(where(is.numeric),
-                    ~as.factor(ifelse(. >= 0, "Above average", "Below average"))))
-  } else if (recode == 2){
-    dta = dta |>
-      mutate(across(where(is.numeric), ~as.factor(case_when(
-        . > 2 ~ "Significantly above average",
-        . > 0 ~ "Above average",
-        . > -2 ~ "Below average",
-        .default = "Significantly below average"
-      ))))
-  }
+  dta = dta |>
+    mutate(across(where(is.numeric),
+                  ~as.factor(case_when(
+                    . >= quanti.threshold ~ quanti.mod[1],
+                    . <= - quanti.threshold ~ quanti.mod[2],
+                    .default = quanti.mod[3]))))
+
   dta = dta %>% cbind(dataset[keep], .)
 
   return(dta)
@@ -92,7 +86,8 @@ The individuals have the following characteristics:
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
-#' @param recode an integer specifying how continuous variables are converted to categorical, for the analysis. recode = 1 (default) converts values to "more/less than average"; recode = 2 adds the categories "significantly more/less than average" when a value is more/less than 2 standard deviations away from the average.
+#' @param quanti.threshold the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical.
+#' @param quanti.mod a vector of the 3 possible modalities for continuous variables converted to categorical according to the threshold. Default is "above average", "below average" and "average".
 #' @param weights weights for the individuals (see [FactoMineR::condes()]).
 #' @param proba the significance threshold considered to characterize the category (by default 0.05).
 #'
@@ -110,23 +105,21 @@ The individuals have the following characteristics:
 #'
 #' res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
 #' deca_work <- res_pca_deca$ind$coord |> as.data.frame()
-#' deca_work <- deca_work[1:3] |> cbind(decathlon)
+#' deca_work <- deca_work[1,] |> cbind(decathlon)
 #'
-#' res_deca <- nail_condes(deca_work, 1, recode = 1, introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale. You will analyze what sets apart individuals from either side of the scale. If an event is listed as both below (or above) and significantly below (or above) average, consider it significantly so.")
+#' res_deca <- nail_condes(deca_work, 1, quanti.threshold = 1, quanti.mod = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
 #'
 #' cat(res_deca$response)
-#' ## A really interesting thing to note is that depending on the variable names and the exact prompt, the LLM sometimes confuses a "below average time" in speed-based events with a "bad performance".
-#' ## This shows how important the prompt is, and how the LLM's response should be double-checked.
-
 
 nail_condes = function(dataset, num.var,
                        introduction = '',
                        request = 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.',
                        model = 'llama3',
-                       recode = 1, weights = NULL, proba = 0.05,
+                       quanti.threshold = 0, quanti.mod = c("Significantly above average", "Significantly below average", 'Average'),
+                       weights = NULL, proba = 0.05,
                        generate = T){
 
-  dta = get_bins(dataset, keep = num.var, recode = recode)
+  dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.mod = quanti.mod)
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)
 

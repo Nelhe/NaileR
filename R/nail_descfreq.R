@@ -86,7 +86,8 @@ nail_descfreq = function(dataset,
                          introduction = '',
                          request = 'Based on the results, please describe what makes each row unique.',
                          model = 'llama3', isolate.groups = F,
-                         by.quali = NULL, proba = 0.05){
+                         by.quali = NULL, proba = 0.05,
+                         generate = T){
 
   res_df = FactoMineR::descfreq(dataset, by.quali = by.quali, proba = proba)
 
@@ -101,6 +102,8 @@ nail_descfreq = function(dataset,
              # Data
 
              {get_sentences_descfreq(res_df, isolate.groups = isolate.groups)}")
+
+  if (!generate) return(ppt)
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

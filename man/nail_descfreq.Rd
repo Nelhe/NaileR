@@ -11,7 +11,8 @@ nail_descfreq(
   model = "llama3",
   isolate.groups = F,
   by.quali = NULL,
-  proba = 0.05
+  proba = 0.05,
+  generate = T
 )
 }
 \arguments{

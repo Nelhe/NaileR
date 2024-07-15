@@ -85,7 +85,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 
 nail_descfreq = function(dataset,
                          introduction = '',
-                         request = 'Based on the results, please describe what makes each row unique. Then, based on these characteristics, give each group a new name.',
+                         request = 'Based on the results, please describe what makes each row unique.',
                          model = 'llama3', isolate.groups = F,
                          by.quali = NULL, proba = 0.05){
 

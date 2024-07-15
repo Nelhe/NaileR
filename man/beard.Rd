@@ -3,7 +3,7 @@
 \docType{data}
 \name{beard}
 \alias{beard}
-\title{Beard descriptions (data)}
+\title{Beard descriptions}
 \format{
 A data frame with 494 rows and 2 columns:
 \itemize{

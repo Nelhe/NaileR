@@ -3,7 +3,7 @@
 \docType{data}
 \name{beard_cont}
 \alias{beard_cont}
-\title{Beard descriptions (data)}
+\title{Beard descriptions}
 \format{
 A contingency table (data frame) with 8 rows and 337 columns:
 \itemize{

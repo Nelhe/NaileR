@@ -38,10 +38,10 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 
       res = dplyr::case_when(
         nchar(left) == 0 & nchar(right) == 0 ~ '*no information*',
-        nchar(left) == 0 ~ glue('* Least used words: {right}'),
-        nchar(right) == 0 ~ glue('* Most used words: {left}'),
-        .default = glue('* Most used words: {left}
-        * Least used words: {right}'))
+        nchar(left) == 0 ~ glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'),
+        nchar(right) == 0 ~ glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.'),
+        .default = glue('* Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.
+      * Here are the modalities that characterise the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'))
 
     }
 
@@ -85,7 +85,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 
 nail_descfreq = function(dataset,
                          introduction = '',
-                         request = 'Based on the results, please describe what characterizes the individuals of each group. Then, based on these characteristics, give each group a new name.',
+                         request = 'Based on the results, please describe what makes each row unique. Then, based on these characteristics, give each group a new name.',
                          model = 'llama3', isolate.groups = F,
                          by.quali = NULL, proba = 0.05){
 

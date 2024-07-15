@@ -23,7 +23,7 @@ tidy_answer_condes = function(texte){
 #' @importFrom dplyr where
 #' @importFrom dplyr case_when
 
-get_bins = function(dataset, keep, quanti.threshold, quanti.mod){
+get_bins = function(dataset, keep, quanti.threshold, quanti.cat){
 
   dta = dataset |>
     mutate(across(where(is.numeric), scale), .keep = 'unused')
@@ -31,9 +31,9 @@ get_bins = function(dataset, keep, quanti.threshold, quanti.mod){
   dta = dta |>
     mutate(across(where(is.numeric),
                   ~as.factor(case_when(
-                    . >= quanti.threshold ~ quanti.mod[1],
-                    . <= - quanti.threshold ~ quanti.mod[2],
-                    .default = quanti.mod[3]))))
+                    . >= quanti.threshold ~ quanti.cat[1],
+                    . <= - quanti.threshold ~ quanti.cat[2],
+                    .default = quanti.cat[3]))))
 
   dta = dta %>% cbind(dataset[keep], .)
 
@@ -82,12 +82,12 @@ The individuals have the following characteristics:
 #' Generate an LLM response to analyze a continuous latent variable.
 #'
 #' @param dataset a data frame made up of at least one quantitative variable and a set of quantitative variables and/or categorical variables.
-#' @param num.var the number of the variable to be characterized.
+#' @param num.var the index of the variable to be characterized.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
-#' @param quanti.threshold the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical.
-#' @param quanti.mod a vector of the 3 possible modalities for continuous variables converted to categorical according to the threshold. Default is "above average", "below average" and "average".
+#' @param quanti.threshold the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical ones.
+#' @param quanti.cat a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".
 #' @param weights weights for the individuals (see [FactoMineR::condes()]).
 #' @param proba the significance threshold considered to characterize the category (by default 0.05).
 #'
@@ -107,7 +107,7 @@ The individuals have the following characteristics:
 #' deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 #' deca_work <- deca_work[,1] |> cbind(decathlon)
 #'
-#' res_deca <- nail_condes(deca_work, 1, quanti.threshold = 1, quanti.mod = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
+#' res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
 #'
 #' cat(res_deca$response)
 
@@ -115,11 +115,11 @@ nail_condes = function(dataset, num.var,
                        introduction = '',
                        request = 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.',
                        model = 'llama3',
-                       quanti.threshold = 0, quanti.mod = c("Significantly above average", "Significantly below average", 'Average'),
+                       quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
                        generate = T){
 
-  dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.mod = quanti.mod)
+  dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.cat = quanti.cat)
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)
 
@@ -135,7 +135,7 @@ nail_condes = function(dataset, num.var,
 
              {get_sentences_condes(res_cd)}")
 
-  if (!generate) return(ppt)
+  if (!generate) return(data.frame(prompt = ppt))
 
   res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
   res_llm$prompt = ppt

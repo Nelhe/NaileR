@@ -103,7 +103,7 @@ nail_descfreq = function(dataset,
 
              {get_sentences_descfreq(res_df, isolate.groups = isolate.groups)}")
 
-  if (!generate) return(ppt)
+  if (!generate) return(data.frame(prompt = ppt))
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

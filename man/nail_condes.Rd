@@ -12,7 +12,7 @@ nail_condes(
     "Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.",
   model = "llama3",
   quanti.threshold = 0,
-  quanti.mod = c("Significantly above average", "Significantly below average", "Average"),
+  quanti.cat = c("Significantly above average", "Significantly below average", "Average"),
   weights = NULL,
   proba = 0.05,
   generate = T
@@ -21,7 +21,7 @@ nail_condes(
 \arguments{
 \item{dataset}{a data frame made up of at least one quantitative variable and a set of quantitative variables and/or categorical variables.}
 
-\item{num.var}{the number of the variable to be characterized.}
+\item{num.var}{the index of the variable to be characterized.}
 
 \item{introduction}{the introduction for the LLM prompt.}
 
@@ -29,9 +29,9 @@ nail_condes(
 
 \item{model}{the model name ('llama3' by default).}
 
-\item{quanti.threshold}{the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical.}
+\item{quanti.threshold}{the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical ones.}
 
-\item{quanti.mod}{a vector of the 3 possible modalities for continuous variables converted to categorical according to the threshold. Default is "above average", "below average" and "average".}
+\item{quanti.cat}{a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".}
 
 \item{weights}{weights for the individuals (see \code{\link[FactoMineR:condes]{FactoMineR::condes()}}).}
 
@@ -56,7 +56,7 @@ res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
 deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 deca_work <- deca_work[,1] |> cbind(decathlon)
 
-res_deca <- nail_condes(deca_work, 1, quanti.threshold = 1, quanti.mod = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
+res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
 
 cat(res_deca$response)
 }

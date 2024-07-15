@@ -166,7 +166,7 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' Generate an LLM response to analyze a categorical latent variable.
 #'
 #' @param dataset a data frame made up of at least one categorical variable and a set of quantitative variables and/or categorical variables.
-#' @param num.var the number of the variable to be characterized.
+#' @param num.var the index of the variable to be characterized.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
@@ -200,7 +200,7 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' plot.HCPC(res_hcpc, choice = "map", draw.tree = F, ind.names = F)
 #' don_clust <- res_hcpc$data.clust
 #'
-#' res_food <- nail_catdes(don_clust, ncol(don_clust), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
+#' res_food <- nail_catdes(don_clust, num.var = ncol(don_clust), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
 #' res_food[[1]]$response |> cat()
 #' res_food[[2]]$response |> cat()
 #' res_food[[3]]$response |> cat()
@@ -218,7 +218,7 @@ nail_catdes = function(dataset, num.var,
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
                           isolate.groups = isolate.groups, drop.negative = drop.negative)
 
-  if (!generate) return(ppt)
+  if (!generate) return(data.frame(prompt = ppt))
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

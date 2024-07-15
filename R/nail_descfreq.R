@@ -19,23 +19,31 @@ get_sentences_descfreq = function(res_df, isolate.groups){
   ppts = c()
 
   for (i in c(1:length(names(res_df)))){
-    res_df_work = res_df[[i]] |>
-      as.data.frame() |>
-      select(v.test, p.value) |>
-      mutate(Variable = sapply(rownames(res_df[[i]]), tidy_answer_descfreq)) |>
-      mutate(Variable = glue('"{Variable}"'))
 
-    left = res_df_work$Variable[res_df_work$v.test > 0] |>
-      paste(collapse = ', ')
-    right = res_df_work$Variable[res_df_work$v.test < 0] |>
-      paste(collapse = ', ')
+    if (is.null(res_df[[i]])) {
+      res = '*no information*'
 
-    res = dplyr::case_when(
-      nchar(left) == 0 & nchar(right) == 0 ~ '*no information*',
-      nchar(left) == 0 ~ glue('* Least used words: {right}'),
-      nchar(right) == 0 ~ glue('* Most used words: {left}'),
-      .default = glue('* Most used words: {left}
-      * Least used words: {right}'))
+    } else {
+
+      res_df_work = res_df[[i]] |>
+        as.data.frame() |>
+        select(v.test, p.value) |>
+        mutate(Variable = sapply(rownames(res_df[[i]]), tidy_answer_descfreq)) |>
+        mutate(Variable = glue('"{Variable}"'))
+
+      left = res_df_work$Variable[res_df_work$v.test > 0] |>
+        paste(collapse = ', ')
+      right = res_df_work$Variable[res_df_work$v.test < 0] |>
+        paste(collapse = ', ')
+
+      res = dplyr::case_when(
+        nchar(left) == 0 & nchar(right) == 0 ~ '*no information*',
+        nchar(left) == 0 ~ glue('* Least used words: {right}'),
+        nchar(right) == 0 ~ glue('* Most used words: {left}'),
+        .default = glue('* Most used words: {left}
+        * Least used words: {right}'))
+
+    }
 
     ppt = glue("## {names(res_df)[i]}
 

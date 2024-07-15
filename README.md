@@ -37,12 +37,16 @@ library(NaileR)
 
 ## Usage
 
-NaileR currently features 4 datasets and 7 functions.
+NaileR currently features 8 datasets and 7 functions.
 
 ### Datasets
 
+* agri_studies: contains the results of a Q method-like survey on agribusiness studies
 * beard, beard_cont and beard_wide: contain the results of a sensometrics experiment on beards
+* boss: contains the results of a Q method-like survey on the ideal boss
+* glossophobia: contains the results of a Q method-like survey on feelings about speaking in public
 * local_food: contains the results of a Q method-like survey on sustainable food systems
+* waste: contains the results of a survey on food waste
 
 ### Functions
 

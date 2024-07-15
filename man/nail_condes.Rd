@@ -54,7 +54,7 @@ names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for t
 
 res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13)
 deca_work <- res_pca_deca$ind$coord |> as.data.frame()
-deca_work <- deca_work[1,] |> cbind(decathlon)
+deca_work <- deca_work[,1] |> cbind(decathlon)
 
 res_deca <- nail_condes(deca_work, 1, quanti.threshold = 1, quanti.mod = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
 

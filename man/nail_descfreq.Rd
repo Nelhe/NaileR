@@ -7,8 +7,7 @@
 nail_descfreq(
   dataset,
   introduction = "",
-  request =
-    "Based on the results, please describe what makes each row unique. Then, based on these characteristics, give each group a new name.",
+  request = "Based on the results, please describe what makes each row unique.",
   model = "llama3",
   isolate.groups = F,
   by.quali = NULL,

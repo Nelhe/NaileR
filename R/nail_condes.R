@@ -159,12 +159,12 @@ The individuals have the following characteristics:
 #' beard_work <- beard_work[,1] |> cbind(beard_cont)
 #'
 #' res_beard <- nail_condes(beard_work, num.var = 1, quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'), introduction = "These data refer to 8 types of beards. Each beard was evaluated by 62 assessors.", request = "Please explain what differentiates beards on both sides of the scale. Then, give the scale a name.", generate = F)
-#'
 #' cat(res_beard$prompt)
 #'
-#' ppt = stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
+#' ppt <- stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
+#' cat(ppt)
 #'
-#' res_beard = ollamar::generate(model = 'llama3', prompt = ppt, output = 'df')
+#' res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'df')
 #'
 #' cat(res_beard$response)
 

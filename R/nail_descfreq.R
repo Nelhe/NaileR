@@ -63,7 +63,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
-#' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per row. Recommended if the contingency table has several rows.
+#' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per row. Recommended if the contingency table has a great number of rows.
 #' @param proba the significance threshold considered to characterize the category (by default 0.05).
 #' @param by.quali a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized.
 #'
@@ -94,13 +94,15 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #'
 #' titles
 #'
-#' # for the following code to work, the response must have the beards' new names with this format: \*\*B1: The Nice beard\*\*, etc.
+#' # for the following code to work, the response must have the beards' new names with this format: **B1: The Nice beard**, etc.
 #'
-#'titles <- str_replace_all(titles, "\\*\\*", "")  # Remove asterisks
-#' names <- str_extract(titles, ": .+")
-#' names <- str_replace_all(names, ": ", "")  # Remove the colon and space
+#'titles <- stringr::str_replace_all(titles, "\\*\\*", "")  # remove asterisks
+#' names <- stringr::str_extract(titles, ": .+")
+#' names <- stringr::str_replace_all(names, ": ", "")  # remove the colon and space
 #'
 #' rownames(beard_cont) <- names
+#'
+#' library(FactoMineR)
 #'
 #' res_ca_beard <- CA(beard_cont, graph = F)
 #' plot.CA(res_ca_beard, invisible = "col")
@@ -109,13 +111,12 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #'
 #' ### Example 2: children dataset ###
 #'
-#' library(FactoMineR)
 #' data(children)
 #'
-#' children = children[1:14, 1:5] |> t() |> as.data.frame()
-#' rownames(children) = c('No education', 'Elementary school', 'Middle school', 'High school', 'University')
+#' children <- children[1:14, 1:5] |> t() |> as.data.frame()
+#' rownames(children) <- c('No education', 'Elementary school', 'Middle school', 'High school', 'University')
 #'
-#' res_children = nail_descfreq(children, introduction = 'The data used here is a contingency table that summarizes the answers given by different categories of people to the following question: "according to you, what are the reasons that can make hesitate a woman or a couple to have children?". Each row corresponds to a level of education, and columns are reasons.', request = "Please explain the main differences between more educated and less educated couples, when it comes to hesitating to have children.")
+#' res_children <- nail_descfreq(children, introduction = 'The data used here is a contingency table that summarizes the answers given by different categories of people to the following question: "according to you, what are the reasons that can make hesitate a woman or a couple to have children?". Each row corresponds to a level of education, and columns are reasons.', request = "Please explain the main differences between more educated and less educated couples, when it comes to hesitating to have children.")
 #'
 #' cat(res_children$response)
 

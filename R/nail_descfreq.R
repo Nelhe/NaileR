@@ -76,11 +76,49 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' @export
 #'
 #' @examples
+#' ### Example 1: beard dataset ###
+#'
 #' data(beard_cont)
 #'
-#' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey about beards was led, and 62 participants had to describe 8 types of beards. I will give you the results for one type of beard and you will have to summarise what makes this beard unique.', request = 'Please summarise what makes this beard unique, in no more than 3 sentences', isolate.groups = TRUE)
+#' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey was conducted about beards and 8 types of beards were described. I will give you the results for one type of beard.', request = 'Please give a name to this beard and summarise what makes this beard unique.', isolate.groups = T, generate = F)
 #'
+#' res_beard$prompt[1]
+#' res_beard$prompt[2]
+#'
+#' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey was conducted about beards and 8 types of beards were described. In the data that follows, beards are named B1 to B8.', request = 'Please give a name to each beard and summarise what makes this beard unique.')
 #' cat(res_beard$response)
+#'
+#'\dontrun{
+#' text <- res_beard$response
+#' titles <- stringr::str_extract_all(text, "\\*\\*B[0-9]+: [^\\*\\*]+\\*\\*")[[1]]
+#'
+#' titles
+#'
+#' # for the following code to work, the response must have the beards' new names with this format: \*\*B1: The Nice beard\*\*, etc.
+#'
+#'titles <- str_replace_all(titles, "\\*\\*", "")  # Remove asterisks
+#' names <- str_extract(titles, ": .+")
+#' names <- str_replace_all(names, ": ", "")  # Remove the colon and space
+#'
+#' rownames(beard_cont) <- names
+#'
+#' res_ca_beard <- CA(beard_cont, graph = F)
+#' plot.CA(res_ca_beard, invisible = "col")
+#'}
+#'
+#'
+#' ### Example 2: children dataset ###
+#'
+#' library(FactoMineR)
+#' data(children)
+#'
+#' children = children[1:14, 1:5] |> t() |> as.data.frame()
+#' rownames(children) = c('No education', 'Elementary school', 'Middle school', 'High school', 'University')
+#'
+#' res_children = nail_descfreq(children, introduction = 'The data used here is a contingency table that summarizes the answers given by different categories of people to the following question: "according to you, what are the reasons that can make hesitate a woman or a couple to have children?". Each row corresponds to a level of education, and columns are reasons.', request = "Please explain the main differences between more educated and less educated couples, when it comes to hesitating to have children.")
+#'
+#' cat(res_children$response)
+
 
 nail_descfreq = function(dataset,
                          introduction = '',

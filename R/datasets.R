@@ -103,8 +103,8 @@
 #' @format
 #' A data frame with 53 rows (participants) and 42 columns (questions):
 #' \describe{
-#'  \item{columns 1-39}{statements about agribusiness studies}
-#'  \item{columns 31-39}{personal information}
+#'  \item{columns 1-38}{statements about agribusiness studies}
+#'  \item{columns 39-42}{personal information}
 #'  }
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
@@ -123,7 +123,7 @@
 #' A data frame with 139 rows (participants) and 41 columns (questions):
 #' \describe{
 #'  \item{columns 1-25}{descriptions of speaking in public}
-#'  \item{columns 25-41}{personal information}
+#'  \item{columns 26-41}{personal information}
 #'  }
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples

@@ -14,7 +14,8 @@ nail_catdes(
   isolate.groups = F,
   drop.negative = F,
   proba = 0.05,
-  row.w = NULL
+  row.w = NULL,
+  generate = T
 )
 }
 \arguments{

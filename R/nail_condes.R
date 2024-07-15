@@ -123,7 +123,8 @@ nail_condes = function(dataset, num.var,
                        introduction = '',
                        request = 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.',
                        model = 'llama3',
-                       recode = 1, weights = NULL, proba = 0.05){
+                       recode = 1, weights = NULL, proba = 0.05,
+                       generate = T){
 
   dta = get_bins(dataset, keep = num.var, recode = recode)
 
@@ -140,6 +141,8 @@ nail_condes = function(dataset, num.var,
              # Data
 
              {get_sentences_condes(res_cd)}")
+
+  if (!generate) return(ppt)
 
   res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
   res_llm$prompt = ppt

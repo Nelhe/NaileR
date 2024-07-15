@@ -210,12 +210,15 @@ nail_catdes = function(dataset, num.var,
                        introduction = '',
                        request = 'Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.',
                        model = 'llama3', isolate.groups = F, drop.negative = F,
-                       proba = 0.05, row.w = NULL){
+                       proba = 0.05, row.w = NULL,
+                       generate = T){
 
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
                           isolate.groups = isolate.groups, drop.negative = drop.negative)
+
+  if (!generate) return(ppt)
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

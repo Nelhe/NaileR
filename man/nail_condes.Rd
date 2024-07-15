@@ -13,7 +13,8 @@ nail_condes(
   model = "llama3",
   recode = 1,
   weights = NULL,
-  proba = 0.05
+  proba = 0.05,
+  generate = T
 )
 }
 \arguments{

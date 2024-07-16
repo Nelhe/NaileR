@@ -90,8 +90,9 @@ The individuals have the following characteristics:
 #' @param quanti.cat a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".
 #' @param weights weights for the individuals (see [FactoMineR::condes()]).
 #' @param proba the significance threshold considered to characterize the category (by default 0.05).
+#' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
 #'
-#' @return A data frame containing the LLM's response.
+#' @return A data frame containing the LLM's prompt and response (if generate = TRUE).
 #'
 #' @details This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 #'
@@ -110,7 +111,7 @@ The individuals have the following characteristics:
 #' deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 #' deca_work <- deca_work[,1] |> cbind(decathlon)
 #'
-#' res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
+#' res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating in a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on an unidimensional scale.")
 #'
 #' cat(res_deca$response)
 #'

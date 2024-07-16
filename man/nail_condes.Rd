@@ -36,9 +36,11 @@ nail_condes(
 \item{weights}{weights for the individuals (see \code{\link[FactoMineR:condes]{FactoMineR::condes()}}).}
 
 \item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
+
+\item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
 }
 \value{
-A data frame containing the LLM's response.
+A data frame containing the LLM's prompt and response (if generate = TRUE).
 }
 \description{
 Generate an LLM response to analyze a continuous latent variable.
@@ -59,7 +61,7 @@ plot.PCA(res_pca_deca, choix = 'var')
 deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 deca_work <- deca_work[,1] |> cbind(decathlon)
 
-res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating to a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on a unidimensional scale.")
+res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating in a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on an unidimensional scale.")
 
 cat(res_deca$response)
 

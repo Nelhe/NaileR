@@ -29,9 +29,11 @@ nail_descfreq(
 \item{by.quali}{a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized.}
 
 \item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
+
+\item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
 }
 \value{
-A data frame, or a list of data frames (if isolate.groups = TRUE), containing the LLM's response.
+A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
 }
 \description{
 Describes the rows of a contingency table. For each row, this description is based on the columns of the contingency table that are significantly related to it.

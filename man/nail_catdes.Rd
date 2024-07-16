@@ -36,9 +36,11 @@ nail_catdes(
 \item{proba}{the significance threshold considered to characterize the categories (by default 0.05).}
 
 \item{row.w}{a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)}
+
+\item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
 }
 \value{
-A data frame, or a list of data frames, containing the LLM's response.
+A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
 }
 \description{
 Generate an LLM response to analyze a categorical latent variable.

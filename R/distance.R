@@ -75,7 +75,7 @@ dist_mat_llm <- function(ppt, n, per_miss = 0){
 
   for (i in 2:n) {
     for (j in 1:(i-1)) {
-      if (runif(1) > per_miss) {
+      if (stats::runif(1) > per_miss) {
         sim_matrix[i, j] <- sim_llm(res_llm[[i]]$response, res_llm[[j]]$response)
         sim_matrix[j, i] <- sim_matrix[i, j]
         }

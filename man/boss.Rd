@@ -25,7 +25,7 @@ Participants had to rank how much they agreed with 30 statements about an ideal 
 library(FactoMineR)
 library(NaileR)
 data(boss)
-res_mca_boss <- MCA(boss, quali.sup = 31:39, ncp = 30, level.ventil = 0.05, graph = F)
+res_mca_boss <- MCA(boss, quali.sup = 31:39, ncp = 30, level.ventil = 0.05, graph = FALSE)
 res_hcpc_boss <- HCPC(res_mca_boss, nb.clust = 4, graph = F)
 don_clust_boss <- res_hcpc_boss$data.clust
 intro = 'A study on "the ideal boss" was led on 73 participants. The study had 2 parts. In the first part, participants were given statements about the ideal boss (starting with "My ideal boss..."). They had to rate, on a scale from 1 to 5, how much they agreed with the statements; 1 being "Strongly disagree", 3 being "neutral" and 5 being "Strongly agree". In the second part, they were asked for personal information: work experience, age, etc. Participants were then split into groups based on their answers.'

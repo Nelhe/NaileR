@@ -55,11 +55,13 @@
 #' * columns are the assessors' opinions.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' data(beard_wide)
 #' res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", introduction = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
 #' res$dta_sort
 #' cat(res$prompt_llm[[1]])
+#' }
 "beard_wide"
 
 
@@ -77,6 +79,7 @@
 #' * columns 60-63 personal information
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(FactoMineR)
 #' library(NaileR)
 #' data(local_food)
@@ -85,6 +88,7 @@
 #' don_clust_food <- res_hcpc_food$data.clust
 #' res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = TRUE, drop.negative = TRUE)
 #' res_food[[1]]$response |> cat()
+#' }
 "local_food"
 
 
@@ -101,6 +105,7 @@
 #' * columns 31-39: personal information
 #' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(FactoMineR)
 #' library(NaileR)
 #' data(boss)
@@ -111,6 +116,7 @@
 #' requ = "Please describe, for each group, their ideal boss. Then, give each group a new name, based on your conclusions."
 #' res_boss <- nail_catdes(don_clust_boss, num.var = 40, introduction = intro, request = requ, isolate.groups = FALSE, drop.negative = TRUE)
 #' res_boss$response |> cat()
+#' }
 "boss"
 
 
@@ -127,6 +133,7 @@
 #' * columns 39-42: personal information
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' data(agri_studies)
 #' res_mca_agri <- FactoMineR::MCA(agri_studies, quali.sup = 39:42, level.ventil = 0.05, graph = FALSE)
@@ -134,6 +141,7 @@
 #' agri_work <- agri_work[,1] |> cbind(agri_studies)
 #' res_agri <- nail_condes(agri_work, num.var = 1, introduction = "These data were collected after a survey on students' expectations of agribusiness studies. Participants had to rank how much they agreed with 38 statements about possible benefits from agribusiness studies; then, they were asked personal questions.")
 #' cat(res_agri$response)
+#' }
 "agri_studies"
 
 
@@ -150,6 +158,7 @@
 #' * columns 26-41: personal information
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' data(glossophobia)
 #' res_mca_phobia <- FactoMineR::MCA(glossophobia, quali.sup = 26:41, level.ventil = 0.05, graph = FALSE)
@@ -157,6 +166,7 @@
 #' phobia_work <- phobia_work[,1] |> cbind(glossophobia)
 #' res_phobia <- nail_condes(phobia_work, num.var = 1, introduction = "These data were collected after a survey on participants' feelings about speaking in public. Participants had to rank how much they agreed with 25 descriptions of speaking in public; then, they were asked personal questions.")
 #' cat(res_phobia$response)
+#' }
 "glossophobia"
 
 
@@ -171,6 +181,7 @@
 #'
 #' @source Héloïse BILLES and Amélie RATEAU, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' library(FactoMineR)
 #' data(waste)
@@ -180,6 +191,7 @@
 #' don_clust_waste <- res_hcpc_waste$data.clust
 #' res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste), introduction = 'These data were collected after a survey on food waste, with participants describing their habits.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions. Finally, give each group a grade between 0 and 10, based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".', drop.negative = TRUE)
 #' cat(res_waste$response)
+#' }
 "waste"
 
 
@@ -203,9 +215,11 @@
 #' * Médailles Agro: a prize won at a yearly contest based on taste.
 #' @source Sébastien Lê, applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' library(FactoMineR)
 #' data(quality)
+#' }
 "quality"
 
 
@@ -220,6 +234,7 @@
 #'
 #' @source Anaëlle YANNIC and Jessie PICOT, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' library(FactoMineR)
 #' data(nutriscore)
@@ -228,4 +243,5 @@
 #' don_clust_nutriscore <- res_hcpc_nutriscore$data.clust
 #' res_waste <- nail_catdes(don_clust_nutriscore, num.var = ncol(don_clust_nutriscore), introduction = 'These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits. Participants were split into groups according to their answers.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions.', drop.negative = TRUE)
 #' cat(res_waste$response)
+#' }
 "nutriscore"

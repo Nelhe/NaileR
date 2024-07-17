@@ -17,6 +17,7 @@ waste
 These data were collected after a survey on food waste, with participants describing their habits.
 }
 \examples{
+\dontrun{
 library(NaileR)
 library(FactoMineR)
 data(waste)
@@ -26,5 +27,6 @@ res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = FALSE)
 don_clust_waste <- res_hcpc_waste$data.clust
 res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste), introduction = 'These data were collected after a survey on food waste, with participants describing their habits.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions. Finally, give each group a grade between 0 and 10, based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".', drop.negative = TRUE)
 cat(res_waste$response)
+}
 }
 \keyword{datasets}

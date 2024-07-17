@@ -23,6 +23,7 @@ These data were collected after a Q-method-like survey on sustainable food syste
 Participants had to rank how acceptable they found 45 statements about a sustainable food system; then, they were asked if they agreed with 14 other statements.
 }
 \examples{
+\dontrun{
 library(FactoMineR)
 library(NaileR)
 data(local_food)
@@ -31,5 +32,6 @@ res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = FALSE)
 don_clust_food <- res_hcpc_food$data.clust
 res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = TRUE, drop.negative = TRUE)
 res_food[[1]]$response |> cat()
+}
 }
 \keyword{datasets}

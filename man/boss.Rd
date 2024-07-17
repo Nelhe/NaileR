@@ -22,6 +22,7 @@ These data were collected after a Q-method-like survey on participants' percepti
 Participants had to rank how much they agreed with 30 statements about an ideal boss; then, they were asked personal questions.
 }
 \examples{
+\dontrun{
 library(FactoMineR)
 library(NaileR)
 data(boss)
@@ -32,5 +33,6 @@ intro = 'A study on "the ideal boss" was led on 73 participants. The study had 2
 requ = "Please describe, for each group, their ideal boss. Then, give each group a new name, based on your conclusions."
 res_boss <- nail_catdes(don_clust_boss, num.var = 40, introduction = intro, request = requ, isolate.groups = FALSE, drop.negative = TRUE)
 res_boss$response |> cat()
+}
 }
 \keyword{datasets}

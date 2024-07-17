@@ -20,10 +20,10 @@ These data were collected after a survey on the nutri-score. Participants were a
 library(NaileR)
 library(FactoMineR)
 data(nutriscore)
-res_mca_nutriscore <- MCA(nutriscore, quali.sup = 17:36, ncp = 15, level.ventil = 0.05, graph = F)
-res_hcpc_nutriscore <- HCPC(res_mca_nutriscore, nb.clust = 3, graph = F)
+res_mca_nutriscore <- MCA(nutriscore, quali.sup = 17:36, ncp = 15, level.ventil = 0.05, graph = FALSE)
+res_hcpc_nutriscore <- HCPC(res_mca_nutriscore, nb.clust = 3, graph = FALSE)
 don_clust_nutriscore <- res_hcpc_nutriscore$data.clust
-res_waste <- nail_catdes(don_clust_nutriscore, num.var = ncol(don_clust_nutriscore), introduction = 'These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits. Participants were split into groups according to their answers.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions.', drop.negative = T)
+res_waste <- nail_catdes(don_clust_nutriscore, num.var = ncol(don_clust_nutriscore), introduction = 'These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits. Participants were split into groups according to their answers.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions.', drop.negative = TRUE)
 cat(res_waste$response)
 }
 \keyword{datasets}

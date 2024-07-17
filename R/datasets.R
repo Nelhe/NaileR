@@ -68,11 +68,9 @@
 #'
 #' @format
 #' A data frame with 573 rows (participants) and 63 columns (questions):
-#' \describe{
-#'  \item{columns 1-45}{statements about food systems}
-#'  \item{columns 46-59}{opinions}
-#'  \item{columns 60-63}{personal information}
-#'  }
+#' * columns 1-45 statements about food systems
+#' * columns 46-59 opinions
+#' * columns 60-63 personal information
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
 #' library(FactoMineR)

@@ -6,10 +6,10 @@
 \title{Local food systems survey}
 \format{
 A data frame with 573 rows (participants) and 63 columns (questions):
-\describe{
-\item{columns 1-45}{statements about food systems}
-\item{columns 46-59}{opinions}
-\item{columns 60-63}{personal information}
+\itemize{
+\item columns 1-45 statements about food systems
+\item columns 46-59 opinions
+\item columns 60-63 personal information
 }
 }
 \source{

@@ -6,9 +6,9 @@
 \title{Ideal boss survey}
 \format{
 A data frame with 73 rows (participants) and 39 columns (questions):
-\describe{
-\item{columns 1-30}{statements about the ideal boss}
-\item{columns 31-39}{personal information}
+\itemize{
+\item columns 1-30: statements about the ideal boss
+\item columns 31-39: personal information
 }
 }
 \source{

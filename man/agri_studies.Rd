@@ -6,9 +6,9 @@
 \title{Agribusiness studies survey}
 \format{
 A data frame with 53 rows (participants) and 42 columns (questions):
-\describe{
-\item{columns 1-38}{statements about agribusiness studies}
-\item{columns 39-42}{personal information}
+\itemize{
+\item columns 1-38: statements about agribusiness studies
+\item columns 39-42: personal information
 }
 }
 \source{

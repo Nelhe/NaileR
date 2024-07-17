@@ -95,10 +95,8 @@
 #'
 #' @format
 #' A data frame with 73 rows (participants) and 39 columns (questions):
-#' \describe{
-#'  \item{columns 1-30}{statements about the ideal boss}
-#'  \item{columns 31-39}{personal information}
-#'  }
+#' * columns 1-30: statements about the ideal boss
+#' * columns 31-39: personal information
 #' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
 #' @examples
 #' library(FactoMineR)
@@ -123,10 +121,8 @@
 #'
 #' @format
 #' A data frame with 53 rows (participants) and 42 columns (questions):
-#' \describe{
-#'  \item{columns 1-38}{statements about agribusiness studies}
-#'  \item{columns 39-42}{personal information}
-#'  }
+#' * columns 1-38: statements about agribusiness studies
+#' * columns 39-42: personal information
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
 #' library(NaileR)
@@ -148,10 +144,8 @@
 #'
 #' @format
 #' A data frame with 139 rows (participants) and 41 columns (questions):
-#' \describe{
-#'  \item{columns 1-25}{descriptions of speaking in public}
-#'  \item{columns 26-41}{personal information}
-#'  }
+#' * columns 1-25: descriptions of speaking in public
+#' * columns 26-41: personal information
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples
 #' library(NaileR)

@@ -6,9 +6,9 @@
 \title{Glossophobia survey}
 \format{
 A data frame with 139 rows (participants) and 41 columns (questions):
-\describe{
-\item{columns 1-25}{descriptions of speaking in public}
-\item{columns 26-41}{personal information}
+\itemize{
+\item columns 1-25: descriptions of speaking in public
+\item columns 26-41: personal information
 }
 }
 \source{

@@ -53,6 +53,7 @@
 #' beard_wide
 "beard_wide"
 
+
 #' Local food systems survey
 #'
 #' These data were collected after a Q-method-like survey on sustainable food systems.
@@ -93,6 +94,7 @@
 #' boss[1:5, c(1,2,31,33,34)]
 "boss"
 
+
 #' Agribusiness studies survey
 #'
 #' These data were collected after a Q-method-like survey on students' expectations of agribusiness studies.
@@ -111,6 +113,7 @@
 #' data(agri_studies)
 #' agri_studies[1:5, c(1,2,40,41)]
 "agri_studies"
+
 
 #' Glossophobia survey
 #'
@@ -131,6 +134,7 @@
 #' glossophobia[1:5, c(1,2,26,31,37)]
 "glossophobia"
 
+
 #' Food waste survey
 #'
 #' These data were collected after a survey on food waste, with participants describing their habits.
@@ -145,3 +149,44 @@
 #' data(waste)
 #' waste[1:5, 1:5]
 "waste"
+
+
+#' Perception of food quality
+#'
+#' These data were collected after a study on the perception of food quality.
+#' Participants were given 9 French logos; they had to rate, on a scale from 0 (not at all) to 10 (absolutely), how much a product bearing them aligned with their own perception of quality.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 55 rows and 9 columns. Here is the list of logos:
+#' * AB: organic;
+#' * Label Rouge: superior quality (from the taste, process, packaging...);
+#' * FairTrade: decent wages and working conditions for the producers;
+#' * Bleu Blanc Coeur: diverse and balanced diet for the livestock;
+#' * AOC: controlled designation of origin;
+#' * Produit en Bretagne: processed in Brittany;
+#' * Viandes de France: livestock bred, grown and slaughtered in France, with respectful living conditions;
+#' * Nourri sans OGM: no GMOs in livestock food;
+#' * Médailles Agro: a prize won at a yearly contest based on taste.
+#' @source Sébastien Lê, applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' data(quality)
+#' quality[1:5,]
+"quality"
+
+
+#' Nutri-score survey
+#'
+#' These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 112 rows (participants) and 36 columns (questions).
+#'
+#' @source Anaëlle YANNIC and Jessie PICOT, students at l'Institut Agro Rennes-Angers
+#' @examples
+#' data(nutriscore)
+#' nutriscore[1:5, c(1,8,21,30)]
+"nutriscore"

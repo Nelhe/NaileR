@@ -30,8 +30,11 @@
 #' * columns are the words used at least once to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
 #' data(beard_cont)
 #' FactoMineR::descfreq(beard_cont)
+#' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey was conducted about beards and 8 types of beards were described. In the data that follows, beards are named B1 to B8.', request = 'Please give a name to each beard and summarise what makes this beard unique.')
+#' cat(res_beard$response)
 "beard_cont"
 
 
@@ -48,9 +51,11 @@
 #' * columns are the assessors' opinions.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#'
+#' library(NaileR)
 #' data(beard_wide)
-#' beard_wide
+#' res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", introduction = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
+#' res$dta_sort
+#' cat(res$prompt_llm[[1]])
 "beard_wide"
 
 
@@ -70,8 +75,14 @@
 #'  }
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' library(FactoMineR)
+#' library(NaileR)
 #' data(local_food)
-#' local_food[1:5, c(1,2,46,47,60)]
+#' res_mca_food <- MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05, graph = FALSE)
+#' res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = F)
+#' don_clust_food <- res_hcpc_food$data.clust
+#' res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
+#' res_food[[1]]$response |> cat()
 "local_food"
 
 
@@ -90,8 +101,16 @@
 #'  }
 #' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' library(FactoMineR)
+#' library(NaileR)
 #' data(boss)
-#' boss[1:5, c(1,2,31,33,34)]
+#' res_mca_boss <- MCA(boss, quali.sup = 31:39, ncp = 30, level.ventil = 0.05, graph = FALSE)
+#' res_hcpc_boss <- HCPC(res_mca_boss, nb.clust = 4, graph = F)
+#' don_clust_boss <- res_hcpc_boss$data.clust
+#' intro = 'A study on "the ideal boss" was led on 73 participants. The study had 2 parts. In the first part, participants were given statements about the ideal boss (starting with "My ideal boss..."). They had to rate, on a scale from 1 to 5, how much they agreed with the statements; 1 being "Strongly disagree", 3 being "neutral" and 5 being "Strongly agree". In the second part, they were asked for personal information: work experience, age, etc. Participants were then split into groups based on their answers.'
+#' requ = "Please describe, for each group, their ideal boss. Then, give each group a new name, based on your conclusions."
+#' res_boss <- nail_catdes(don_clust_boss, num.var = 40, introduction = intro, request = requ, isolate.groups = F, drop.negative = T)
+#' res_boss$response |> cat()
 "boss"
 
 
@@ -110,8 +129,13 @@
 #'  }
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
 #' data(agri_studies)
-#' agri_studies[1:5, c(1,2,40,41)]
+#' res_mca_agri <- FactoMineR::MCA(agri_studies, quali.sup = 39:42, level.ventil = 0.05, graph = FALSE)
+#' agri_work <- res_mca_agri$ind$coord |> as.data.frame()
+#' agri_work <- agri_work[,1] |> cbind(agri_studies)
+#' res_agri <- nail_condes(agri_work, num.var = 1, introduction = "These data were collected after a survey on students' expectations of agribusiness studies. Participants had to rank how much they agreed with 38 statements about possible benefits from agribusiness studies; then, they were asked personal questions.")
+#' cat(res_agri$response)
 "agri_studies"
 
 
@@ -130,8 +154,13 @@
 #'  }
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
 #' data(glossophobia)
-#' glossophobia[1:5, c(1,2,26,31,37)]
+#' res_mca_phobia <- FactoMineR::MCA(glossophobia, quali.sup = 26:41, level.ventil = 0.05, graph = FALSE)
+#' phobia_work <- res_mca_phobia$ind$coord |> as.data.frame()
+#' phobia_work <- phobia_work[,1] |> cbind(glossophobia)
+#' res_phobia <- nail_condes(phobia_work, num.var = 1, introduction = "These data were collected after a survey on participants' feelings about speaking in public. Participants had to rank how much they agreed with 25 descriptions of speaking in public; then, they were asked personal questions.")
+#' cat(res_phobia$response)
 "glossophobia"
 
 
@@ -146,8 +175,15 @@
 #'
 #' @source Héloïse BILLES and Amélie RATEAU, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
+#' library(FactoMineR)
 #' data(waste)
-#' waste[1:5, 1:5]
+#' waste <- waste[-14]
+#' res_mca_waste <- MCA(waste, quali.sup = c(1,2,50:76), ncp = 35, level.ventil = 0.05, graph = FALSE)
+#' res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = F)
+#' don_clust_waste <- res_hcpc_waste$data.clust
+#' res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste), introduction = 'These data were collected after a survey on food waste, with participants describing their habits.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions. Finally, give each group a grade between 0 and 10, based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".', drop.negative = T)
+#' cat(res_waste$response)
 "waste"
 
 
@@ -171,8 +207,9 @@
 #' * Médailles Agro: a prize won at a yearly contest based on taste.
 #' @source Sébastien Lê, applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
+#' library(FactoMineR)
 #' data(quality)
-#' quality[1:5,]
 "quality"
 
 
@@ -187,6 +224,12 @@
 #'
 #' @source Anaëlle YANNIC and Jessie PICOT, students at l'Institut Agro Rennes-Angers
 #' @examples
+#' library(NaileR)
+#' library(FactoMineR)
 #' data(nutriscore)
-#' nutriscore[1:5, c(1,8,21,30)]
+#' res_mca_nutriscore <- MCA(nutriscore, quali.sup = 17:36, ncp = 15, level.ventil = 0.05, graph = F)
+#' res_hcpc_nutriscore <- HCPC(res_mca_nutriscore, nb.clust = 3, graph = F)
+#' don_clust_nutriscore <- res_hcpc_nutriscore$data.clust
+#' res_waste <- nail_catdes(don_clust_nutriscore, num.var = ncol(don_clust_nutriscore), introduction = 'These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits. Participants were split into groups according to their answers.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions.', drop.negative = T)
+#' cat(res_waste$response)
 "nutriscore"

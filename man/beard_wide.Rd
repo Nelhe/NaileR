@@ -22,8 +22,10 @@ These data refer to 8 types of beards. They come from a subset of the original "
 Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
 }
 \examples{
-
+library(NaileR)
 data(beard_wide)
-beard_wide
+res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", introduction = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
+res$dta_sort
+cat(res$prompt_llm[[1]])
 }
 \keyword{datasets}

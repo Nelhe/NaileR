@@ -37,10 +37,10 @@ get_sentences_descfreq = function(res_df, isolate.groups){
         paste(collapse = ', ')
 
       res = dplyr::case_when(
-        nchar(left) == 0 ~ glue('* Here are the categories that characterise the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'),
-        nchar(right) == 0 ~ glue('* Here are the categories that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.'),
-        .default = glue('* Here are the categories that characterise the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.
-      * Here are the categories that characterise the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'))
+        nchar(left) == 0 ~ glue('* Here are the categories that characterize the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'),
+        nchar(right) == 0 ~ glue('* Here are the categories that characterize the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.'),
+        .default = glue('* Here are the categories that characterize the row {names(res_df)[i]} and whose frequency of use is significantly above average: {left}.
+      * Here are the categories that characterize the row {names(res_df)[i]} and whose frequency of use is significantly below average: {right}.'))
 
     }
 

@@ -51,6 +51,7 @@ This function directly sends a prompt to an LLM. Therefore, to get a consistent 
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }
 \examples{
+\dontrun{
 ### Example 1: Fisher's iris ###
 library(NaileR)
 data(iris)
@@ -77,7 +78,6 @@ res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste), intro
 cat(res_waste$response)
 
 
-\dontrun{
 ### Example 3: local_food dataset ###
 
 data(local_food)

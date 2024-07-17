@@ -49,6 +49,7 @@ Generate an LLM response to analyze a continuous latent variable.
 This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 }
 \examples{
+\dontrun{
 ### Example 1: decathlon dataset ###
 
 library(FactoMineR)
@@ -118,4 +119,5 @@ cat(ppt)
 res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'df')
 
 cat(res_beard$response)
+}
 }

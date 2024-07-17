@@ -77,6 +77,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' ### Example 1: beard dataset ###
 #'
 #' data(beard_cont)
@@ -89,7 +90,6 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey was conducted about beards and 8 types of beards were described. In the data that follows, beards are named B1 to B8.', request = 'Please give a name to each beard and summarise what makes this beard unique.')
 #' cat(res_beard$response)
 #'
-#'\dontrun{
 #' text <- res_beard$response
 #' titles <- stringr::str_extract_all(text, "\\*\\*B[0-9]+: [^\\*\\*]+\\*\\*")[[1]]
 #'

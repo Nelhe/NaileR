@@ -99,6 +99,7 @@ The individuals have the following characteristics:
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' ### Example 1: decathlon dataset ###
 #'
 #' library(FactoMineR)
@@ -168,6 +169,7 @@ The individuals have the following characteristics:
 #' res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'df')
 #'
 #' cat(res_beard$response)
+#' }
 
 nail_condes = function(dataset, num.var,
                        introduction = '',

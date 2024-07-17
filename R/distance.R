@@ -58,7 +58,14 @@ sim_llm <- function (textA, textB) {
 #'\dontrun{
 #' data(iris)
 #'
-#' res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
+#' res_iris <- nail_catdes(iris, num.var = 5,
+#' introduction = "A study measured various parts of iris flowers
+#' from 3 different species: setosa, versicolor and virginica.
+#' I will give you the results from this study.
+#' You will have to identify what sets these flowers apart.",
+#' request = "Please explain what makes each species distinct.
+#' Also, tell me which species has the biggest flowers,
+#' and which species has the smallest.")
 #'
 #' dist_mat_llm(res_iris$prompt, n = 5, per_miss = 0)
 #' }
@@ -103,7 +110,14 @@ dist_mat_llm <- function(ppt, n, per_miss = 0){
 #'\dontrun{
 #' data(iris)
 #'
-#' res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
+#' res_iris <- nail_catdes(iris, num.var = 5,
+#' introduction = "A study measured various parts of iris flowers
+#' from 3 different species: setosa, versicolor and virginica.
+#' I will give you the results from this study. You will have to identify
+#' what sets these flowers apart.",
+#' request = "Please explain what makes each species distinct.
+#' Also, tell me which species has the biggest flowers,
+#' and which species has the smallest.")
 #'
 #' dist_ref_llm(res_iris$prompt, res_iris$response, n = 5)
 #' }

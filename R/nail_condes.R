@@ -105,14 +105,23 @@ The individuals have the following characteristics:
 #' library(FactoMineR)
 #' data(decathlon)
 #'
-#' names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for the long jump', 'Distance reached for the shot put', 'Height reached for the high jump',  'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle', 'Distance reached for the discus', 'Height reached for the pole vault', 'Distance reached for the javeline', 'Time taken to complete the 1500 m', 'Rank/Counter-performance indicator', 'Points', 'Competition')
+#' names(decathlon) <- c('Time taken to complete the 100m', 'Distance reached for the long jump',
+#' 'Distance reached for the shot put', 'Height reached for the high jump',
+#' 'Time taken to complete the 400m', 'Time taken to complete the 110m hurdle',
+#' 'Distance reached for the discus', 'Height reached for the pole vault',
+#' 'Distance reached for the javeline', 'Time taken to complete the 1500 m',
+#' 'Rank/Counter-performance indicator', 'Points', 'Competition')
 #'
 #' res_pca_deca <- FactoMineR::PCA(decathlon, quanti.sup = 11:12, quali.sup = 13, graph = F)
 #' plot.PCA(res_pca_deca, choix = 'var')
 #' deca_work <- res_pca_deca$ind$coord |> as.data.frame()
 #' deca_work <- deca_work[,1] |> cbind(decathlon)
 #'
-#' res_deca <- nail_condes(deca_work, num.var = 1, quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'), introduction = "A study was led on athletes participating in a decathlon event. Their performance was assessed on each part of the decathlon, and they were all placed on an unidimensional scale.")
+#' res_deca <- nail_condes(deca_work, num.var = 1,
+#' quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'),
+#' introduction = "A study was led on athletes participating in a decathlon event.
+#' Their performance was assessed on each part of the decathlon,
+#' and they were all placed on an unidimensional scale.")
 #'
 #' cat(res_deca$response)
 #'
@@ -128,7 +137,12 @@ The individuals have the following characteristics:
 #' agri_work <- res_mca_agri$ind$coord |> as.data.frame()
 #' agri_work <- agri_work[,1] |> cbind(agri_studies)
 #'
-#' res_agri <- nail_condes(agri_work, num.var = 1, introduction = "These data were collected after a survey on students' expectations of agribusiness studies. Participants had to rank how much they agreed with 38 statements about possible benefits from agribusiness studies; then, they were asked personal questions.")
+#' res_agri <- nail_condes(agri_work, num.var = 1,
+#' introduction = "These data were collected after a survey on students'
+#' expectations of agribusiness studies.
+#' Participants had to rank how much they agreed with 38 statements
+#' about possible benefits from agribusiness studies;
+#' then, they were asked personal questions.")
 #'
 #' cat(res_agri$response)
 #'
@@ -144,7 +158,11 @@ The individuals have the following characteristics:
 #' phobia_work <- res_mca_phobia$ind$coord |> as.data.frame()
 #' phobia_work <- phobia_work[,1] |> cbind(glossophobia)
 #'
-#' res_phobia <- nail_condes(phobia_work, num.var = 1, introduction = "These data were collected after a survey on participants' feelings about speaking in public. Participants had to rank how much they agreed with 25 descriptions of speaking in public; then, they were asked personal questions.")
+#' res_phobia <- nail_condes(phobia_work, num.var = 1,
+#' introduction = "These data were collected after a survey on participants'
+#' feelings about speaking in public.
+#' Participants had to rank how much they agreed with 25 descriptions of speaking in public;
+#' then, they were asked personal questions.")
 #'
 #' cat(res_phobia$response)
 #'
@@ -160,7 +178,13 @@ The individuals have the following characteristics:
 #' beard_work <- res_ca_beard$row$coord |> as.data.frame()
 #' beard_work <- beard_work[,1] |> cbind(beard_cont)
 #'
-#' res_beard <- nail_condes(beard_work, num.var = 1, quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'), introduction = "These data refer to 8 types of beards. Each beard was evaluated by 62 assessors.", request = "Please explain what differentiates beards on both sides of the scale. Then, give the scale a name.", generate = F)
+#' res_beard <- nail_condes(beard_work, num.var = 1,
+#' quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'),
+#' introduction = "These data refer to 8 types of beards. Each beard was evaluated by 62 assessors.",
+#' request = "Please explain what differentiates beards on both sides of the scale.
+#' Then, give the scale a name.",
+#' generate = F)
+#'
 #' cat(res_beard$prompt)
 #'
 #' ppt <- stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
@@ -173,12 +197,13 @@ The individuals have the following characteristics:
 
 nail_condes = function(dataset, num.var,
                        introduction = '',
-                       request = 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.',
+                       request = '',
                        model = 'llama3',
                        quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
                        generate = T){
 
+  request <- 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
   dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.cat = quanti.cat)
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)

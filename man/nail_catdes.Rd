@@ -8,8 +8,7 @@ nail_catdes(
   dataset,
   num.var,
   introduction = "",
-  request =
-    "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.",
+  request = "",
   model = "llama3",
   isolate.groups = F,
   drop.negative = F,
@@ -56,7 +55,14 @@ Additionally, if isolate.groups = TRUE, you will need an introduction and a requ
 library(NaileR)
 data(iris)
 
-res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
+res_iris <- nail_catdes(iris, num.var = 5,
+introduction = "A study measured various parts of iris flowers
+from 3 different species: setosa, versicolor and virginica.
+I will give you the results from this study.
+You will have to identify what sets these flowers apart.",
+request = "Please explain what makes each species distinct.
+Also, tell me which species has the biggest flowers,
+and which species has the smallest.")
 cat(res_iris$response)
 
 
@@ -74,7 +80,15 @@ res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = F)
 plot.HCPC(res_hcpc_waste, choice = "map", draw.tree = F, ind.names = F)
 don_clust_waste <- res_hcpc_waste$data.clust
 
-res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste), introduction = 'These data were collected after a survey on food waste, with participants describing their habits.', request = 'Please summarize the characteristics of each group. Then, give each group a new name, based on your conclusions. Finally, give each group a grade between 0 and 10, based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".', drop.negative = T)
+res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste),
+introduction = 'These data were collected after a survey on food waste,
+with participants describing their habits.',
+request = 'Please summarize the characteristics of each group.
+Then, give each group a new name, based on your conclusions.
+Finally, give each group a grade between 0 and 10,
+based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".',
+drop.negative = T)
+
 cat(res_waste$response)
 
 
@@ -89,7 +103,17 @@ res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = F)
 plot.HCPC(res_hcpc_food, choice = "map", draw.tree = F, ind.names = F)
 don_clust_food <- res_hcpc_food$data.clust
 
-res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food), introduction = 'A study on sustainable food systems was led on several French participants. This study had 2 parts. In the first part, participants had to rate how acceptable "a food system that..." (e.g, "a food system that only uses renewable energy") was to them. In the second part, they had to say if they agreed or disagreed with some statements.', request = 'I will give you the answers from one group. Please explain who the individuals of this group are, what their beliefs are. Then, give this group a new name, and explain why you chose this name. Do not use 1st person ("I", "my"...) in your answer.', isolate.groups = T, drop.negative = T)
+res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food),
+introduction = 'A study on sustainable food systems was led on several French participants.
+This study had 2 parts. In the first part, participants had to rate how acceptable
+"a food system that..." (e.g, "a food system that only uses renewable energy") was to them.
+In the second part, they had to say if they agreed or disagreed with some statements.',
+request = 'I will give you the answers from one group.
+Please explain who the individuals of this group are, what their beliefs are.
+Then, give this group a new name, and explain why you chose this name.
+Do not use 1st person ("I", "my"...) in your answer.',
+isolate.groups = T, drop.negative = T)
+
 res_food[[1]]$response |> cat()
 res_food[[2]]$response |> cat()
 res_food[[3]]$response |> cat()

@@ -107,8 +107,6 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #'
 #' res_ca_beard <- CA(beard_cont, graph = F)
 #' plot.CA(res_ca_beard, invisible = "col")
-#'}
-#'
 #'
 #' ### Example 2: children dataset ###
 #'
@@ -120,6 +118,7 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' res_children <- nail_descfreq(children, introduction = 'The data used here is a contingency table that summarizes the answers given by different categories of people to the following question: "according to you, what are the reasons that can make hesitate a woman or a couple to have children?". Each row corresponds to a level of education, and columns are reasons.', request = "Please explain the main differences between more educated and less educated couples, when it comes to hesitating to have children.")
 #'
 #' cat(res_children$response)
+#' }
 
 
 nail_descfreq = function(dataset,

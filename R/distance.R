@@ -12,10 +12,12 @@
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' textA <- "Participant A was described as a nice, outgoing man, with a friendly attitude."
 #' textB <- "Participant A was an extroverted and caring individual."
 #'
 #' sim_llm(textA, textB)
+#' }
 
 
 sim_llm <- function (textA, textB) {
@@ -53,11 +55,13 @@ sim_llm <- function (textA, textB) {
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' data(iris)
 #'
 #' res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
 #'
 #' dist_mat_llm(res_iris$prompt, n = 5, per_miss = 0)
+#' }
 
 
 dist_mat_llm <- function(ppt, n, per_miss = 0){
@@ -96,11 +100,13 @@ dist_mat_llm <- function(ppt, n, per_miss = 0){
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' data(iris)
 #'
 #' res_iris <- nail_catdes(iris, num.var = 5, introduction = "A study measured various parts of iris flowers from 3 different species: setosa, versicolor and virginica. I will give you the results from this study. You will have to identify what sets these flowers apart.", request = "Please explain what makes each species distinct. Also, tell me which species has the biggest flowers, and which species has the smallest.")
 #'
 #' dist_ref_llm(res_iris$prompt, res_iris$response, n = 5)
+#' }
 
 dist_ref_llm <- function(ppt, ref, n){
   res_llm <- list()

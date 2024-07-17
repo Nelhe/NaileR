@@ -185,6 +185,7 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ### Example 1: Fisher's iris ###
 #' library(NaileR)
 #' data(iris)
@@ -211,7 +212,6 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' cat(res_waste$response)
 #'
 #'
-#' \dontrun{
 #' ### Example 3: local_food dataset ###
 #'
 #' data(local_food)

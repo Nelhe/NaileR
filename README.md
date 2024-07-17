@@ -60,6 +60,8 @@ NaileR currently features 8 datasets and 7 functions.
 
 ## Example
 
+For complete case studies and a showcase of NaileR's main functions, see the [documentation](doc/NaileR, the ins and outs.pdf).
+
 Let's have a look at how we can interpret HCPC clusters:
 
 ``` r

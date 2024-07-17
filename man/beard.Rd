@@ -22,7 +22,9 @@ These data refer to 8 types of beards.
 Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
 }
 \examples{
+\dontrun{
 data(beard)
 beard[1:8,]
+}
 }
 \keyword{datasets}

@@ -12,8 +12,10 @@
 #' * the words used to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' data(beard)
 #' beard[1:8,]
+#' }
 "beard"
 
 
@@ -30,11 +32,13 @@
 #' * columns are the words used at least once to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
+#' \dontrun{
 #' library(NaileR)
 #' data(beard_cont)
 #' FactoMineR::descfreq(beard_cont)
 #' res_beard <- nail_descfreq(beard_cont, introduction = 'A survey was conducted about beards and 8 types of beards were described. In the data that follows, beards are named B1 to B8.', request = 'Please give a name to each beard and summarise what makes this beard unique.')
 #' cat(res_beard$response)
+#' }
 "beard_cont"
 
 

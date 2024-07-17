@@ -40,8 +40,11 @@ Group textual data according to their similarity, in a context in which the asse
 This function uses a while loop to ensure that the LLM gives the right number of groups. Therefore, customizing the stimulus ID, prompt introduction and measure is highly recommended; a clear prompt can help the LLM finish its task faster.
 }
 \examples{
+\dontrun{
+data(beard_wide)
 res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard", introduction = "As a barber, you make recommendations based on consumers comments. Examples of consumers descriptions of beards are as follows.", measure = 'the description was')
 
 res$dta_sort
 res$prompt_llm[[1]]
+}
 }

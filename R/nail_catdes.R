@@ -190,14 +190,21 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' library(NaileR)
 #' data(iris)
 #'
-#' res_iris <- nail_catdes(iris, num.var = 5,
-#' introduction = "A study measured various parts of iris flowers
+#' intro_iris <- "A study measured various parts of iris flowers
 #' from 3 different species: setosa, versicolor and virginica.
 #' I will give you the results from this study.
-#' You will have to identify what sets these flowers apart.",
-#' request = "Please explain what makes each species distinct.
+#' You will have to identify what sets these flowers apart."
+#' intro_iris <- gsub('\n', ' ', intro_iris) |>
+#' stringr::str_squish()
+#'
+#' req_iris <- "Please explain what makes each species distinct.
 #' Also, tell me which species has the biggest flowers,
-#' and which species has the smallest.")
+#' and which species has the smallest."
+#' req_iris <- gsub('\n', ' ', req_iris) |>
+#' stringr::str_squish()
+#'
+#' res_iris <- nail_catdes(iris, num.var = 5,
+#' introduction = intro_iris, request = req_iris)
 #' cat(res_iris$response)
 #'
 #'
@@ -209,20 +216,33 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' waste <- waste[-14]    # no variability on this question
 #'
 #' set.seed(1)
-#' res_mca_waste <- MCA(waste, quali.sup = c(1,2,50:76), ncp = 35, level.ventil = 0.05, graph = F)
-#' plot.MCA(res_mca_waste, choix = "ind", invisible = c("var", "quali.sup"), label = "none")
-#' res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = F)
-#' plot.HCPC(res_hcpc_waste, choice = "map", draw.tree = F, ind.names = F)
+#' res_mca_waste <- MCA(waste, quali.sup = c(1,2,50:76),
+#' ncp = 35, level.ventil = 0.05, graph = FALSE)
+#' plot.MCA(res_mca_waste, choix = "ind",
+#' invisible = c("var", "quali.sup"), label = "none")
+#' res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = FALSE)
+#' plot.HCPC(res_hcpc_waste, choice = "map", draw.tree = FALSE,
+#' ind.names = FALSE)
 #' don_clust_waste <- res_hcpc_waste$data.clust
 #'
-#' res_waste <- nail_catdes(don_clust_waste, num.var = ncol(don_clust_waste),
-#' introduction = 'These data were collected after a survey on food waste,
-#' with participants describing their habits.',
-#' request = 'Please summarize the characteristics of each group.
+#' intro_waste <- 'These data were collected
+#' after a survey on food waste,
+#' with participants describing their habits.'
+#' intro_waste <- gsub('\n', ' ', intro_waste) |>
+#' stringr::str_squish()
+#'
+#' req_waste <- 'Please summarize the characteristics of each group.
 #' Then, give each group a new name, based on your conclusions.
 #' Finally, give each group a grade between 0 and 10,
-#' based on how wasteful they are with food: 0 being "not at all", 10 being "absolutely".',
-#' drop.negative = T)
+#' based on how wasteful they are with food:
+#' 0 being "not at all", 10 being "absolutely".'
+#' req_waste <- gsub('\n', ' ', req_waste) |>
+#' stringr::str_squish()
+#'
+#' res_waste <- nail_catdes(don_clust_waste,
+#' num.var = ncol(don_clust_waste),
+#' introduction = intro_waste, request = req_waste,
+#' drop.negative = TRUE)
 #'
 #' cat(res_waste$response)
 #'
@@ -232,22 +252,39 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' data(local_food)
 #'
 #' set.seed(1)
-#' res_mca_food <- MCA(local_food, quali.sup = 46:63, ncp = 100, level.ventil = 0.05, graph = F)
-#' plot.MCA(res_mca_food, choix = "ind", invisible = c("var", "quali.sup"), label = "none")
-#' res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = F)
-#' plot.HCPC(res_hcpc_food, choice = "map", draw.tree = F, ind.names = F)
+#' res_mca_food <- MCA(local_food, quali.sup = 46:63,
+#' ncp = 100, level.ventil = 0.05, graph = FALSE)
+#' plot.MCA(res_mca_food, choix = "ind",
+#' invisible = c("var", "quali.sup"), label = "none")
+#' res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = FALSE)
+#' plot.HCPC(res_hcpc_food, choice = "map", draw.tree = FALSE,
+#' ind.names = FALSE)
 #' don_clust_food <- res_hcpc_food$data.clust
 #'
-#' res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food),
-#' introduction = 'A study on sustainable food systems was led on several French participants.
-#' This study had 2 parts. In the first part, participants had to rate how acceptable
-#' "a food system that..." (e.g, "a food system that only uses renewable energy") was to them.
-#' In the second part, they had to say if they agreed or disagreed with some statements.',
-#' request = 'I will give you the answers from one group.
-#' Please explain who the individuals of this group are, what their beliefs are.
-#' Then, give this group a new name, and explain why you chose this name.
-#' Do not use 1st person ("I", "my"...) in your answer.',
-#' isolate.groups = T, drop.negative = T)
+#' intro_food <- 'A study on sustainable food systems
+#' was led on several French participants.
+#' This study had 2 parts. In the first part,
+#' participants had to rate how acceptable
+#' "a food system that..." (e.g, "a food system that
+#' only uses renewable energy") was to them.
+#' In the second part, they had to say
+#' if they agreed or disagreed with some statements.'
+#' intro_food <- gsub('\n', ' ', intro_food) |>
+#' stringr::str_squish()
+#'
+#' req_food <- 'I will give you the answers from one group.
+#' Please explain who the individuals of this group are,
+#' what their beliefs are.
+#' Then, give this group a new name,
+#' and explain why you chose this name.
+#' Do not use 1st person ("I", "my"...) in your answer.'
+#' req_food <- gsub('\n', ' ', req_food) |>
+#' stringr::str_squish()
+#'
+#' res_food <- nail_catdes(don_clust_food, num.var = 64,
+#' introduction = intro_food,
+#' request = req_food,
+#' isolate.groups = TRUE, drop.negative = TRUE)
 #'
 #' res_food[[1]]$response |> cat()
 #' res_food[[2]]$response |> cat()

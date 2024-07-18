@@ -14,7 +14,7 @@
 
 ## Overview
 
-NaileR in an R package that uses convenience functions offered by the <a href="https://cran.r-project.org/web/packages/FactoMineR/index.html">FactoMineR package</a> (condes, catdes, descfreq) in conjunction with the <a href="https://cran.r-project.org/web/packages/ollamar/index.html">ollamar package</a>.
+NaileR in an R package that uses convenience functions offered by the <a href="https://CRAN.R-project.org/package=FactoMineR">FactoMineR package</a> (condes, catdes, descfreq) in conjunction with the <a href="https://CRAN.R-project.org/package=ollamar">ollamar package</a>.
 
 Its two main goals are to:
 * generate latent variables descriptions with the help of AI
@@ -108,7 +108,7 @@ In the same fashion, nail_condes can be used to interpret axis from a PCA - alth
 
 ## License
 
-This package is under the GPL (>= 2) License. Details can be found [here](https://cran.r-project.org/web/licenses).
+This package is under the GPL (>= 2) License. Details can be found [here](https://cran.r-project.org/web/licenses/).
 
 ## Contact
 

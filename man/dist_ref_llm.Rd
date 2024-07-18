@@ -27,14 +27,21 @@ Compute distances between an LLM response of interest and some other responses t
 \dontrun{
 data(iris)
 
-res_iris <- nail_catdes(iris, num.var = 5,
-introduction = "A study measured various parts of iris flowers
+intro_iris <- "A study measured various parts of iris flowers
 from 3 different species: setosa, versicolor and virginica.
-I will give you the results from this study. You will have to identify
-what sets these flowers apart.",
-request = "Please explain what makes each species distinct.
+I will give you the results from this study.
+You will have to identify what sets these flowers apart."
+intro_iris <- gsub('\n', ' ', intro_iris) |>
+stringr::str_squish()
+
+req_iris <- "Please explain what makes each species distinct.
 Also, tell me which species has the biggest flowers,
-and which species has the smallest.")
+and which species has the smallest."
+req_iris <- gsub('\n', ' ', req_iris) |>
+stringr::str_squish()
+
+res_iris <- nail_catdes(iris, num.var = 5,
+introduction = intro_iris, request = req_iris)
 
 dist_ref_llm(res_iris$prompt, res_iris$response, n = 5)
 }

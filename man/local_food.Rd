@@ -27,20 +27,35 @@ Participants had to rank how acceptable they found 45 statements about a sustain
 library(FactoMineR)
 library(NaileR)
 data(local_food)
+
 res_mca_food <- MCA(local_food, quali.sup = 46:63,
 ncp = 100, level.ventil = 0.05, graph = FALSE)
 res_hcpc_food <- HCPC(res_mca_food, nb.clust = 3, graph = FALSE)
 don_clust_food <- res_hcpc_food$data.clust
-res_food <- nail_catdes(don_clust_food, num.var = ncol(don_clust_food),
-introduction = 'A study on sustainable food systems was led on several French participants.
+
+intro_food <- 'A study on sustainable food systems
+was led on several French participants.
 This study had 2 parts. In the first part,
-participants had to rate how acceptable "a food system that..."
-(e.g, "a food system that only uses renewable energy") was to them.
-In the second part, they had to say if they agreed or disagreed with some statements.',
-request = 'I will give you the answers from one group.
-Please explain who the individuals of this group are, what their beliefs are.
-Then, give this group a new name, and explain why you chose this name.
-Do not use 1st person ("I", "my"...) in your answer.',
+participants had to rate how acceptable
+"a food system that..." (e.g, "a food system that
+only uses renewable energy") was to them.
+In the second part, they had to say
+if they agreed or disagreed with some statements.'
+intro_food <- gsub('\n', ' ', intro_food) |>
+stringr::str_squish()
+
+req_food <- 'I will give you the answers from one group.
+Please explain who the individuals of this group are,
+what their beliefs are.
+Then, give this group a new name,
+and explain why you chose this name.
+Do not use 1st person ("I", "my"...) in your answer.'
+req_food <- gsub('\n', ' ', req_food) |>
+stringr::str_squish()
+
+res_food <- nail_catdes(don_clust_food, num.var = 64,
+introduction = intro_food,
+request = req_food,
 isolate.groups = TRUE, drop.negative = TRUE)
 res_food[[1]]$response |> cat()
 }

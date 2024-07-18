@@ -25,10 +25,18 @@ Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evalu
 \dontrun{
 library(NaileR)
 data(beard_wide)
-res <- nail_sort(beard_wide[,1:5], name_size = 3, stimulus_id = "beard",
-introduction = "As a barber, you make recommendations based on consumers comments.
-Examples of consumers descriptions of beards are as follows.",
+
+intro_beard <- "As a barber, you make
+recommendations based on consumers comments.
+Examples of consumers descriptions of beards
+are as follows."
+intro_beard <- gsub('\n', ' ', intro_beard) |>
+stringr::str_squish()
+
+res <- nail_sort(beard_wide[,1:5], name_size = 3,
+stimulus_id = "beard", introduction = intro_beard,
 measure = 'the description was')
+
 res$dta_sort
 cat(res$prompt_llm[[1]])
 }

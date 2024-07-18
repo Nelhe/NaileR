@@ -25,11 +25,23 @@ Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evalu
 \dontrun{
 library(NaileR)
 data(beard_cont)
+
 FactoMineR::descfreq(beard_cont)
+
+intro_beard <- 'A survey was conducted about beards
+and 8 types of beards were described.
+In the data that follow, beards are named B1 to B8.'
+intro_beard <- gsub('\n', ' ', intro_beard) |>
+stringr::str_squish()
+
+req_beard <- 'Please give a name to each beard
+and summarize what makes this beard unique.'
+req_beard <- gsub('\n', ' ', req_beard) |>
+stringr::str_squish()
+
 res_beard <- nail_descfreq(beard_cont,
-introduction = 'A survey was conducted about beards and 8 types of beards were described.
-In the data that follows, beards are named B1 to B8.',
-request = 'Please give a name to each beard and summarise what makes this beard unique.')
+introduction = intro_beard,
+request = req_beard)
 cat(res_beard$response)
 }
 }

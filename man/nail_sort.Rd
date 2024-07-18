@@ -41,14 +41,21 @@ This function uses a while loop to ensure that the LLM gives the right number of
 }
 \examples{
 \dontrun{
+library(NaileR)
 data(beard_wide)
+
+intro_beard <- "As a barber, you make
+recommendations based on consumers comments.
+Examples of consumers descriptions of beards
+are as follows."
+intro_beard <- gsub('\n', ' ', intro_beard) |>
+stringr::str_squish()
+
 res <- nail_sort(beard_wide[,1:5], name_size = 3,
-stimulus_id = "beard", introduction = "As a barber,
-you make recommendations based on consumers comments.
-Examples of consumers descriptions of beards are as follows.",
+stimulus_id = "beard", introduction = intro_beard,
 measure = 'the description was')
 
 res$dta_sort
-res$prompt_llm[[1]]
+cat(res$prompt_llm[[1]])
 }
 }

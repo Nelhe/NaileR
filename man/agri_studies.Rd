@@ -25,14 +25,22 @@ Participants had to rank how much they agreed with 38 statements about possible 
 \dontrun{
 library(NaileR)
 data(agri_studies)
-res_mca_agri <- FactoMineR::MCA(agri_studies, quali.sup = 39:42, level.ventil = 0.05, graph = FALSE)
+
+res_mca_agri <- FactoMineR::MCA(agri_studies, quali.sup = 39:42,
+level.ventil = 0.05, graph = FALSE)
 agri_work <- res_mca_agri$ind$coord |> as.data.frame()
 agri_work <- agri_work[,1] |> cbind(agri_studies)
+
+intro_agri <- "These data were collected after a survey
+on students' expectations of agribusiness studies.
+Participants had to rank how much they agreed with 38 statements
+about possible benefits from agribusiness studies;
+then, they were asked personal questions."
+intro_agri <- gsub('\n', ' ', intro_agri) |>
+stringr::str_squish()
+
 res_agri <- nail_condes(agri_work, num.var = 1,
-introduction = "These data were collected after a survey on students'
-expectations of agribusiness studies. Participants had to rank
-how much they agreed with 38 statements about possible benefits from agribusiness studies;
-then, they were asked personal questions.")
+introduction = intro_agri)
 cat(res_agri$response)
 }
 }

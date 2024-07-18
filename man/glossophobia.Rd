@@ -25,16 +25,22 @@ Participants had to rank how much they agreed with 25 descriptions of speaking i
 \dontrun{
 library(NaileR)
 data(glossophobia)
+
 res_mca_phobia <- FactoMineR::MCA(glossophobia, quali.sup = 26:41,
 level.ventil = 0.05, graph = FALSE)
 phobia_work <- res_mca_phobia$ind$coord |> as.data.frame()
 phobia_work <- phobia_work[,1] |> cbind(glossophobia)
-res_phobia <- nail_condes(phobia_work, num.var = 1,
-introduction = "These data were collected after a survey on participants'
-feelings about speaking in public.
+
+intro_phobia <- "These data were collected after a survey
+on participants' feelings about speaking in public.
 Participants had to rank how much they agreed with
 25 descriptions of speaking in public;
-then, they were asked personal questions.")
+then, they were asked personal questions."
+intro_phobia <- gsub('\n', ' ', intro_phobia) |>
+stringr::str_squish()
+
+res_phobia <- nail_condes(phobia_work, num.var = 1,
+introduction = intro_phobia)
 cat(res_phobia$response)
 }
 }

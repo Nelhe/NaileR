@@ -31,8 +31,40 @@ Participants were given 9 French logos; they had to rate, on a scale from 0 (not
 \examples{
 \dontrun{
 library(NaileR)
-library(FactoMineR)
 data(quality)
+
+colnames(quality) <- c("Agriculture biologique",
+"Label Rouge",
+"FairTrade",
+"Bleu Blanc Coeur",
+"Appelation d'origine contrôlée",
+"Produit en Bretagne",
+"Viandes de France",
+"Nourri sans OGM",
+"Médailles Agro")
+
+res_pca_quality <- FactoMineR::PCA(quality, graph = FALSE)
+quali_work <- res_pca_quality$ind$coord |> as.data.frame()
+quali_work <- quali_work[,1] |> cbind(quality)
+
+intro_quali <- "These data were collected after a study
+on the perception of food quality.
+Participants were given 9 French logos;
+they had to rate, on a scale from 0 (not at all)
+to 10 (absolutely), how much a product bearing them
+aligned with their own perception of quality."
+intro_quali <- gsub('\n', ' ', intro_quali) |>
+stringr::str_squish()
+
+res_quality <- nail_condes(quali_work, num.var = 1,
+quanti.cat = c('Higher quality', 'Lower quality', 'Neutral'),
+introduction = intro_quali, generate = FALSE)
+
+ppt <- gsub('characteristics', 'opinions', res_quality$prompt)
+
+res_quality <- ollamar::generate('llama3', ppt, output = 'df')
+
+cat(res_quality$response)
 }
 }
 \keyword{datasets}

@@ -23,18 +23,29 @@ library(FactoMineR)
 
 data(nutriscore)
 
-res_mca_nutriscore <- MCA(nutriscore, quali.sup = 17:36, ncp = 15,
-level.ventil = 0.05, graph = FALSE)
+res_mca_nutriscore <- MCA(nutriscore, quali.sup = 17:36,
+ncp = 15, level.ventil = 0.05, graph = FALSE)
 
-res_hcpc_nutriscore <- HCPC(res_mca_nutriscore, nb.clust = 3, graph = FALSE)
+res_hcpc_nutriscore <- HCPC(res_mca_nutriscore, nb.clust = 3,
+graph = FALSE)
 don_clust_nutriscore <- res_hcpc_nutriscore$data.clust
 
-res_nutriscore <- nail_catdes(don_clust_nutriscore, num.var = ncol(don_clust_nutriscore),
-introduction = 'These data were collected after a survey on the nutri-score. Participants were asked
-various questions about their views on the nutri-score, and about their eating habits.
-Participants were split into groups according to their answers.',
-request = 'Please summarize the characteristics of each group. Then, give each group a new name,
-based on your conclusions.',
+intro_nutri <- 'These data were collected after a survey
+on the nutri-score. Participants were asked
+various questions about their views on the nutri-score,
+and about their eating habits.
+Participants were split into groups according to their answers.'
+intro_nutri <- gsub('\n', ' ', intro_nutri) |>
+stringr::str_squish()
+
+req_nutri <- 'Please summarize the characteristics
+of each group. Then, give each group a new name,
+based on your conclusions.'
+req_nutri <- gsub('\n', ' ', req_nutri)|>
+stringr::str_squish()
+
+res_nutriscore <- nail_catdes(don_clust_nutriscore, num.var = 37,
+introduction = intro_nutri, request = req_nutri,
 drop.negative = TRUE)
 
 cat(res_nutriscore$response)

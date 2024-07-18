@@ -49,19 +49,39 @@ Additionally, if isolate.groups = TRUE, you will need an introduction and a requ
 
 data(beard_cont)
 
+intro_beard_iso <- 'A survey was conducted about beards
+and 8 types of beards were described.
+I will give you the results for one type of beard.'
+intro_beard_iso <- gsub('\n', ' ', intro_beard_iso) |>
+stringr::str_squish()
+
+req_beard_iso <- 'Please give a name to this beard
+and summarize what makes this beard unique.'
+req_beard_iso <- gsub('\n', ' ', req_beard_iso) |>
+stringr::str_squish()
+
 res_beard <- nail_descfreq(beard_cont,
-introduction = 'A survey was conducted about beards and 8 types of beards were described.
-I will give you the results for one type of beard.',
-request = 'Please give a name to this beard and summarise what makes this beard unique.',
-isolate.groups = T, generate = F)
+introduction = intro_beard_iso,
+request = req_beard_iso,
+isolate.groups = TRUE, generate = FALSE)
 
 res_beard$prompt[1]
 res_beard$prompt[2]
 
+intro_beard <- 'A survey was conducted about beards
+and 8 types of beards were described.
+In the data that follow, beards are named B1 to B8.'
+intro_beard <- gsub('\n', ' ', intro_beard) |>
+stringr::str_squish()
+
+req_beard <- 'Please give a name to each beard
+and summarize what makes this beard unique.'
+req_beard <- gsub('\n', ' ', req_beard) |>
+stringr::str_squish()
+
 res_beard <- nail_descfreq(beard_cont,
-introduction = 'A survey was conducted about beards and 8 types of beards were described.
-In the data that follows, beards are named B1 to B8.',
-request = 'Please give a name to each beard and summarise what makes this beard unique.')
+introduction = intro_beard,
+request = req_beard)
 cat(res_beard$response)
 
 text <- res_beard$response
@@ -83,6 +103,7 @@ library(FactoMineR)
 res_ca_beard <- CA(beard_cont, graph = F)
 plot.CA(res_ca_beard, invisible = "col")
 
+
 ### Example 2: children dataset ###
 
 data(children)
@@ -91,14 +112,23 @@ children <- children[1:14, 1:5] |> t() |> as.data.frame()
 rownames(children) <- c('No education', 'Elementary school',
 'Middle school', 'High school', 'University')
 
-res_children <- nail_descfreq(children,
-introduction = 'The data used here is a contingency table that summarizes the answers
+intro_children <- 'The data used here is a contingency table
+that summarizes the answers
 given by different categories of people to the following question:
-"according to you, what are the reasons that can make hesitate
-a woman or a couple to have children?".
-Each row corresponds to a level of education, and columns are reasons.',
-request = "Please explain the main differences between more educated and less educated couples,
-when it comes to hesitating to have children.")
+"according to you, what are the reasons that can make
+a woman of a couple hesitate to have children?".
+Each row corresponds to a level of education, and columns are reasons.'
+intro_children <- gsub('\n', ' ', intro_children) |>
+stringr::str_squish()
+
+req_children <- "Please explain the main differences
+between more educated and less educated couples,
+when it comes to hesitating to have children."
+req_children <- gsub('\n', ' ', req_children) |>
+stringr::str_squish()
+
+res_children <- nail_descfreq(children,
+introduction = intro_children, request = req_children)
 
 cat(res_children$response)
 }

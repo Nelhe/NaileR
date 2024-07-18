@@ -8,7 +8,7 @@ nail_catdes(
   dataset,
   num.var,
   introduction = "",
-  request = "",
+  request = NULL,
   model = "llama3",
   isolate.groups = F,
   drop.negative = F,

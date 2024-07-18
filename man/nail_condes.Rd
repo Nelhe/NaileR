@@ -8,7 +8,7 @@ nail_condes(
   dataset,
   num.var,
   introduction = "",
-  request = "",
+  request = NULL,
   model = "llama3",
   quanti.threshold = 0,
   quanti.cat = c("Significantly above average", "Significantly below average", "Average"),

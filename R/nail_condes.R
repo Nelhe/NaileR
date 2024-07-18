@@ -197,13 +197,13 @@ The individuals have the following characteristics:
 
 nail_condes = function(dataset, num.var,
                        introduction = '',
-                       request = '',
+                       request = NULL,
                        model = 'llama3',
                        quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
                        generate = T){
 
-  request <- 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
+  if (is.null(request)) request <- 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
   dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.cat = quanti.cat)
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)

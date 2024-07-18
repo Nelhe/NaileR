@@ -256,13 +256,14 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 
 nail_catdes = function(dataset, num.var,
                        introduction = '',
-                       request = '',
+                       request = NULL,
                        model = 'llama3', isolate.groups = F, drop.negative = F,
                        proba = 0.05, row.w = NULL,
                        generate = T){
 
 
-  request <- 'Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name.'
+  if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
+
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,

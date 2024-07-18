@@ -139,11 +139,12 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 
 nail_descfreq = function(dataset,
                          introduction = '',
-                         request = 'Based on the results, please describe what makes each row unique.',
+                         request = NULL,
                          model = 'llama3', isolate.groups = F,
                          by.quali = NULL, proba = 0.05,
                          generate = T){
 
+  if (is.null(request)) request <- 'Based on the results, please describe what makes each row unique.'
   res_df = FactoMineR::descfreq(dataset, by.quali = by.quali, proba = proba)
 
   ppt = glue("# Introduction

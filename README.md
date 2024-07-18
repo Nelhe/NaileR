@@ -37,7 +37,7 @@ library(NaileR)
 
 ## Usage
 
-NaileR currently features 8 datasets and 7 functions.
+NaileR currently features 9 datasets and 7 functions.
 
 ### Datasets
 
@@ -46,6 +46,7 @@ NaileR currently features 8 datasets and 7 functions.
 * boss: contains the results of a Q method-like survey on the ideal boss
 * glossophobia: contains the results of a Q method-like survey on feelings about speaking in public
 * local_food: contains the results of a Q method-like survey on sustainable food systems
+* quality: contains the results of a survey on French food certification logos
 * waste: contains the results of a survey on food waste
 
 ### Functions

@@ -294,9 +294,9 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 nail_catdes = function(dataset, num.var,
                        introduction = '',
                        request = NULL,
-                       model = 'llama3', isolate.groups = F, drop.negative = F,
+                       model = 'llama3', isolate.groups = FALSE, drop.negative = FALSE,
                        proba = 0.05, row.w = NULL,
-                       generate = T){
+                       generate = TRUE){
 
 
   if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."

@@ -6,7 +6,7 @@ Authors@R: c(
     person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',
     comment = c(ORCID = "0000-0001-8814-6714"))
     )
-Description: A small package designed for interpreting continuous or categorical latent variables. It links FactoMineR's description functions (catdes, condes, descfreq) and ollamar.
+Description: A small package designed for interpreting continuous or categorical latent variables. You provide a data set with a latent variable you want to understand and some other explanatory variables. It provides a description of the latent variable based on the explanatory variables. It also provides a name to the latent variable.
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

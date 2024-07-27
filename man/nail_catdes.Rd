@@ -10,11 +10,11 @@ nail_catdes(
   introduction = "",
   request = NULL,
   model = "llama3",
-  isolate.groups = F,
-  drop.negative = F,
+  isolate.groups = FALSE,
+  drop.negative = FALSE,
   proba = 0.05,
   row.w = NULL,
-  generate = T
+  generate = TRUE
 )
 }
 \arguments{

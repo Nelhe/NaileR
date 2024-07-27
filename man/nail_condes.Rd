@@ -14,7 +14,7 @@ nail_condes(
   quanti.cat = c("Significantly above average", "Significantly below average", "Average"),
   weights = NULL,
   proba = 0.05,
-  generate = T
+  generate = TRUE
 )
 }
 \arguments{

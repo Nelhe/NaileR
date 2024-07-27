@@ -9,10 +9,10 @@ nail_descfreq(
   introduction = "",
   request = NULL,
   model = "llama3",
-  isolate.groups = F,
+  isolate.groups = FALSE,
   by.quali = NULL,
   proba = 0.05,
-  generate = T
+  generate = TRUE
 )
 }
 \arguments{

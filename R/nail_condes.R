@@ -233,7 +233,7 @@ nail_condes = function(dataset, num.var,
                        model = 'llama3',
                        quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
-                       generate = T){
+                       generate = TRUE){
 
   if (is.null(request)) request <- 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
   dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.cat = quanti.cat)

@@ -29,7 +29,7 @@ Its two main goals are to:
 install.packages('devtools')
 ```
 
-2. Install and load the NaileR package from GitHub.
+2. Install and load the 'NaileR' package from GitHub.
 ``` r
 devtools::install_github('Nelhe/NaileR')
 library(NaileR)
@@ -37,7 +37,7 @@ library(NaileR)
 
 ## Usage
 
-NaileR currently features 9 datasets and 7 functions.
+'NaileR' currently features 9 datasets and 7 functions.
 
 ### Datasets
 
@@ -61,7 +61,7 @@ NaileR currently features 9 datasets and 7 functions.
 
 ## Example
 
-For complete case studies and a showcase of NaileR's main functions, see the [documentation](https://github.com/Nelhe/NaileR/tree/master/doc).
+For complete case studies and a showcase of the main functions of the 'NaileR' package, see the [documentation](https://github.com/Nelhe/NaileR/tree/master/doc).
 
 Let's have a look at how we can interpret HCPC clusters:
 

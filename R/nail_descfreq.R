@@ -77,7 +77,10 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' ### Example 1: beard dataset ###
 #'
 #' data(beard_cont)

@@ -24,7 +24,10 @@ remove_punctuation <- function(text) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(beard_wide)
 #'

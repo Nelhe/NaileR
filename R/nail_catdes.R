@@ -185,7 +185,10 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' ### Example 1: Fisher's iris ###
 #' library(NaileR)
 #' data(iris)

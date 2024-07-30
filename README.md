@@ -51,13 +51,13 @@ library(NaileR)
 
 ### Functions
 
-* nail_catdes: performs a catdes analysis on a dataset and describes each category
-* nail_condes: performs a condes analysis on a dataset and describes the chosen continuous variable
-* nail_descfreq: performs a descfreq analysis on a contingency table and describes the rows
-* sim_llm: computes the similarity between texts
-* dist_mat_llm: computes a distance matrix based on sim_llm
-* dist_ref_llm: computes a distance vector based on sim_llm
-* nail_sort: performs clustering on textual data from sensometrics experiments
+* nail_catdes(): performs a catdes analysis on a dataset and describes each category
+* nail_condes(): performs a condes analysis on a dataset and describes the chosen continuous variable
+* nail_descfreq(): performs a descfreq analysis on a contingency table and describes the rows
+* sim_llm(): computes the similarity between texts
+* dist_mat_llm(): computes a distance matrix based on sim_llm
+* dist_ref_llm(): computes a distance vector based on sim_llm
+* nail_sort(): performs clustering on textual data from sensometrics experiments
 
 ## Example
 

@@ -12,7 +12,10 @@
 #' * the words used to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' data(beard)
 #' beard[1:8,]
 #' }
@@ -32,7 +35,10 @@
 #' * columns are the words used at least once to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(beard_cont)
 #'
@@ -70,7 +76,10 @@
 #' * columns are the assessors' opinions.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(beard_wide)
 #'
@@ -105,7 +114,10 @@
 #' * columns 60-63 personal information
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(FactoMineR)
 #' library(NaileR)
 #' data(local_food)
@@ -157,7 +169,10 @@
 #' * columns 31-39: personal information
 #' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(FactoMineR)
 #' library(NaileR)
 #' data(boss)
@@ -207,7 +222,10 @@
 #' * columns 39-42: personal information
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(agri_studies)
 #'
@@ -244,7 +262,10 @@
 #' * columns 26-41: personal information
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(glossophobia)
 #'
@@ -279,7 +300,10 @@
 #'
 #' @source Héloïse BILLES and Amélie RATEAU, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' library(FactoMineR)
 #' data(waste)
@@ -333,7 +357,10 @@
 #' * Médailles Agro: a prize won at a yearly contest based on taste.
 #' @source Sébastien Lê, applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' data(quality)
 #'
@@ -384,7 +411,10 @@
 #'
 #' @source Anaëlle YANNIC and Jessie PICOT, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' library(NaileR)
 #' library(FactoMineR)
 #'

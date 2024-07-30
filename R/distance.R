@@ -12,7 +12,10 @@
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' textA <- "Participant A was described as a nice, outgoing man, with a friendly attitude."
 #' textB <- "Participant A was an extroverted and caring individual."
 #'
@@ -55,7 +58,10 @@ sim_llm <- function (textA, textB) {
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' data(iris)
 #'
 #' intro_iris <- "A study measured various parts of iris flowers
@@ -114,7 +120,10 @@ dist_mat_llm <- function(ppt, n, per_miss = 0){
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' data(iris)
 #'
 #' intro_iris <- "A study measured various parts of iris flowers

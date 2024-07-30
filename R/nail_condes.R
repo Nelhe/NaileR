@@ -99,7 +99,10 @@ The individuals have the following characteristics:
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#'\donttest{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
 #' ### Example 1: decathlon dataset ###
 #'
 #' library(FactoMineR)

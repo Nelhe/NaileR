@@ -48,7 +48,10 @@ Generate an LLM response to analyze a continuous latent variable.
 This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
 }
 \examples{
-\dontrun{
+\donttest{
+# Processing time is often longer than ten seconds
+# because the function uses a large language model.
+
 ### Example 1: decathlon dataset ###
 
 library(FactoMineR)

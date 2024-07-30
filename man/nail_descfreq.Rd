@@ -44,7 +44,10 @@ This function directly sends a prompt to an LLM. Therefore, to get a consistent 
 Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
 }
 \examples{
-\dontrun{
+\donttest{
+# Processing time is often longer than ten seconds
+# because the function uses a large language model.
+
 ### Example 1: beard dataset ###
 
 data(beard_cont)

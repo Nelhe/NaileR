@@ -22,7 +22,10 @@ These data were collected after a Q-method-like survey on participants' percepti
 Participants had to rank how much they agreed with 30 statements about an ideal boss; then, they were asked personal questions.
 }
 \examples{
-\dontrun{
+\donttest{
+# Processing time is often longer than ten seconds
+# because the function uses a large language model.
+
 library(FactoMineR)
 library(NaileR)
 data(boss)

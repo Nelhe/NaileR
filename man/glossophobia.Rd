@@ -22,7 +22,10 @@ These data were collected after a Q-method-like survey on participants' feelings
 Participants had to rank how much they agreed with 25 descriptions of speaking in public; then, they were asked personal questions.
 }
 \examples{
-\dontrun{
+\donttest{
+# Processing time is often longer than ten seconds
+# because the function uses a large language model.
+
 library(NaileR)
 data(glossophobia)
 

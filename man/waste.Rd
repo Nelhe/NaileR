@@ -17,7 +17,10 @@ waste
 These data were collected after a survey on food waste, with participants describing their habits.
 }
 \examples{
-\dontrun{
+\donttest{
+# Processing time is often longer than ten seconds
+# because the function uses a large language model.
+
 library(NaileR)
 library(FactoMineR)
 data(waste)

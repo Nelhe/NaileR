@@ -23,7 +23,7 @@ These data were collected after a Q-method-like survey on sustainable food syste
 Participants had to rank how acceptable they found 45 statements about a sustainable food system; then, they were asked if they agreed with 14 other statements.
 }
 \examples{
-\donttest{
+\dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses a large language model.
 

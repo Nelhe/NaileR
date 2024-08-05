@@ -24,7 +24,7 @@ A list containing:
 Compute distances between an LLM response of interest and some other responses to the same prompt.
 }
 \examples{
-\donttest{
+\dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses a large language model.
 

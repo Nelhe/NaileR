@@ -24,7 +24,7 @@ remove_punctuation <- function(text) {
 #' @export
 #'
 #' @examples
-#'\donttest{
+#'\dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -71,7 +71,7 @@ nail_sort <- function(dta_text, name_size = 3, stimulus_id = "stimulus", introdu
     }
 
     descr = paste(liste, sep = '', collapse = ' ')
-    ppt_q = glue('Please group the ', stimulus_id, 's into a minimum of 2 groups and a maximum of ', nb_max,' groups, such that ', stimulus_id, 's of a same group have the same description. Give the groups a short name. Without any justification, write for each', stimulus_id, ' which group it belongs to, from the first one to the last one, accordingly to this exact format, in a single line without asterisks: "', stimulus_id,' 1 belongs to group "...", ', stimulus_id,' 2 belongs to group "...", ', stimulus_id,' 3 belongs to group "...",...')
+    ppt_q = glue('Please group the ', stimulus_id, 's into a minimum of 2 groups and a maximum of ', nb_max,' groups, such that ', stimulus_id, 's of a same group have the same description. Give the groups a short name. Without any justification, write for each ', stimulus_id, ' which group it belongs to, from the first one to the last one, accordingly to this exact format, in a single line without asterisks: "', stimulus_id,' 1 belongs to group "...", ', stimulus_id,' 2 belongs to group "...", ', stimulus_id,' 3 belongs to group "...",...')
     ppt = paste(introduction, descr, ppt_q)
     res_llm[[j]] <- ppt
     grps <- ""

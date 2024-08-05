@@ -27,7 +27,7 @@ Compute a distance matrix between randomly-generated responses to an LLM prompt.
 The final percentage of missing values might differ from the per_miss parameter value; rather than a percentage of values being turned to NA, each value has a per_miss probability of being NA.
 }
 \examples{
-\donttest{
+\dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses a large language model.
 

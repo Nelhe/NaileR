@@ -17,7 +17,7 @@ nutriscore
 These data were collected after a survey on the nutri-score. Participants were asked various questions about their views on the nutri-score, and about their eating habits.
 }
 \examples{
-\donttest{
+\dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses a large language model.
 

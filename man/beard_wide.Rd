@@ -22,7 +22,7 @@ These data refer to 8 types of beards. They come from a subset of the original "
 Each beard was evaluated by 62 assessors (except beard 8 which only had 60 evaluations).
 }
 \examples{
-\donttest{
+\dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses a large language model.
 

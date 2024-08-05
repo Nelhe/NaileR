@@ -99,7 +99,7 @@ The individuals have the following characteristics:
 #' @export
 #'
 #' @examples
-#'\donttest{
+#'\dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'

@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#'\donttest{
+#'\dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -58,7 +58,7 @@ sim_llm <- function (textA, textB) {
 #' @export
 #'
 #' @examples
-#'\donttest{
+#'\dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -120,7 +120,7 @@ dist_mat_llm <- function(ppt, n, per_miss = 0){
 #' @export
 #'
 #' @examples
-#'\donttest{
+#'\dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'

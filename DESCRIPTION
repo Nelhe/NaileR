@@ -1,6 +1,6 @@
 Package: NaileR
 Title: Interpreting Latent Variables with AI
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
     person("Nel", "Hervé", role = 'aut'),
     person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',
@@ -17,8 +17,9 @@ Imports:
     FactoMineR,
     glue,
     ollamar,
-    magrittr
+    magrittr,
+    SensoMineR
 Config/testthat/edition: 3
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 LazyData: true

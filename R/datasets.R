@@ -1,4 +1,146 @@
 
+#' Atomic habits survey
+#'
+#' People think they need to make big changes to change
+#' the course of their lives. But in James Clear's book,
+#' Atomic Habits, they will discover that the smallest of changes,
+#' coupled with a good knowledge of psychology and neuroscience,
+#' can have a revolutionary effect on their lives and relationships.
+#' To understand this concept of atomic habits, we interviewed 167 people
+#' and asked them if they were able to never take their car alone again,
+#' to buy local products...
+#' We also asked them how restrictive they found this and why.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 167 rows and 50 columns:
+#' * columns 1-10, do you feel able to...
+#' * columns 11-20, from 0 to 5 how restrictive...
+#' * columns 21-30, is it restrictive, yes or no...
+#' * columns 31-40, justify your answers
+#' * columns 41-50, a combination of able and restrictive
+#'
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' \dontrun{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
+#'library(FactoMineR)
+#'library(NaileR)
+#'data(atomic_habit)
+#'
+#'res_mfa <- MFA(atomic_habit[,1:30],
+#'               group = c(10,10,10),
+#'               type = c("n","s","n"),
+#'               num.group.sup = 3,
+#'               name.group = c("capable","restrictive", "restrictive binary"),
+#'               graph = FALSE)
+#'
+#'plot.MFA(res_mfa, choix = "ind", invisible = c("quali","quali.sup"),
+#'         lab.ind = FALSE,
+#'         title = "MFA based on being capable and restrictiveness data")
+#'
+#'res_hcpc <- HCPC(res_mfa, nb.clust = 3, graph = FALSE)
+#'plot.HCPC(res_hcpc, choice = "map",
+#'          draw.tree = FALSE,
+#'          ind.names = FALSE,
+#'          title = "Atomic habits - typology")
+#'summary(res_hcpc$data.clust)
+#' }
+"atomic_habit"
+
+
+#' Atomic habits survey
+#'
+#' People think they need to make big changes to change
+#' the course of their lives. But in James Clear's book,
+#' Atomic Habits, they will discover that the smallest of changes,
+#' coupled with a good knowledge of psychology and neuroscience,
+#' can have a revolutionary effect on their lives and relationships.
+#' To understand this concept of atomic habits, we interviewed 167 people
+#' and asked them if they were able to never take their car alone again,
+#' to buy local products...
+#' We also asked them how restrictive they found this and why.
+#'
+#' @docType data
+#'
+#' @format
+#' * column 1, a combination of being able and feeling restrictive
+#' * column 2, justify your answer
+#'
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' \dontrun{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
+#'library(FactoMineR)
+#'library(NaileR)
+#'library(dplyr)
+#'data(car_alone)
+#'sampled_car_alone <- car_alone %>%
+#'group_by(car_alone_capable_restrictive) %>%
+#'sample_frac(0.5)
+#'sampled_car_alone <- as.data.frame(sampled_car_alone)
+#'
+#'intro_car <- "Knowing the impact on the climate,
+#'I have made these choices based on
+#'the following benefits and constraints..."
+#'intro_car <- gsub('\n', ' ', intro_car) |>
+#'stringr::str_squish()
+#'res_nail_textual <- nail_textual(sampled_car_alone, num.var = 1,
+#'                                 num.text = 2,
+#'                                 introduction = intro_car,
+#'                                 request = NULL,
+#'                                 model = 'llama3', isolate.groups = TRUE,
+#'                                 generate = TRUE)
+#' res_nail_textual[[1]]$response |> cat()
+#' res_nail_textual[[3]]$response |> cat()
+#' res_nail_textual[[2]]$response |> cat()
+#' res_nail_textual[[4]]$response |> cat()
+#' }
+"car_alone"
+
+#' Atomic habits survey
+#'
+#' People think they need to make big changes to change
+#' the course of their lives. But in James Clear's book,
+#' Atomic Habits, they will discover that the smallest of changes,
+#' coupled with a good knowledge of psychology and neuroscience,
+#' can have a revolutionary effect on their lives and relationships.
+#' To understand this concept of atomic habits, we interviewed 167 people
+#' and asked them if they were able to never take their car alone again,
+#' to buy local products...
+#' We also asked them how restrictive they found this and why.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 167 rows and 51 columns:
+#' * columns 1-10, do you feel able to...
+#' * columns 11-20, from 0 to 5 how restrictive...
+#' * columns 21-30, is it restrictive, yes or no...
+#' * columns 31-40, justify your answers
+#' * columns 41-50, a combination of able and restrictive
+#' * column 51, cluster variable based on MFA (20 first variables)
+#'
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' \dontrun{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
+#'library(FactoMineR)
+#'library(NaileR)
+#'data(atomic_habit_clust)
+#'
+#'catdes(atomic_habit_clust, num.var = 51)
+#' }
+"atomic_habit_clust"
+
+
 #' Beard descriptions
 #'
 #' These data refer to 8 types of beards.
@@ -12,7 +154,7 @@
 #' * the words used to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -35,7 +177,7 @@
 #' * columns are the words used at least once to describe them.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -76,7 +218,7 @@
 #' * columns are the assessors' opinions.
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -114,7 +256,7 @@
 #' * columns 60-63 personal information
 #' @source Applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -169,7 +311,7 @@
 #' * columns 31-39: personal information
 #' @source Florian LECLERE and Marianne ANDRE, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -222,7 +364,7 @@
 #' * columns 39-42: personal information
 #' @source Juliette LE COLLONNIER and Lou ROBERT, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -262,7 +404,7 @@
 #' * columns 26-41: personal information
 #' @source Elina BIAU and Théo LEDAIN, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -300,7 +442,7 @@
 #'
 #' @source Héloïse BILLES and Amélie RATEAU, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -357,7 +499,7 @@
 #' * Médailles Agro: a prize won at a yearly contest based on taste.
 #' @source Sébastien Lê, applied mathematics department, Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
@@ -411,7 +553,7 @@
 #'
 #' @source Anaëlle YANNIC and Jessie PICOT, students at l'Institut Agro Rennes-Angers
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'

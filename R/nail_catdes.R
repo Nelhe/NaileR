@@ -185,7 +185,7 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'

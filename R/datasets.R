@@ -48,7 +48,7 @@
 #'
 #' cat(res_nail_textual_rorschach$prompt)
 #'
-#' ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt)
+#' ppt <- gsub("## Group", "## Inkblot", res_nail_textual_rorschach$prompt)
 #' cat(ppt)
 #'
 #' res_inkblot <- ollamar::generate(model = 'llama3', prompt = ppt,

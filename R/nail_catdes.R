@@ -302,7 +302,13 @@ nail_catdes = function(dataset, num.var,
                        generate = TRUE){
 
 
-  if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
+  #if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
+
+  if (isolate.groups == F){
+    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of each group and what set them apart from the other groups. Then, based on these characteristics, give each group a new name."
+  } else {
+    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of this group and what make them so special. Then, based on these characteristics, give the group a new name."
+  }
 
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 

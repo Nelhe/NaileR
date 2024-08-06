@@ -146,6 +146,7 @@ In other words, what are the drivers for disliking
 and liking the fabrics."
 request_car <- gsub('\n', ' ', request_car) |>
 stringr::str_squish()
+
 res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
                                         num.text = 3,
                                         introduction = intro_car,

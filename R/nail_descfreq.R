@@ -177,7 +177,14 @@ nail_descfreq = function(dataset,
                          by.quali = NULL, proba = 0.05,
                          generate = TRUE){
 
-  if (is.null(request)) request <- 'Based on the results, please describe what makes each row unique.'
+  #if (is.null(request)) request <- 'Based on the results, please describe what make each row unique.'
+
+  if (isolate.groups == F){
+    if (is.null(request)) request <- 'Based on the results, please describe what make each row unique.'
+  } else {
+    if (is.null(request)) request <- 'Based on the results, please describe this row according to its specific features.'
+  }
+
   res_df = FactoMineR::descfreq(dataset, by.quali = by.quali, proba = proba)
 
   ppt = glue("# Introduction

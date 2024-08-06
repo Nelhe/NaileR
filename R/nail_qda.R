@@ -167,7 +167,13 @@ nail_qda = function(dataset,
                     generate = TRUE){
 
 
-    if (is.null(request)) request <- "Based on the results, please describe what characterizes the stimuli and what sets them apart. Then, based on these characteristics, give each stimulus a new name."
+    #if (is.null(request)) request <- "Based on the results, please describe what characterizes the stimuli and what sets them apart. Then, based on these characteristics, give each stimulus a new name."
+
+    if (isolate.groups == F){
+      if (is.null(request)) request <- "Based on the results, please describe what characterize the stimuli and what set them apart. Then, based on these characteristics, give each stimulus a new name."
+    } else {
+      if (is.null(request)) request <- "Based on the results, please describe that particular stimulus according to its specific features. Then, based on these characteristics, give the stimulus a new name."
+    }
 
     res_cd = SensoMineR::decat(dataset, formul = formul, firstvar = firstvar, lastvar = lastvar, proba = proba, graph = FALSE)
 

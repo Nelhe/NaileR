@@ -219,5 +219,80 @@ cat(ppt)
 res_liking <- ollamar::generate(model = 'llama3', prompt = ppt,
                                 output = "df")
 cat(res_liking$response)
+
+### Example 4: Rorschach inkblots ###
+
+# Description of each inkblot
+# isolate.groups = TRUE
+
+intro_rorschach <- "For this study,
+we asked sixty people to briefly describe
+one of the inkblots of the Rorschach test."
+intro_rorschach <- gsub('\n', ' ', intro_rorschach) |>
+stringr::str_squish()
+
+request_rorschach <- "Based on the comments of the 60 people,
+please give me a description of that inkblot
+in terms of how it was perceived. Tell me if it was
+a rather positive or negative perception."
+request_rorschach <- gsub('\n', ' ', request_rorschach) |>
+stringr::str_squish()
+
+res_nail_textual_rorschach <- nail_textual(rorschach, num.var = 2,
+                                           num.text = 5,
+                                           introduction = intro_rorschach,
+                                           request = request_rorschach,
+                                           model = 'llama3',
+                                           isolate.groups = TRUE,
+                                           generate = FALSE)
+
+cat(res_nail_textual_rorschach$prompt[[10]])
+
+ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt[[10]])
+cat(ppt)
+
+res_inkblot_10 <- ollamar::generate(model = 'llama3', prompt = ppt,
+                                    output = "df")
+cat(res_inkblot_10$response)
+
+cat(res_nail_textual_rorschach$prompt[[5]])
+
+ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt[[5]])
+cat(ppt)
+
+res_inkblot_5 <- ollamar::generate(model = 'llama3', prompt = ppt,
+                                   output = "df")
+cat(res_inkblot_5$response)
+
+
+#Comparison of panels
+
+rorschach_10 <- droplevels(rorschach[rorschach$Inkblot=="10",])
+
+intro_rorschach <- "For this study,
+we asked sixty people to briefly describe
+one of the inkblots of the Rorschach test.
+The sixty people belonged to three different panels,
+with 20 people per panel."
+intro_rorschach <- gsub('\n', ' ', intro_rorschach) |>
+stringr::str_squish()
+
+request_rorschach <- "Based on the comments of the 60 people,
+please tell me what is common from panel to panel
+and what is specific to each panel
+in terms of the perception of the inkblot."
+request_rorschach <- gsub('\n', ' ', request_rorschach) |>
+stringr::str_squish()
+
+res_nail_textual_rorschach <- nail_textual(rorschach_10, num.var = 1,
+                                           num.text = 5,
+                                           introduction = intro_rorschach,
+                                           request = request_rorschach,
+                                           model = 'llama3',
+                                           isolate.groups = FALSE,
+                                           generate = TRUE)
+
+cat(res_nail_textual_rorschach$prompt)
+cat(res_nail_textual_rorschach$response)
 }
 }

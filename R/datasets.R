@@ -1,4 +1,63 @@
 
+#' Rorschach inkblots
+#'
+#' This dataset was initially collected to understand the perception of the Rorschach test.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 600 rows and 5 columns:
+#' * The Panel effect (3 panels)
+#' * The Inkblot effect (10 inkblots)
+#' * The Panelist effect (20 panelists par panel)
+#' * The interaction Panel and Panelist
+#' * The perception of the inkblot
+#'
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' \dontrun{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
+#' library(NaileR)
+#' data(rorschach)
+#'
+#' ### Example 1: perception of the inkblots for one panel ###
+#' intro_rorschach <- "For this study,
+#' we asked 20 people to briefly describe
+#' the 10 inkblots of the Rorschach test."
+#' intro_rorschach <- gsub('\n', ' ', intro_rorschach) |>
+#' stringr::str_squish()
+#'
+#' request_rorschach <- "Based on the comments of the 20 people,
+#' please give me a description of each inkblot
+#' in terms of how it was perceived. Tell me if it was
+#' a rather positive or negative perception."
+#' request_rorschach <- gsub('\n', ' ', request_rorschach) |>
+#' stringr::str_squish()
+#'
+#' rorschach_A <- droplevels(rorschach[rorschach$Panel=="A",])
+#'
+#' res_nail_textual_rorschach <- nail_textual(rorschach_A, num.var = 2,
+#'                                            num.text = 5,
+#'                                            introduction = intro_rorschach,
+#'                                            request = request_rorschach,
+#'                                            model = 'llama3',
+#'                                            isolate.groups = FALSE,
+#'                                            generate = FALSE)
+#'
+#' cat(res_nail_textual_rorschach$prompt)
+#'
+#' ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt)
+#' cat(ppt)
+#'
+#' res_inkblot <- ollamar::generate(model = 'llama3', prompt = ppt,
+#'                                  output = "df")
+#'
+#' cat(res_inkblot$response)
+#' }
+"rorschach"
+
 #' Car seat fabrics
 #'
 #' This dataset was initially collected to understand the free jar data.

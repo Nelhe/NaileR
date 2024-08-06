@@ -1,4 +1,65 @@
 
+#' Car seat fabrics
+#'
+#' This dataset was initially collected to understand the free jar data.
+#'
+#' @docType data
+#'
+#' @format
+#' A data frame with 567 rows and 4 columns:
+#' * The ID of the judge
+#' * The product
+#' * The reason why the product was liked or disliked
+#' * O if the product was disliked, 1 otherwise
+#'
+#' @source Applied mathematics department, Institut Agro Rennes-Angers
+#' @examples
+#' \dontrun{
+#' # Processing time is often longer than ten seconds
+#' # because the function uses a large language model.
+#'
+#' library(NaileR)
+#' data(fabric)
+#'
+#' intro_car <- "For this consumer study,
+#' a car seat fabric was evaluated by consumers.
+#' Some of them didn't like it (group '0'),
+#' others liked it (group '1'). The consumers
+#' gave their reasons for disliking or liking the fabric."
+#' intro_car <- gsub('\n', ' ', intro_car) |>
+#' stringr::str_squish()
+#'
+#' request_car <- "Based on the comments provided by the consumers,
+#' please explain the reasons why
+#' the fabric was not appreciated for group '0',
+#' and the reasons why the fabric was appreciated for group '1'.
+#' In other words, what are the drivers
+#' for disliking and liking this fabric."
+#' request_car <- gsub('\n', ' ', request_car) |>
+#' stringr::str_squish()
+#'
+#' fabric_A <- droplevels(fabric[fabric$Fabric=="A",])
+#'
+#' res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
+#'                                         num.text = 3,
+#'                                         introduction = intro_car,
+#'                                         request = request_car,
+#'                                         model = 'llama3',
+#'                                         isolate.groups = FALSE,
+#'                                         generate = FALSE)
+#' cat(res_nail_textual_fabric$prompt)
+#'
+#' res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
+#'                                         num.text = 3,
+#'                                         introduction = intro_car,
+#'                                         request = request_car,
+#'                                         model = 'llama3',
+#'                                         isolate.groups = FALSE,
+#'                                         generate = TRUE)
+#' cat(res_nail_textual_fabric$response)
+#' }
+"fabric"
+
 #' Atomic habits survey
 #'
 #' People think they need to make big changes to change

@@ -124,5 +124,99 @@ res_nail_textual_plane <- nail_textual(sampled_dta_plane, num.var = 2,
                                       generate = TRUE)
 cat(res_nail_textual_plane$prompt)
 cat(res_nail_textual_plane$response)
+
+### Example 3: Car seat fabrics ###
+
+# Drivers of liking and disliking
+# isolate.groups = F
+
+intro_car <- "In this consumer study, a number of car seat fabrics
+were rated by consumers who gave their reasons
+for liking or disliking the fabrics.
+Reasons for disliking the fabrics were reported in group '0',
+while reasons for liking the fabrics were reported in group '1'."
+intro_car <- gsub('\n', ' ', intro_car) |>
+stringr::str_squish()
+
+request_car <- "Based on the comments provided by the consumers,
+please explain the reasons why
+the fabrics were not appreciated (group '0'),
+and the reasons why fabrics were appreciated (group '1').
+In other words, what are the drivers for disliking
+and liking the fabrics."
+request_car <- gsub('\n', ' ', request_car) |>
+stringr::str_squish()
+res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
+                                        num.text = 3,
+                                        introduction = intro_car,
+                                        request = request_car,
+                                        model = 'llama3',
+                                        isolate.groups = FALSE,
+                                        generate = TRUE)
+
+cat(res_nail_textual_fabric$response)
+
+# Drivers of disliking with a specific prompt
+# isolate.groups = T
+
+intro_car_disliking <- "In this consumer study, a range of car seat fabrics
+were rated by consumers who gave their reasons
+for disliking the fabrics.
+In these data, only the reasons for disliking the fabrics were reported."
+intro_car_disliking <- gsub('\n', ' ', intro_car_disliking) |>
+stringr::str_squish()
+
+request_car_disliking <- "Based on the comments provided by the consumers,
+please explain the reasons why
+the fabrics were not appreciated.
+In other words, what are the drivers for disliking the fabrics."
+request_car_disliking <- gsub('\n', ' ', request_car_disliking) |>
+stringr::str_squish()
+
+res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
+                                        num.text = 3,
+                                        introduction = intro_car_disliking,
+                                        request = request_car_disliking,
+                                        model = 'llama3',
+                                        isolate.groups = TRUE,
+                                        generate = FALSE)
+
+ppt <- res_nail_textual_fabric$prompt[1]
+cat(ppt)
+
+res_disliking <- ollamar::generate(model = 'llama3', prompt = ppt,
+                                   output = "df")
+cat(res_disliking$response)
+
+# Drivers of liking with a specific prompt
+# isolate.groups = T
+
+intro_car_liking <- "In this consumer study, a range of car seat fabrics
+were rated by consumers who gave their reasons
+for liking the fabrics.
+In these data, only the reasons for liking the fabrics were reported."
+intro_car_liking <- gsub('\n', ' ', intro_car_liking) |>
+stringr::str_squish()
+
+request_car_liking <- "Based on the comments provided by the consumers,
+please explain the reasons why
+the fabrics were appreciated.
+In other words, what are the drivers for liking the fabrics."
+request_car_liking <- gsub('\n', ' ', request_car_liking) |>
+stringr::str_squish()
+
+res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
+                                        num.text = 3,
+                                        introduction = intro_car_liking,
+                                        request = request_car_liking,
+                                        model = 'llama3', isolate.groups = TRUE,
+                                        generate = FALSE)
+
+ppt <- res_nail_textual_fabric$prompt[2]
+cat(ppt)
+
+res_liking <- ollamar::generate(model = 'llama3', prompt = ppt,
+                                output = "df")
+cat(res_liking$response)
 }
 }

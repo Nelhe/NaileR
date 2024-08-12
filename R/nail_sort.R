@@ -8,12 +8,13 @@ remove_punctuation <- function(text) {
 #'
 #' Group textual data according to their similarity, in a context in which the assessors have commented on a set of stimuli.
 #'
-#' @param dta_text a data frame where each row is a stimulus and each column is an assessor.
+#' @param dataset a data frame where each row is a stimulus and each column is an assessor.
 #' @param name_size the maximum number of words in a group name created by the LLM.
 #' @param stimulus_id the nature of the stimulus. Customizing it is highly recommended.
 #' @param introduction the introduction to the LLM prompt.
 #' @param measure the type of measure used in the experiment.
 #' @param nb_max the maximum number of clusters the LLM can form per assessor.
+#' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
 #'
 #' @return A list consisting of:
 #' * a list of prompts (one per assessor);
@@ -40,7 +41,7 @@ remove_punctuation <- function(text) {
 #'
 #' res <- nail_sort(beard_wide[,1:5], name_size = 3,
 #' stimulus_id = "beard", introduction = intro_beard,
-#' measure = 'the description was')
+#' measure = 'the description was', generate = TRUE)
 #'
 #' res$dta_sort
 #' cat(res$prompt_llm[[1]])
@@ -54,16 +55,16 @@ remove_punctuation <- function(text) {
 #' @importFrom stringr str_count
 
 
-nail_sort <- function(dta_text, name_size = 3, stimulus_id = "stimulus", introduction = "", measure="", nb_max = 6) {
+nail_sort <- function(dataset, name_size = 3, stimulus_id = "stimulus", introduction = "", measure="", nb_max = 6, generate = FALSE) {
 
   res_llm <- list()
-  dta_sort = dta_text[,FALSE]
+  dta_sort = dataset[,FALSE]
 
-  for (j in c(1:dim(dta_text)[2])){
-    dta_j = dta_text[[j]]
+  for (j in c(1:dim(dataset)[2])){
+    dta_j = dataset[[j]]
     liste = c()
 
-    for (i in c(1:dim(dta_text)[1])){
+    for (i in c(1:dim(dataset)[1])){
       texte_j = dta_j[i] |>
         str_split_1(pattern = ';') |>
         paste(sep = '', collapse = ', ')
@@ -78,23 +79,27 @@ nail_sort <- function(dta_text, name_size = 3, stimulus_id = "stimulus", introdu
 
     nb_words <- name_size
 
-    while(length(grps)!=dim(dta_text)[1] | nb_words>(name_size+1)){
-      grps = generate('llama3', ppt, output = 'df')$response
-      grps <- tolower(grps)
-      grps <- grps |> str_split_1(pattern = c(glue(stimulus_id,' ')))
+    if (generate == TRUE){
+      while(length(grps)!=dim(dataset)[1] | nb_words>(name_size+1)){
+        grps = generate('llama3', ppt, output = 'df')$response
+        grps <- tolower(grps)
+        grps <- grps |> str_split_1(pattern = c(glue(stimulus_id,' ')))
+        #print(grps)
+        #print(j)
 
-      if (length(grps)-(dim(dta_text)[1]-1)>0){
-        grps <- grps[(length(grps)-(dim(dta_text)[1]-1)):length(grps)]
-        numbers <- as.numeric(gsub("\\D+", "", grps))
-        grps <- grps[order(numbers)]
-        grps = grps[(length(grps)-(dim(dta_text)[1]-1)):length(grps)] |>
-          str_split_i(pattern = "to group", i = -1) |>
-          str_squish() |>
-          remove_punctuation()
-        nb_words <- max(str_count(grps, "\\w+"))
+        if (length(grps)-(dim(dataset)[1]-1)>0){
+          grps <- grps[(length(grps)-(dim(dataset)[1]-1)):length(grps)]
+          numbers <- as.numeric(gsub("\\D+", "", grps))
+          grps <- grps[order(numbers)]
+          grps = grps[(length(grps)-(dim(dataset)[1]-1)):length(grps)] |>
+            str_split_i(pattern = "to group", i = -1) |>
+            str_squish() |>
+            remove_punctuation()
+          nb_words <- max(str_count(grps, "\\w+"))
+        }
       }
+      dta_sort[,j] = grps
     }
-    dta_sort[,j] = grps
   }
   return(list(prompt_llm = res_llm, dta_sort = dta_sort))
 }

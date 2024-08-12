@@ -5,16 +5,17 @@
 \title{Sort textual data}
 \usage{
 nail_sort(
-  dta_text,
+  dataset,
   name_size = 3,
   stimulus_id = "stimulus",
   introduction = "",
   measure = "",
-  nb_max = 6
+  nb_max = 6,
+  generate = FALSE
 )
 }
 \arguments{
-\item{dta_text}{a data frame where each row is a stimulus and each column is an assessor.}
+\item{dataset}{a data frame where each row is a stimulus and each column is an assessor.}
 
 \item{name_size}{the maximum number of words in a group name created by the LLM.}
 
@@ -25,6 +26,8 @@ nail_sort(
 \item{measure}{the type of measure used in the experiment.}
 
 \item{nb_max}{the maximum number of clusters the LLM can form per assessor.}
+
+\item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
 }
 \value{
 A list consisting of:
@@ -56,7 +59,7 @@ stringr::str_squish()
 
 res <- nail_sort(beard_wide[,1:5], name_size = 3,
 stimulus_id = "beard", introduction = intro_beard,
-measure = 'the description was')
+measure = 'the description was', generate = TRUE)
 
 res$dta_sort
 cat(res$prompt_llm[[1]])

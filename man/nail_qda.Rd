@@ -9,13 +9,13 @@ nail_qda(
   formul,
   firstvar,
   lastvar = length(colnames(dataset)),
-  introduction = "",
+  introduction = NULL,
   request = NULL,
   model = "llama3",
   isolate.groups = FALSE,
   drop.negative = FALSE,
   proba = 0.05,
-  generate = TRUE
+  generate = FALSE
 )
 }
 \arguments{

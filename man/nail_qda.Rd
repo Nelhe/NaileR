@@ -69,8 +69,8 @@ You will have to identify what sets these chocolates apart."
 intro_sensochoc <- gsub('\n', ' ', intro_sensochoc) |>
 stringr::str_squish()
 
-req_sensochoc <- "Please explain what makes each chocolate distinct
-and provide a sensory profile of each chocolate."
+req_sensochoc <- "Please explain what makes each chocolate different
+and provide a sensory profile of each chocolate, as well as a name."
 req_sensochoc <- gsub('\n', ' ', req_sensochoc) |>
 stringr::str_squish()
 
@@ -78,13 +78,14 @@ res_nail_qda <- nail_qda(sensochoc,
                          formul="~Product+Panelist",
                          firstvar = 5,
                          introduction = intro_sensochoc,
-                         request = NULL,
+                         request = req_sensochoc,
                          model = 'llama3',
                          isolate.groups = FALSE,
                          drop.negative = FALSE,
                          proba = 0.05,
                          generate = TRUE)
 
+cat(res_nail_qda$prompt)
 cat(res_nail_qda$response)
 }
 }

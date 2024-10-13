@@ -67,7 +67,7 @@ get_prompt_qda = function(res_cd, introduction, request, isolate.groups, drop.ne
       qual = ifelse(is.null(stces_quali[[grp]]), '', stces_quali[[grp]])
       quant = ifelse(is.null(stces_quanti[[grp]]), '', stces_quanti[[grp]])
 
-      ppt_grp = glue('## Stimuli "{grp}":
+      ppt_grp = glue('## Stimulus "{grp}":
 
                    {quant}')
 
@@ -158,47 +158,57 @@ nail_qda = function(dataset,
                     formul,
                     firstvar,
                     lastvar = length(colnames(dataset)),
-                    introduction = '',
+                    introduction = NULL,
                     request = NULL,
                     model = 'llama3',
                     isolate.groups = FALSE,
                     drop.negative = FALSE,
                     proba = 0.05,
-                    generate = TRUE){
+                    generate = FALSE){
 
-
-    #if (is.null(request)) request <- "Based on the results, please describe what characterizes the stimuli and what sets them apart. Then, based on these characteristics, give each stimulus a new name."
-
-    if (isolate.groups == F){
-      if (is.null(request)) request <- "Based on the results, please describe what characterize the stimuli and what set them apart. Then, based on these characteristics, give each stimulus a new name."
-    } else {
-      if (is.null(request)) request <- "Based on the results, please describe that particular stimulus according to its specific features. Then, based on these characteristics, give the stimulus a new name."
-    }
-
-    res_cd = SensoMineR::decat(dataset, formul = formul, firstvar = firstvar, lastvar = lastvar, proba = proba, graph = FALSE)
-
-    names(res_cd)[6] <- "quanti"
-    for (i in 1:length(res_cd$quanti)){
-      colnames(res_cd$quanti[[i]])[3] <-  "p.value"
-      colnames(res_cd$quanti[[i]])[4] <- "v.test"
-    }
-
-    ppt = get_prompt_qda(res_cd, introduction = introduction, request = request,
-                         isolate.groups = isolate.groups, drop.negative = drop.negative)
-
-    if (!generate) return(data.frame(prompt = ppt))
-
-    if (isolate.groups == F){
-      res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
-      res_llm$prompt = ppt
-      return(res_llm)
-    } else {
-      list_rep = list()
-      for (prpt in ppt){
-        res_llm = ollamar::generate(model = model, prompt = prpt, output = 'df')
-        res_llm$prompt = prpt
-        list_rep[[length(list_rep) + 1]] = res_llm
-      }
-      return(list_rep)
-    }
+  if (isolate.groups == F){
+    if (is.null(introduction)) introduction <- "For this study, some stimuli have been evaluated by panelists that used a common list of perceptual or sensory attributes."
+  } else {
+    if (is.null(introduction)) introduction <- "For this study, a stimulus has been evaluated by panelists that used a common list of perceptual or sensory attributes."
   }
+
+  if (isolate.groups == F){
+    if (is.null(request)) request <- "Based on the results, please describe what characterize the stimuli and what set them apart. Then, based on these characteristics, give each stimulus a new name."
+  } else {
+    if (is.null(request)) request <- "Based on the results, please describe that particular stimulus according to its specific features. Then, based on these characteristics, give the stimulus a new name."
+  }
+
+  res_cd = SensoMineR::decat(dataset, formul = formul, firstvar = firstvar, lastvar = lastvar, proba = proba, graph = FALSE)
+
+  names(res_cd)[6] <- "quanti"
+  for (i in 1:length(res_cd$quanti)){
+    colnames(res_cd$quanti[[i]])[3] <-  "p.value"
+    colnames(res_cd$quanti[[i]])[4] <- "v.test"
+  }
+
+  ppt = get_prompt_qda(res_cd, introduction = introduction, request = request,
+                       isolate.groups = isolate.groups, drop.negative = drop.negative)
+
+  if (!generate) return(ppt)
+
+  if (isolate.groups == F){
+    list_res = list()
+    res_llm = ollamar::generate(model = model, prompt = ppt,
+                                output = 'text')
+    list_res$prompt <- ppt
+    list_res$response <- res_llm
+    list_res$model <- model
+    return(list_res)
+  } else {
+    list_rep = list()
+    for (prpt in ppt){
+      list_res = list()
+      res_llm = ollamar::generate(model = model, prompt = prpt, output = 'text')
+      list_res$prompt <- prpt
+      list_res$response <- res_llm
+      list_res$model <- model
+      list_rep[[length(list_rep) + 1]] = list_res
+    }
+    return(list_rep)
+  }
+}

@@ -54,12 +54,12 @@ get_sentences_quali = function(res_cd, drop.negative){
 
       ppt1 = ifelse(nrow(more) == 0,
                     "",
-                    glue('The following answers appear *more* often:
+                    glue('Observations in this group are *more* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its strong association:
 {paste(more$Sentence, collapse = "\n")}'))
 
       ppt2 = ifelse(nrow(less) == 0,
                     "",
-                    glue('The following answers appear *less* often:
+                    glue('Observations in this group are *less* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its weak association:
 {paste(less$Sentence, collapse = "\n")}'))
 
       ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
@@ -98,12 +98,12 @@ get_sentences_quanti = function(res_cd, drop.negative){
 
       ppt1 = ifelse(nchar(left) == 0,
                     '',
-                    glue('The following variables are *higher*:
+                    glue('Observations in this group have quite *high* values for the following variables:
                        {left}'))
 
       ppt2 = ifelse(nchar(right) == 0,
                     '',
-                    glue('The following variables are *lower*:
+                    glue('Observations in this group have quite *low* values for the following variables:
                        {right}'))
 
       ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
@@ -207,7 +207,9 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' stringr::str_squish()
 #'
 #' res_iris <- nail_catdes(iris, num.var = 5,
-#' introduction = intro_iris, request = req_iris)
+#' introduction = intro_iris,
+#' request = req_iris,
+#' generate = TRUE)
 #' cat(res_iris$response)
 #'
 #'
@@ -244,8 +246,10 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #'
 #' res_waste <- nail_catdes(don_clust_waste,
 #' num.var = ncol(don_clust_waste),
-#' introduction = intro_waste, request = req_waste,
-#' drop.negative = TRUE)
+#' introduction = intro_waste,
+#' request = req_waste,
+#' drop.negative = TRUE,
+#' generate = TRUE)
 #'
 #' cat(res_waste$response)
 #'
@@ -287,7 +291,9 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' res_food <- nail_catdes(don_clust_food, num.var = 64,
 #' introduction = intro_food,
 #' request = req_food,
-#' isolate.groups = TRUE, drop.negative = TRUE)
+#' isolate.groups = TRUE,
+#' drop.negative = TRUE,
+#' generate = TRUE)
 #'
 #' res_food[[1]]$response |> cat()
 #' res_food[[2]]$response |> cat()
@@ -295,19 +301,20 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' }
 
 nail_catdes = function(dataset, num.var,
-                       introduction = '',
+                       introduction = NULL,
                        request = NULL,
                        model = 'llama3', isolate.groups = FALSE, drop.negative = FALSE,
                        proba = 0.05, row.w = NULL,
-                       generate = TRUE){
+                       generate = FALSE){
 
 
   #if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
+  if (is.null(introduction)) introduction <- "For this study, observations were grouped according to their similarities."
 
   if (isolate.groups == F){
-    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of each group and what set them apart from the other groups. Then, based on these characteristics, give each group a new name."
+    if (is.null(request)) request <- "Based on the results, please describe what characterize the observations of each group and what set them apart from the other groups. Then, based on these characteristics, give each group a new name."
   } else {
-    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of this group and what make them so special. Then, based on these characteristics, give the group a new name."
+    if (is.null(request)) request <- "Based on the results, please describe what characterize the observations of this group and what make them so special. Then, based on these characteristics, give the group a new name."
   }
 
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
@@ -315,7 +322,8 @@ nail_catdes = function(dataset, num.var,
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
                           isolate.groups = isolate.groups, drop.negative = drop.negative)
 
-  if (!generate) return(data.frame(prompt = ppt))
+  #if (!generate) return(data.frame(prompt = ppt))
+  if (!generate) return(ppt)
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

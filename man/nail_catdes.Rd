@@ -7,14 +7,14 @@
 nail_catdes(
   dataset,
   num.var,
-  introduction = "",
+  introduction = NULL,
   request = NULL,
   model = "llama3",
   isolate.groups = FALSE,
   drop.negative = FALSE,
   proba = 0.05,
   row.w = NULL,
-  generate = TRUE
+  generate = FALSE
 )
 }
 \arguments{
@@ -72,7 +72,9 @@ req_iris <- gsub('\n', ' ', req_iris) |>
 stringr::str_squish()
 
 res_iris <- nail_catdes(iris, num.var = 5,
-introduction = intro_iris, request = req_iris)
+introduction = intro_iris,
+request = req_iris,
+generate = TRUE)
 cat(res_iris$response)
 
 
@@ -109,8 +111,10 @@ stringr::str_squish()
 
 res_waste <- nail_catdes(don_clust_waste,
 num.var = ncol(don_clust_waste),
-introduction = intro_waste, request = req_waste,
-drop.negative = TRUE)
+introduction = intro_waste,
+request = req_waste,
+drop.negative = TRUE,
+generate = TRUE)
 
 cat(res_waste$response)
 
@@ -152,7 +156,9 @@ stringr::str_squish()
 res_food <- nail_catdes(don_clust_food, num.var = 64,
 introduction = intro_food,
 request = req_food,
-isolate.groups = TRUE, drop.negative = TRUE)
+isolate.groups = TRUE,
+drop.negative = TRUE,
+generate = TRUE)
 
 res_food[[1]]$response |> cat()
 res_food[[2]]$response |> cat()

@@ -63,14 +63,10 @@ get_sentences_condes = function(res_cd){
     filter(Estimate > 0) |>
     mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
 
-  ppt1 = glue('## Left side of the scale
-
-The individuals have the following characteristics:
+  ppt1 = glue('## On the *left* side of the scale, the observations have the following characteristics for the following measures:
 {paste(left$Sentence, collapse = "\n")}')
 
-  ppt2 = glue('## Right side of the scale
-
-The individuals have the following characteristics:
+  ppt2 = glue('## On the *right* side of the scale, the observations have the following characteristics for the following measures:
 {paste(right$Sentence, collapse = "\n")}')
 
   return(paste(ppt1, ppt2, sep = '\n\n'))
@@ -136,7 +132,8 @@ The individuals have the following characteristics:
 #'
 #' res_deca <- nail_condes(deca_work, num.var = 1,
 #' quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'),
-#' introduction = intro_deca)
+#' introduction = intro_deca,
+#' generate = TRUE)
 #'
 #' cat(res_deca$response)
 #'
@@ -163,7 +160,8 @@ The individuals have the following characteristics:
 #' stringr::str_squish()
 #'
 #' res_agri <- nail_condes(agri_work, num.var = 1,
-#' introduction = intro_agri)
+#' introduction = intro_agri,
+#' generate = TRUE)
 #' cat(res_agri$response)
 #'
 #'
@@ -189,7 +187,8 @@ The individuals have the following characteristics:
 #' stringr::str_squish()
 #'
 #' res_phobia <- nail_condes(phobia_work, num.var = 1,
-#' introduction = intro_phobia)
+#' introduction = intro_phobia,
+#' generate = TRUE)
 #' cat(res_phobia$response)
 #'
 #'
@@ -217,10 +216,10 @@ The individuals have the following characteristics:
 #'
 #' res_beard <- nail_condes(beard_work, num.var = 1,
 #' quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'),
-#' introduction = intro_beard, request = req_beard,
-#' generate = FALSE)
+#' introduction = intro_beard,
+#' request = req_beard)
 #'
-#' cat(res_beard$prompt)
+#' res_beard
 #'
 #' ppt <- stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
 #' cat(ppt)
@@ -231,14 +230,16 @@ The individuals have the following characteristics:
 #' }
 
 nail_condes = function(dataset, num.var,
-                       introduction = '',
+                       introduction = NULL,
                        request = NULL,
                        model = 'llama3',
                        quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
-                       generate = TRUE){
+                       generate = FALSE){
 
-  if (is.null(request)) request <- 'Please explain what differentiates individuals from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
+  if (is.null(introduction)) introduction <- "Observations were placed on a quantitative scale."
+
+  if (is.null(request)) request <- 'Please explain what differentiates observations from both sides of the scale. Then give a name to the scale, and briefly explain why you chose that name.'
   dta = get_bins(dataset, keep = num.var, quanti.threshold = quanti.threshold, quanti.cat = quanti.cat)
 
   res_cd = FactoMineR::condes(dta[-(num.var + 1)], 1, weights = weights, proba = proba)
@@ -255,7 +256,8 @@ nail_condes = function(dataset, num.var,
 
              {get_sentences_condes(res_cd)}")
 
-  if (!generate) return(data.frame(prompt = ppt))
+  #if (!generate) return(data.frame(prompt = ppt))
+  if (!generate) return(ppt)
 
   res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
   res_llm$prompt = ppt

@@ -7,14 +7,14 @@
 nail_condes(
   dataset,
   num.var,
-  introduction = "",
+  introduction = NULL,
   request = NULL,
   model = "llama3",
   quanti.threshold = 0,
   quanti.cat = c("Significantly above average", "Significantly below average", "Average"),
   weights = NULL,
   proba = 0.05,
-  generate = TRUE
+  generate = FALSE
 )
 }
 \arguments{
@@ -85,7 +85,8 @@ stringr::str_squish()
 
 res_deca <- nail_condes(deca_work, num.var = 1,
 quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'),
-introduction = intro_deca)
+introduction = intro_deca,
+generate = TRUE)
 
 cat(res_deca$response)
 
@@ -112,7 +113,8 @@ intro_agri <- gsub('\n', ' ', intro_agri) |>
 stringr::str_squish()
 
 res_agri <- nail_condes(agri_work, num.var = 1,
-introduction = intro_agri)
+introduction = intro_agri,
+generate = TRUE)
 cat(res_agri$response)
 
 
@@ -138,7 +140,8 @@ intro_phobia <- gsub('\n', ' ', intro_phobia) |>
 stringr::str_squish()
 
 res_phobia <- nail_condes(phobia_work, num.var = 1,
-introduction = intro_phobia)
+introduction = intro_phobia,
+generate = TRUE)
 cat(res_phobia$response)
 
 
@@ -166,10 +169,10 @@ stringr::str_squish()
 
 res_beard <- nail_condes(beard_work, num.var = 1,
 quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'),
-introduction = intro_beard, request = req_beard,
-generate = FALSE)
+introduction = intro_beard,
+request = req_beard)
 
-cat(res_beard$prompt)
+res_beard
 
 ppt <- stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
 cat(ppt)

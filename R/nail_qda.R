@@ -32,12 +32,18 @@ get_sentences_qda <- function(res_cd, drop.negative){
         ppt1 = ifelse(nchar(left) == 0,
                       '',
                       glue('For the following perceptual attributes, this stimulus has been scored with rather *high* values compared to the average over all stimuli; attributes have been sorted from the most discriminative one to the less discriminative one:
-                       {left}'))
+
+                       {left}
+
+                           '))
 
         ppt2 = ifelse(nchar(right) == 0,
                       '',
                       glue('For the following perceptual attributes, this stimulus has been scored with rather *low* values compared to the average over all stimuli; attributes have been sorted from the most discriminative one to the less discriminative one:
-                       {right}'))
+
+                       {right}
+
+                           '))
 
         ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
 
@@ -76,7 +82,8 @@ get_prompt_qda = function(res_cd, introduction, request, isolate.groups, drop.ne
 
     if (!isolate.groups) stces = paste(stces, collapse = '\n\n')
 
-    deb = glue('# Introduction
+    deb = glue('
+             # Introduction
 
              {introduction}
 
@@ -121,7 +128,7 @@ get_prompt_qda = function(res_cd, introduction, request, isolate.groups, drop.ne
 #' # Processing time is often longer than ten seconds
 #' # because the function uses a large language model.
 #'
-#' ### Example 1: QDA data on chocolates  ###
+#' ### Example 1: QDA data on chocolates with isolate.groups = FALSE ###
 #' library(NaileR)
 #' library(SensoMineR)
 #' data(chocolates)
@@ -151,6 +158,37 @@ get_prompt_qda = function(res_cd, introduction, request, isolate.groups, drop.ne
 #'
 #' cat(res_nail_qda$prompt)
 #' cat(res_nail_qda$response)
+#'
+#' ### Example 2: QDA data on chocolates with isolate.groups = TRUE ###
+#' library(NaileR)
+#' library(SensoMineR)
+#' data(chocolates)
+#'
+#' intro_sensochoc <- "A chocolate was measured according
+#' to sensory attributes by a trained panel.
+#' I will give you the results from this study.
+#' You will have to identify the characteristics of this chocolate."
+#' intro_sensochoc <- gsub('\n', ' ', intro_sensochoc) |>
+#' stringr::str_squish()
+#'
+#' req_sensochoc <- "Please provide a detailed sensory profile for this chocolate,
+#' as well as a name."
+#' req_sensochoc <- gsub('\n', ' ', req_sensochoc) |>
+#' stringr::str_squish()
+#'
+#' res_nail_qda <- nail_qda(sensochoc,
+#'                          formul="~Product+Panelist",
+#'                          firstvar = 5,
+#'                          introduction = intro_sensochoc,
+#'                          request = req_sensochoc,
+#'                          model = 'llama3',
+#'                          isolate.groups = TRUE,
+#'                          drop.negative = FALSE,
+#'                          proba = 0.05,
+#'                          generate = TRUE)
+#'
+#' cat(res_nail_qda[[1]]$prompt)
+#' cat(res_nail_qda[[1]]$response)
 #' }
 
 #' @importFrom SensoMineR decat

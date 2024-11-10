@@ -99,10 +99,11 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' res_beard <- nail_descfreq(beard_cont,
 #' introduction = intro_beard_iso,
 #' request = req_beard_iso,
-#' isolate.groups = TRUE, generate = FALSE)
+#' isolate.groups = TRUE,
+#' generate = FALSE)
 #'
-#' res_beard$prompt[1]
-#' res_beard$prompt[2]
+#' res_beard[[1]]
+#' res_beard[[2]]
 #'
 #' intro_beard <- 'A survey was conducted about beards
 #' and 8 types of beards were described.
@@ -117,7 +118,8 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #'
 #' res_beard <- nail_descfreq(beard_cont,
 #' introduction = intro_beard,
-#' request = req_beard)
+#' request = req_beard,
+#' generate = TRUE)
 #' cat(res_beard$response)
 #'
 #' text <- res_beard$response
@@ -164,20 +166,22 @@ get_sentences_descfreq = function(res_df, isolate.groups){
 #' stringr::str_squish()
 #'
 #' res_children <- nail_descfreq(children,
-#' introduction = intro_children, request = req_children)
+#' introduction = intro_children,
+#' request = req_children,
+#' generate = TRUE)
 #'
 #' cat(res_children$response)
 #' }
 
 
 nail_descfreq = function(dataset,
-                         introduction = '',
+                         introduction = NULL,
                          request = NULL,
                          model = 'llama3', isolate.groups = FALSE,
                          by.quali = NULL, proba = 0.05,
-                         generate = TRUE){
+                         generate = FALSE){
 
-  #if (is.null(request)) request <- 'Based on the results, please describe what make each row unique.'
+  if (is.null(introduction)) introduction <- "The table we are going to analyse is a contingency table that allows to study the relationship between two qualitative variables. The row shows the categories of the first variable. The column shows the categories of the second variable. The cells show the number of observations that have both a modality of the 1st variable and a modality of the 2nd variable."
 
   if (isolate.groups == F){
     if (is.null(request)) request <- 'Based on the results, please describe what make each row unique.'
@@ -199,7 +203,7 @@ nail_descfreq = function(dataset,
 
              {get_sentences_descfreq(res_df, isolate.groups = isolate.groups)}")
 
-  if (!generate) return(data.frame(prompt = ppt))
+  if (!generate) return(ppt)
 
   if (isolate.groups == F){
     res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')

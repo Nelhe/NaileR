@@ -75,8 +75,8 @@ res_iris <- nail_catdes(iris, num.var = 5,
 introduction = intro_iris,
 request = req_iris,
 generate = TRUE)
-cat(res_iris$response)
 
+cat(res_iris$response)
 
 ### Example 2: food waste dataset ###
 

@@ -210,8 +210,8 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' introduction = intro_iris,
 #' request = req_iris,
 #' generate = TRUE)
-#' cat(res_iris$response)
 #'
+#' cat(res_iris$response)
 #'
 #' ### Example 2: food waste dataset ###
 #'

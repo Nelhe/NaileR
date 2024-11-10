@@ -64,10 +64,10 @@ req_beard_iso <- gsub('\n', ' ', req_beard_iso) |>
 stringr::str_squish()
 
 res_beard <- nail_descfreq(beard_cont,
-introduction = intro_beard_iso,
-request = req_beard_iso,
-isolate.groups = TRUE,
-generate = FALSE)
+                           introduction = intro_beard_iso,
+                           request = req_beard_iso,
+                           isolate.groups = TRUE,
+                           generate = FALSE)
 
 res_beard[[1]]
 res_beard[[2]]
@@ -84,9 +84,10 @@ req_beard <- gsub('\n', ' ', req_beard) |>
 stringr::str_squish()
 
 res_beard <- nail_descfreq(beard_cont,
-introduction = intro_beard,
-request = req_beard,
-generate = TRUE)
+                           introduction = intro_beard,
+                           request = req_beard,
+                           generate = TRUE)
+
 cat(res_beard$response)
 
 text <- res_beard$response
@@ -133,9 +134,9 @@ req_children <- gsub('\n', ' ', req_children) |>
 stringr::str_squish()
 
 res_children <- nail_descfreq(children,
-introduction = intro_children,
-request = req_children,
-generate = TRUE)
+                              introduction = intro_children,
+                              request = req_children,
+                              generate = TRUE)
 
 cat(res_children$response)
 }

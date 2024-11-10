@@ -8,7 +8,7 @@ nail_textual(
   dataset,
   num.var,
   num.text,
-  introduction = "",
+  introduction = NULL,
   request = NULL,
   model = "llama3",
   isolate.groups = TRUE,
@@ -70,6 +70,7 @@ res_nail_textual <- nail_textual(sampled_car_alone, num.var = 1,
                                  request = NULL,
                                  model = 'llama3', isolate.groups = TRUE,
                                  generate = TRUE)
+
 res_nail_textual[[1]]$response |> cat()
 res_nail_textual[[3]]$response |> cat()
 res_nail_textual[[2]]$response |> cat()
@@ -100,12 +101,13 @@ sampled_dta_plane <- as.data.frame(sampled_dta_plane)
 summary(sampled_dta_plane)
 
 res_nail_textual_plane <- nail_textual(sampled_dta_plane, num.var = 2,
-                                      num.text = 1,
-                                      introduction = intro_atomic,
-                                      request = NULL,
-                                      model = 'llama3',
-                                      isolate.groups = TRUE,
-                                      generate = TRUE)
+                                       num.text = 1,
+                                       introduction = intro_atomic,
+                                       request = NULL,
+                                       model = 'llama3',
+                                       isolate.groups = TRUE,
+                                       generate = TRUE)
+
 cat(res_nail_textual_plane[[1]]$prompt)
 cat(res_nail_textual_plane[[1]]$response)
 
@@ -116,12 +118,13 @@ cat(res_nail_textual_plane[[3]]$prompt)
 cat(res_nail_textual_plane[[3]]$response)
 
 res_nail_textual_plane <- nail_textual(sampled_dta_plane, num.var = 2,
-                                      num.text = 1,
-                                      introduction = intro_atomic,
-                                      request = NULL,
-                                      model = 'llama3',
-                                      isolate.groups = FALSE,
-                                      generate = TRUE)
+                                       num.text = 1,
+                                       introduction = intro_atomic,
+                                       request = NULL,
+                                       model = 'llama3',
+                                       isolate.groups = FALSE,
+                                       generate = TRUE)
+
 cat(res_nail_textual_plane$prompt)
 cat(res_nail_textual_plane$response)
 
@@ -182,7 +185,7 @@ res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
                                         isolate.groups = TRUE,
                                         generate = FALSE)
 
-ppt <- res_nail_textual_fabric$prompt[1]
+ppt <- res_nail_textual_fabric[1]
 cat(ppt)
 
 res_disliking <- ollamar::generate(model = 'llama3', prompt = ppt,
@@ -210,10 +213,11 @@ res_nail_textual_fabric <- nail_textual(fabric, num.var = 4,
                                         num.text = 3,
                                         introduction = intro_car_liking,
                                         request = request_car_liking,
-                                        model = 'llama3', isolate.groups = TRUE,
+                                        model = 'llama3',
+                                        isolate.groups = TRUE,
                                         generate = FALSE)
 
-ppt <- res_nail_textual_fabric$prompt[2]
+ppt <- res_nail_textual_fabric[2]
 cat(ppt)
 
 res_liking <- ollamar::generate(model = 'llama3', prompt = ppt,
@@ -246,18 +250,17 @@ res_nail_textual_rorschach <- nail_textual(rorschach, num.var = 2,
                                            isolate.groups = TRUE,
                                            generate = FALSE)
 
-cat(res_nail_textual_rorschach$prompt[[10]])
+cat(res_nail_textual_rorschach[[10]])
 
-ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt[[10]])
+ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach[[10]])
 cat(ppt)
 
-res_inkblot_10 <- ollamar::generate(model = 'llama3', prompt = ppt,
-                                    output = "df")
+res_inkblot_10 <- ollamar::generate(model = 'llama3', prompt = ppt, output = "df")
 cat(res_inkblot_10$response)
 
-cat(res_nail_textual_rorschach$prompt[[5]])
+cat(res_nail_textual_rorschach[[5]])
 
-ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach$prompt[[5]])
+ppt <- gsub("## Group", "## Stimulus", res_nail_textual_rorschach[[5]])
 cat(ppt)
 
 res_inkblot_5 <- ollamar::generate(model = 'llama3', prompt = ppt,

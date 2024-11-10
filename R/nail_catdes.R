@@ -206,10 +206,11 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' req_iris <- gsub('\n', ' ', req_iris) |>
 #' stringr::str_squish()
 #'
-#' res_iris <- nail_catdes(iris, num.var = 5,
-#' introduction = intro_iris,
-#' request = req_iris,
-#' generate = TRUE)
+#' res_iris <- nail_catdes(iris,
+#'                         num.var = 5,
+#'                         introduction = intro_iris,
+#'                         request = req_iris,
+#'                         generate = TRUE)
 #'
 #' cat(res_iris$response)
 #'
@@ -245,11 +246,11 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' stringr::str_squish()
 #'
 #' res_waste <- nail_catdes(don_clust_waste,
-#' num.var = ncol(don_clust_waste),
-#' introduction = intro_waste,
-#' request = req_waste,
-#' drop.negative = TRUE,
-#' generate = TRUE)
+#'                          num.var = ncol(don_clust_waste),
+#'                          introduction = intro_waste,
+#'                          request = req_waste,
+#'                          drop.negative = TRUE,
+#'                          generate = TRUE)
 #'
 #' cat(res_waste$response)
 #'
@@ -288,12 +289,13 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' req_food <- gsub('\n', ' ', req_food) |>
 #' stringr::str_squish()
 #'
-#' res_food <- nail_catdes(don_clust_food, num.var = 64,
-#' introduction = intro_food,
-#' request = req_food,
-#' isolate.groups = TRUE,
-#' drop.negative = TRUE,
-#' generate = TRUE)
+#' res_food <- nail_catdes(don_clust_food,
+#'                         num.var = 64,
+#'                         introduction = intro_food,
+#'                         request = req_food,
+#'                         isolate.groups = TRUE,
+#'                         drop.negative = TRUE,
+#'                         generate = TRUE)
 #'
 #' res_food[[1]]$response |> cat()
 #' res_food[[2]]$response |> cat()
@@ -303,8 +305,11 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 nail_catdes = function(dataset, num.var,
                        introduction = NULL,
                        request = NULL,
-                       model = 'llama3', isolate.groups = FALSE, drop.negative = FALSE,
-                       proba = 0.05, row.w = NULL,
+                       model = 'llama3',
+                       isolate.groups = FALSE,
+                       drop.negative = FALSE,
+                       proba = 0.05,
+                       row.w = NULL,
                        generate = FALSE){
 
 

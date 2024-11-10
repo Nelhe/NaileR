@@ -130,10 +130,12 @@ get_sentences_condes = function(res_cd){
 #' intro_deca <- gsub('\n', ' ', intro_deca) |>
 #' stringr::str_squish()
 #'
-#' res_deca <- nail_condes(deca_work, num.var = 1,
-#' quanti.threshold = 1, quanti.cat = c('High', 'Low', 'Average'),
-#' introduction = intro_deca,
-#' generate = TRUE)
+#' res_deca <- nail_condes(deca_work,
+#'                         num.var = 1,
+#'                         quanti.threshold = 1,
+#'                         quanti.cat = c('High', 'Low', 'Average'),
+#'                         introduction = intro_deca,
+#'                         generate = TRUE)
 #'
 #' cat(res_deca$response)
 #'
@@ -159,11 +161,12 @@ get_sentences_condes = function(res_cd){
 #' intro_agri <- gsub('\n', ' ', intro_agri) |>
 #' stringr::str_squish()
 #'
-#' res_agri <- nail_condes(agri_work, num.var = 1,
-#' introduction = intro_agri,
-#' generate = TRUE)
-#' cat(res_agri$response)
+#' res_agri <- nail_condes(agri_work,
+#'                         num.var = 1,
+#'                         introduction = intro_agri,
+#'                         generate = TRUE)
 #'
+#' cat(res_agri$response)
 #'
 #' ### Example 3: glossophobia dataset ###
 #'
@@ -186,11 +189,12 @@ get_sentences_condes = function(res_cd){
 #' intro_phobia <- gsub('\n', ' ', intro_phobia) |>
 #' stringr::str_squish()
 #'
-#' res_phobia <- nail_condes(phobia_work, num.var = 1,
-#' introduction = intro_phobia,
-#' generate = TRUE)
-#' cat(res_phobia$response)
+#' res_phobia <- nail_condes(phobia_work,
+#'                           num.var = 1,
+#'                           introduction = intro_phobia,
+#'                           generate = TRUE)
 #'
+#' cat(res_phobia$response)
 #'
 #' ### Example 4: beard_cont dataset ###
 #'
@@ -214,26 +218,29 @@ get_sentences_condes = function(res_cd){
 #' req_beard <- gsub('\n', ' ', req_beard) |>
 #' stringr::str_squish()
 #'
-#' res_beard <- nail_condes(beard_work, num.var = 1,
-#' quanti.threshold = 0.5, quanti.cat = c('Very often', 'Never', 'Sometimes'),
-#' introduction = intro_beard,
-#' request = req_beard)
+#' res_beard <- nail_condes(beard_work,
+#'                          num.var = 1,
+#'                          quanti.threshold = 0.5,
+#'                          quanti.cat = c('Very often used', 'Never used', 'Sometimes used'),
+#'                          introduction = intro_beard,
+#'                          request = req_beard)
 #'
 #' res_beard
 #'
-#' ppt <- stringr::str_replace_all(res_beard$prompt, 'individuals', 'beards')
+#' ppt <- stringr::str_replace_all(res_beard, 'observations', 'beards')
 #' cat(ppt)
 #'
-#' res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'df')
+#' res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'text')
 #'
-#' cat(res_beard$response)
+#' cat(res_beard)
 #' }
 
 nail_condes = function(dataset, num.var,
                        introduction = NULL,
                        request = NULL,
                        model = 'llama3',
-                       quanti.threshold = 0, quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
+                       quanti.threshold = 0,
+                       quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
                        weights = NULL, proba = 0.05,
                        generate = FALSE){
 

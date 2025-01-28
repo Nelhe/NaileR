@@ -45,16 +45,14 @@
 #'                                            model = 'llama3',
 #'                                            isolate.groups = FALSE,
 #'                                            generate = FALSE)
+#' res_nail_textual_rorschach |> cat()
 #'
-#' cat(res_nail_textual_rorschach$prompt)
-#'
-#' ppt <- gsub("## Group", "## Inkblot", res_nail_textual_rorschach$prompt)
-#' cat(ppt)
+#' ppt <- gsub("## Group", "## Inkblot", res_nail_textual_rorschach)
+#' ppt |> cat()
 #'
 #' res_inkblot <- ollamar::generate(model = 'llama3', prompt = ppt,
-#'                                  output = "df")
-#'
-#' cat(res_inkblot$response)
+#'                                  output = "text")
+#' res_inkblot |> cat()
 #' }
 "rorschach"
 
@@ -106,7 +104,7 @@
 #'                                         model = 'llama3',
 #'                                         isolate.groups = FALSE,
 #'                                         generate = FALSE)
-#' cat(res_nail_textual_fabric$prompt)
+#' res_nail_textual_fabric |> cat()
 #'
 #' res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
 #'                                         num.text = 3,
@@ -115,7 +113,7 @@
 #'                                         model = 'llama3',
 #'                                         isolate.groups = FALSE,
 #'                                         generate = TRUE)
-#' cat(res_nail_textual_fabric$response)
+#' res_nail_textual_fabric$response |> cat()
 #' }
 "fabric"
 
@@ -320,7 +318,7 @@
 #' res_beard <- nail_descfreq(beard_cont,
 #' introduction = intro_beard,
 #' request = req_beard)
-#' cat(res_beard$response)
+#' res_beard
 #' }
 "beard_cont"
 
@@ -355,9 +353,7 @@
 #' res <- nail_sort(beard_wide[,1:5], name_size = 3,
 #' stimulus_id = "beard", introduction = intro_beard,
 #' measure = 'the description was')
-#'
-#' res$dta_sort
-#' cat(res$prompt_llm[[1]])
+#' res$prompt_llm[[1]] |> cat()
 #' }
 "beard_wide"
 
@@ -413,7 +409,7 @@
 #' introduction = intro_food,
 #' request = req_food,
 #' isolate.groups = TRUE, drop.negative = TRUE)
-#' res_food[[1]]$response |> cat()
+#' res_food[[1]] |> cat()
 #' }
 "local_food"
 
@@ -466,7 +462,7 @@
 #' res_boss <- nail_catdes(don_clust_boss, num.var = 40,
 #' introduction = intro_boss, request = req_boss,
 #' isolate.groups = FALSE, drop.negative = TRUE)
-#' res_boss$response |> cat()
+#' res_boss |> cat()
 #' }
 "boss"
 
@@ -506,7 +502,7 @@
 #'
 #' res_agri <- nail_condes(agri_work, num.var = 1,
 #' introduction = intro_agri)
-#' cat(res_agri$response)
+#' res_agri
 #' }
 "agri_studies"
 
@@ -546,7 +542,7 @@
 #'
 #' res_phobia <- nail_condes(phobia_work, num.var = 1,
 #' introduction = intro_phobia)
-#' cat(res_phobia$response)
+#' res_phobia
 #' }
 "glossophobia"
 
@@ -594,7 +590,7 @@
 #' num.var = ncol(don_clust_waste),
 #' introduction = intro_waste, request = req_waste,
 #' drop.negative = TRUE)
-#' cat(res_waste$response)
+#' res_waste |> cat()
 #' }
 "waste"
 
@@ -653,11 +649,10 @@
 #' quanti.cat = c('Higher quality', 'Lower quality', 'Neutral'),
 #' introduction = intro_quali, generate = FALSE)
 #'
-#' ppt <- gsub('characteristics', 'opinions', res_quality$prompt)
+#' ppt <- gsub('characteristics', 'opinions', res_quality)
 #'
 #' res_quality <- ollamar::generate('llama3', ppt, output = 'df')
-#'
-#' cat(res_quality$response)
+#' res_quality$response |> cat()
 #' }
 "quality"
 
@@ -706,7 +701,6 @@
 #' res_nutriscore <- nail_catdes(don_clust_nutriscore, num.var = 37,
 #' introduction = intro_nutri, request = req_nutri,
 #' drop.negative = TRUE)
-#'
-#' cat(res_nutriscore$response)
+#' res_nutriscore |> cat()
 #' }
 "nutriscore"

@@ -44,7 +44,7 @@ stringr::str_squish()
 
 res_agri <- nail_condes(agri_work, num.var = 1,
 introduction = intro_agri)
-cat(res_agri$response)
+res_agri
 }
 }
 \keyword{datasets}

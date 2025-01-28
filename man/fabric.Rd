@@ -56,7 +56,7 @@ res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
                                         model = 'llama3',
                                         isolate.groups = FALSE,
                                         generate = FALSE)
-cat(res_nail_textual_fabric$prompt)
+res_nail_textual_fabric |> cat()
 
 res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
                                         num.text = 3,
@@ -65,7 +65,7 @@ res_nail_textual_fabric <- nail_textual(fabric_A, num.var = 4,
                                         model = 'llama3',
                                         isolate.groups = FALSE,
                                         generate = TRUE)
-cat(res_nail_textual_fabric$response)
+res_nail_textual_fabric$response |> cat()
 }
 }
 \keyword{datasets}

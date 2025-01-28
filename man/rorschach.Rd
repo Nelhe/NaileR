@@ -54,16 +54,14 @@ res_nail_textual_rorschach <- nail_textual(rorschach_A, num.var = 2,
                                            model = 'llama3',
                                            isolate.groups = FALSE,
                                            generate = FALSE)
+res_nail_textual_rorschach |> cat()
 
-cat(res_nail_textual_rorschach$prompt)
-
-ppt <- gsub("## Group", "## Inkblot", res_nail_textual_rorschach$prompt)
-cat(ppt)
+ppt <- gsub("## Group", "## Inkblot", res_nail_textual_rorschach)
+ppt |> cat()
 
 res_inkblot <- ollamar::generate(model = 'llama3', prompt = ppt,
-                                 output = "df")
-
-cat(res_inkblot$response)
+                                 output = "text")
+res_inkblot |> cat()
 }
 }
 \keyword{datasets}

@@ -63,11 +63,10 @@ res_quality <- nail_condes(quali_work, num.var = 1,
 quanti.cat = c('Higher quality', 'Lower quality', 'Neutral'),
 introduction = intro_quali, generate = FALSE)
 
-ppt <- gsub('characteristics', 'opinions', res_quality$prompt)
+ppt <- gsub('characteristics', 'opinions', res_quality)
 
 res_quality <- ollamar::generate('llama3', ppt, output = 'df')
-
-cat(res_quality$response)
+res_quality$response |> cat()
 }
 }
 \keyword{datasets}

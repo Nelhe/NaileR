@@ -39,9 +39,7 @@ stringr::str_squish()
 res <- nail_sort(beard_wide[,1:5], name_size = 3,
 stimulus_id = "beard", introduction = intro_beard,
 measure = 'the description was')
-
-res$dta_sort
-cat(res$prompt_llm[[1]])
+res$prompt_llm[[1]] |> cat()
 }
 }
 \keyword{datasets}

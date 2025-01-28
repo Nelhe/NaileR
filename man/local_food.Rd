@@ -60,7 +60,7 @@ res_food <- nail_catdes(don_clust_food, num.var = 64,
 introduction = intro_food,
 request = req_food,
 isolate.groups = TRUE, drop.negative = TRUE)
-res_food[[1]]$response |> cat()
+res_food[[1]] |> cat()
 }
 }
 \keyword{datasets}

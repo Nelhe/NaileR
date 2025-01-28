@@ -49,7 +49,7 @@ res_waste <- nail_catdes(don_clust_waste,
 num.var = ncol(don_clust_waste),
 introduction = intro_waste, request = req_waste,
 drop.negative = TRUE)
-cat(res_waste$response)
+res_waste |> cat()
 }
 }
 \keyword{datasets}

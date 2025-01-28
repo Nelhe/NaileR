@@ -45,7 +45,7 @@ stringr::str_squish()
 res_beard <- nail_descfreq(beard_cont,
 introduction = intro_beard,
 request = req_beard)
-cat(res_beard$response)
+res_beard
 }
 }
 \keyword{datasets}

@@ -50,8 +50,7 @@ stringr::str_squish()
 res_nutriscore <- nail_catdes(don_clust_nutriscore, num.var = 37,
 introduction = intro_nutri, request = req_nutri,
 drop.negative = TRUE)
-
-cat(res_nutriscore$response)
+res_nutriscore |> cat()
 }
 }
 \keyword{datasets}

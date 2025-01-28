@@ -57,7 +57,7 @@ stringr::str_squish()
 res_boss <- nail_catdes(don_clust_boss, num.var = 40,
 introduction = intro_boss, request = req_boss,
 isolate.groups = FALSE, drop.negative = TRUE)
-res_boss$response |> cat()
+res_boss |> cat()
 }
 }
 \keyword{datasets}

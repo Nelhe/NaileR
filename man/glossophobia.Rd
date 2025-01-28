@@ -44,7 +44,7 @@ stringr::str_squish()
 
 res_phobia <- nail_condes(phobia_work, num.var = 1,
 introduction = intro_phobia)
-cat(res_phobia$response)
+res_phobia
 }
 }
 \keyword{datasets}

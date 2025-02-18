@@ -11,6 +11,7 @@ nail_qda(
   lastvar = length(colnames(dataset)),
   introduction = NULL,
   request = NULL,
+  conclusion = NULL,
   model = "llama3",
   isolate.groups = FALSE,
   drop.negative = FALSE,
@@ -30,6 +31,8 @@ nail_qda(
 \item{introduction}{the introduction for the LLM prompt.}
 
 \item{request}{the request for the LLM prompt.}
+
+\item{conclusion}{the conclusion for the LLM prompt.}
 
 \item{model}{the model name ('llama3' by default).}
 

@@ -11,6 +11,8 @@ nail_catdes(
   request = NULL,
   model = "llama3",
   isolate.groups = FALSE,
+  quali.sample = 1,
+  quanti.sample = 1,
   drop.negative = FALSE,
   proba = 0.05,
   row.w = NULL,
@@ -29,6 +31,10 @@ nail_catdes(
 \item{model}{the model name ('llama3' by default).}
 
 \item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.}
+
+\item{quali.sample}{from 0 to 1, the proportion of qualitative features that are randomly kept.}
+
+\item{quanti.sample}{from 0 to 1, the proportion of quantitative features that are randomly kept.}
 
 \item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.}
 

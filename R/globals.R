@@ -6,4 +6,6 @@ utils::globalVariables(c(".",
                          'v.test',
                          'p.value',
                          'V1',
-                         'V2'))
+                         'V2',
+                         "bin",
+                         ".data"))

@@ -22,11 +22,12 @@ tidy_answer_catdes = function(texte){
 #' @importFrom dplyr filter
 #' @importFrom glue glue
 
-get_sentences_quali = function(res_cd, drop.negative){
+get_sentences_quali = function(res_cd, quali.sample, drop.negative){
   res_cd = res_cd$category
   ppts = list()
 
   for (i in c(1:length(names(res_cd)))){
+    res_cd[[i]] <- sample_numeric_distribution(as.data.frame(res_cd[[i]]), num_var_index = 5, sample_pct = quali.sample, method = "stratified", bins = 5)
     res_cd2 = res_cd[[i]]
 
     if (!is.null(res_cd2)){
@@ -73,12 +74,15 @@ get_sentences_quali = function(res_cd, drop.negative){
 
 #' @importFrom dplyr select
 
-get_sentences_quanti = function(res_cd, drop.negative){
+get_sentences_quanti = function(res_cd, quanti.sample, drop.negative){
 
   res_cd = res_cd$quanti
   ppts = list()
 
   for (i in c(1:length(names(res_cd)))){
+
+    res_cd[[i]] <- sample_numeric_distribution(as.data.frame(res_cd[[i]]), num_var_index = 1, sample_pct = quanti.sample, method = "stratified", bins = 5)
+
     if (!is.null(res_cd[[i]])){
 
       res_cd_work = res_cd[[i]] |>
@@ -115,14 +119,14 @@ get_sentences_quanti = function(res_cd, drop.negative){
 }
 
 
-get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop.negative){
+get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, quali.sample, quanti.sample, drop.negative){
 
   if ("category" %in% names(res_cd)){
-    stces_quali = get_sentences_quali(res_cd, drop.negative)
+    stces_quali = get_sentences_quali(res_cd, quali.sample, drop.negative)
   } else stces_quali = list()
 
   if ("quanti" %in% names(res_cd)){
-    stces_quanti = get_sentences_quanti(res_cd, drop.negative)
+    stces_quanti = get_sentences_quanti(res_cd, quanti.sample, drop.negative)
   } else stces_quanti = list()
 
   if (nchar(stces_quali[1]) == 0 & nchar(stces_quanti[1]) == 0) stop('No significant differences between groups, execution was halted.')
@@ -161,6 +165,85 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
   return(paste(deb, stces, sep = ''))
 }
 
+#' @importFrom tibble rownames_to_column column_to_rownames
+#' @importFrom dplyr slice_sample group_by
+#' @importFrom stats quantile
+#' @importFrom rlang sym
+
+sample_numeric_distribution <- function(data, num_var_index, sample_pct, method = "stratified", bins = 5, return_matrix = TRUE, seed = NULL) {
+
+  # Extract variable name
+  num_var <- colnames(data)[num_var_index]
+
+  # Ensure numeric variable
+  if (!is.numeric(data[[num_var]])) {
+    stop("The selected column is not numeric.")
+  }
+
+  # Convert row names to a column to preserve them
+  data <- tibble::rownames_to_column(data, var = "OriginalRowName")
+
+  # Set seed for reproducibility if specified
+  if (!is.null(seed)) set.seed(seed)
+
+  # Calculate sample size based on percentage
+  sample_size <- max(1, round(nrow(data) * sample_pct))
+
+  if (method == "probability") {
+    # Ensure values are positive for probability weights
+    data$prob <- data[[num_var]] - min(data[[num_var]], na.rm = TRUE) + 1
+
+    # Normalize probabilities to sum to 1
+    data$prob <- data$prob / sum(data$prob, na.rm = TRUE)
+
+    # Sample rows with probability proportional to num_var
+    sampled_data <- data[sample(1:nrow(data), size = sample_size, prob = data$prob, replace = FALSE), ]
+
+  } else if (method == "stratified") {
+    # Ensure bins do not exceed unique values
+    bins <- min(bins, length(unique(data[[num_var]])) - 1)
+
+    # Handle case where all values are identical (avoid cut() failure)
+    if (bins < 1) {
+      warning("Not enough unique values for stratified sampling. Defaulting to random sampling.")
+      sampled_data <- dplyr::slice_sample(data, n = sample_size, replace = FALSE)
+    } else {
+      # Create bins using quantiles, ensuring unique breakpoints
+      breaks <- unique(quantile(data[[num_var]], probs = seq(0, 1, length.out = bins + 1), na.rm = TRUE))
+
+      # Avoid cut() failure due to non-unique breaks
+      if (length(breaks) <= 1) {
+        warning("Insufficient variation in data. Using random sampling.")
+        sampled_data <- dplyr::slice_sample(data, n = sample_size, replace = FALSE)
+      } else {
+        # Create bins
+        data$bin <- cut(data[[num_var]], breaks = breaks, include.lowest = TRUE, labels = FALSE)
+
+        # Sample proportionally from each bin
+        sampled_data <- data %>%
+          dplyr::group_by(bin) %>%
+          dplyr::filter(dplyr::n() > 0) %>%  # Avoid empty bins
+          dplyr::slice_sample(n = max(1, round(sample_size / bins)), replace = FALSE) %>%
+          dplyr::ungroup() %>%
+          dplyr::select(-bin)  # Remove bin column
+      }
+    }
+  } else {
+    stop("Invalid method. Choose 'probability' or 'stratified'.")
+  }
+
+  # Convert back to a matrix or return data frame
+  sampled_data <- sampled_data %>%
+    dplyr::arrange(dplyr::desc(.data[[num_var]])) %>%  # Correct dynamic reference
+    tibble::column_to_rownames(var = "OriginalRowName")
+
+  if (return_matrix) {
+    return(as.matrix(sampled_data))
+  } else {
+    return(sampled_data)
+  }
+}
+
 #' Interpret a categorical latent variable
 #'
 #' Generate an LLM response to analyze a categorical latent variable.
@@ -171,6 +254,8 @@ get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, drop
 #' @param request the request made to the LLM.
 #' @param model the model name ('llama3' by default).
 #' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.
+#' @param quali.sample from 0 to 1, the proportion of qualitative features that are randomly kept.
+#' @param quanti.sample from 0 to 1, the proportion of quantitative features that are randomly kept.
 #' @param drop.negative a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.
 #' @param proba the significance threshold considered to characterize the categories (by default 0.05).
 #' @param row.w a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)
@@ -307,6 +392,8 @@ nail_catdes = function(dataset, num.var,
                        request = NULL,
                        model = 'llama3',
                        isolate.groups = FALSE,
+                       quali.sample = 1,
+                       quanti.sample = 1,
                        drop.negative = FALSE,
                        proba = 0.05,
                        row.w = NULL,
@@ -325,7 +412,8 @@ nail_catdes = function(dataset, num.var,
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 
   ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
-                          isolate.groups = isolate.groups, drop.negative = drop.negative)
+                          isolate.groups = isolate.groups, quali.sample = quali.sample,
+                          quanti.sample = quanti.sample, drop.negative = drop.negative)
 
   #if (!generate) return(data.frame(prompt = ppt))
   if (!generate) return(ppt)

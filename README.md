@@ -37,7 +37,7 @@ library(NaileR)
 
 ## Usage
 
-'NaileR' currently features 9 datasets and 7 functions.
+'NaileR' currently features 15 datasets and 9 functions.
 
 ### Datasets
 
@@ -48,16 +48,22 @@ library(NaileR)
 * local_food: contains the results of a Q method-like survey on sustainable food systems
 * quality: contains the results of a survey on French food certification logos
 * waste: contains the results of a survey on food waste
+* rorschach: this dataset was initially collected to understand the perception of the Rorschach test
+* fabric: this dataset was initially collected to understand the free jar data
+* atomic_habit, car_alone, atomic_habit_clust: a survey for understanding atomic habits
+* nutriscore: these data were collected after a survey on the nutri-score
 
 ### Functions
 
 * nail_catdes(): performs a catdes analysis on a dataset and describes each category
 * nail_condes(): performs a condes analysis on a dataset and describes the chosen continuous variable
 * nail_descfreq(): performs a descfreq analysis on a contingency table and describes the rows
+* nail_textual(): generate an LLM response to analyze a categorical latent variable, based on answers to open-ended questions
+* nail_qda(): performs a decat analysis on QDA dara and describes the stimuli
+* nail_sort(): performs clustering on textual data from sensometrics experiments
 * sim_llm(): computes the similarity between texts
 * dist_mat_llm(): computes a distance matrix based on sim_llm
 * dist_ref_llm(): computes a distance vector based on sim_llm
-* nail_sort(): performs clustering on textual data from sensometrics experiments
 
 ## Example
 

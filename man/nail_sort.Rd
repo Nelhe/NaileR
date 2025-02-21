@@ -7,11 +7,13 @@
 nail_sort(
   dataset,
   name_size = 3,
-  stimulus_id = "stimulus",
-  introduction = "",
-  measure = "",
-  nb_max = 6,
-  generate = FALSE
+  stimulus_id = "individual",
+  introduction = NULL,
+  measure = NULL,
+  model = "llama3.1",
+  nb.clusters = 4,
+  generate = FALSE,
+  max.attempts = 5
 )
 }
 \arguments{
@@ -25,14 +27,19 @@ nail_sort(
 
 \item{measure}{the type of measure used in the experiment.}
 
-\item{nb_max}{the maximum number of clusters the LLM can form per assessor.}
+\item{model}{the model name ('llama3.1' by default).}
+
+\item{nb.clusters}{the maximum number of clusters the LLM can form per assessor.}
 
 \item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
+
+\item{max.attempts}{the maximum number of attempts for a column.}
 }
 \value{
 A list consisting of:
 \itemize{
 \item a list of prompts (one per assessor);
+\item a list of results (one per assessor);
 \item a data frame with the group names.
 }
 }

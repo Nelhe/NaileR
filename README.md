@@ -14,7 +14,7 @@
 
 ## Overview
 
-Thanks to the Ollama API that allows to use Large Language Model (LLM) locally, we developed a small package designed for interpreting continuous or categorical latent variables. You provide a data set with a latent variable you want to understand and some other explanatory variables. It provides a description of the latent variable based on the explanatory variables. It also provides a name to the latent variable. 'NaileR' in an R package that uses convenience functions offered by the <a href="https://CRAN.R-project.org/package=FactoMineR">'FactoMineR' package</a> (condes(), catdes(), descfreq()) in conjunction with the <a href="https://CRAN.R-project.org/package=ollamar">'ollamar' package</a>.
+Thanks to the Ollama API that allows to use Large Language Model (LLM) locally, we developed a small package designed for interpreting continuous or categorical latent variables. You provide a data set with a latent variable you want to understand and some other explanatory variables. It provides a description of the latent variable based on the explanatory variables. It also provides a name to the latent variable. 'NaileR' is an R package that uses convenience functions offered by the <a href="https://CRAN.R-project.org/package=FactoMineR">'FactoMineR' package</a> (condes(), catdes(), descfreq()) in conjunction with the <a href="https://CRAN.R-project.org/package=ollamar">'ollamar' package</a>.
 
 Its two main goals are to:
 * generate latent variables descriptions with the help of AI

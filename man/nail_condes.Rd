@@ -12,6 +12,7 @@ nail_condes(
   model = "llama3",
   quanti.threshold = 0,
   quanti.cat = c("Significantly above average", "Significantly below average", "Average"),
+  sample.pct = 1,
   weights = NULL,
   proba = 0.05,
   generate = FALSE
@@ -31,6 +32,8 @@ nail_condes(
 \item{quanti.threshold}{the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical ones.}
 
 \item{quanti.cat}{a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".}
+
+\item{sample.pct}{the proportion of features to be sampled.}
 
 \item{weights}{weights for the individuals (see \code{\link[FactoMineR:condes]{FactoMineR::condes()}}).}
 

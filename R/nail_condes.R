@@ -41,12 +41,13 @@ get_bins = function(dataset, keep, quanti.threshold, quanti.cat){
 }
 
 
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter desc
 #' @importFrom glue glue
 
-get_sentences_condes = function(res_cd){
+get_sentences_condes = function(res_cd, sample.pct){
 
   res_cd = res_cd$category
+  res_cd <- sample_stratified(as.data.frame(res_cd), num_var_index = 1, sample.pct = sample.pct, bins = 5, return.matrix = TRUE, seed = NULL)
 
   res_cd_work = rownames(res_cd) |>
     sapply(tidy_answer_condes) |>
@@ -58,20 +59,88 @@ get_sentences_condes = function(res_cd){
 
   left = res_cd_work |>
     filter(Estimate < 0) |>
+    arrange(dplyr::desc(Estimate)) |>
     mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
   right = res_cd_work |>
     filter(Estimate > 0) |>
+    arrange(dplyr::desc(Estimate)) |>
     mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
 
-  ppt1 = glue('## On the *left* side of the scale, the observations have the following characteristics for the following measures:
+  ppt1 = glue('## On the *left* side of the scale, observations are significantly associated with the following features. These features are ranked from the most to the least significant:
 {paste(left$Sentence, collapse = "\n")}')
 
-  ppt2 = glue('## On the *right* side of the scale, the observations have the following characteristics for the following measures:
+  ppt2 = glue('## On the *right* side of the scale, observations are significantly associated with the following features. These features are ranked from the most to the least significant:
 {paste(right$Sentence, collapse = "\n")}')
 
   return(paste(ppt1, ppt2, sep = '\n\n'))
 }
 
+#' @importFrom tibble rownames_to_column column_to_rownames
+#' @importFrom dplyr slice_sample group_by select ungroup
+#' @importFrom stats quantile
+
+sample_stratified <- function(data, num_var_index, sample.pct, bins = 5, return.matrix = TRUE, seed = NULL) {
+
+  # Return NULL if data is NULL or empty
+  if (is.null(data) || nrow(data) == 0) {
+    return(NULL)
+  }
+
+  # Extract variable name
+  num_var <- colnames(data)[num_var_index]
+
+  # Ensure numeric variable
+  if (!is.numeric(data[[num_var]])) {
+    stop("The selected column is not numeric.")
+  }
+
+  # Convert row names to a column
+  data <- data %>% tibble::rownames_to_column(var = "OriginalRowName")
+
+  # Set seed for reproducibility
+  if (!is.null(seed)) set.seed(seed)
+
+  # Calculate sample size
+  sample_size <- max(1, round(nrow(data) * sample.pct))
+
+  # Ensure bins do not exceed unique values
+  bins <- min(bins, length(unique(data[[num_var]])) - 1)
+
+  # Handle case where all values are identical (avoid cut() failure)
+  if (bins < 1) {
+    warning("Not enough unique values for stratified sampling. Using random sampling.")
+    sampled_data <- data %>% dplyr::slice_sample(n = sample_size, replace = FALSE)
+  } else {
+    # Create bins using quantiles
+    breaks <- unique(stats::quantile(data[[num_var]], probs = seq(0, 1, length.out = bins + 1), na.rm = TRUE))
+
+    # Avoid cut() failure due to non-unique breaks
+    if (length(breaks) <= 1) {
+      warning("Insufficient variation in data. Using random sampling.")
+      sampled_data <- data %>% dplyr::slice_sample(n = sample_size, replace = FALSE)
+    } else {
+      # Create bins
+      data$bin <- cut(data[[num_var]], breaks = breaks, include.lowest = TRUE, labels = FALSE)
+
+      # Sample proportionally from each bin
+      sampled_data <- data %>%
+        dplyr::group_by(bin) %>%
+        dplyr::slice_sample(n = max(1, round(sample_size / bins)), replace = FALSE) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(-bin)  # Remove bin column
+    }
+  }
+
+  # Restore row names
+  sampled_data <- sampled_data %>% tibble::column_to_rownames(var = "OriginalRowName")
+
+  # Return as matrix if specified
+  if (return.matrix) {
+    return(as.matrix(sampled_data))
+  } else {
+    return(sampled_data)
+  }
+}
 
 #' Interpret a continuous latent variable
 #'
@@ -84,6 +153,7 @@ get_sentences_condes = function(res_cd){
 #' @param model the model name ('llama3' by default).
 #' @param quanti.threshold the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical ones.
 #' @param quanti.cat a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".
+#' @param sample.pct the proportion of features to be sampled.
 #' @param weights weights for the individuals (see [FactoMineR::condes()]).
 #' @param proba the significance threshold considered to characterize the category (by default 0.05).
 #' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
@@ -241,6 +311,7 @@ nail_condes = function(dataset, num.var,
                        model = 'llama3',
                        quanti.threshold = 0,
                        quanti.cat = c("Significantly above average", "Significantly below average", 'Average'),
+                       sample.pct = 1,
                        weights = NULL, proba = 0.05,
                        generate = FALSE){
 
@@ -261,7 +332,9 @@ nail_condes = function(dataset, num.var,
 
              # Data
 
-             {get_sentences_condes(res_cd)}")
+             {get_sentences_condes(res_cd, sample.pct)}")
+
+  ppt <- gsub("\n{3,}", "\n\n", ppt)
 
   #if (!generate) return(data.frame(prompt = ppt))
   if (!generate) return(ppt)

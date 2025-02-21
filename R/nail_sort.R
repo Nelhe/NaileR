@@ -13,11 +13,14 @@ remove_punctuation <- function(text) {
 #' @param stimulus_id the nature of the stimulus. Customizing it is highly recommended.
 #' @param introduction the introduction to the LLM prompt.
 #' @param measure the type of measure used in the experiment.
-#' @param nb_max the maximum number of clusters the LLM can form per assessor.
+#' @param model the model name ('llama3.1' by default).
+#' @param nb.clusters the maximum number of clusters the LLM can form per assessor.
 #' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
+#' @param max.attempts the maximum number of attempts for a column.
 #'
 #' @return A list consisting of:
 #' * a list of prompts (one per assessor);
+#' * a list of results (one per assessor);
 #' * a data frame with the group names.
 #'
 #' @details This function uses a while loop to ensure that the LLM gives the right number of groups. Therefore, customizing the stimulus ID, prompt introduction and measure is highly recommended; a clear prompt can help the LLM finish its task faster.
@@ -50,56 +53,101 @@ remove_punctuation <- function(text) {
 
 #' @importFrom glue glue
 #' @importFrom ollamar generate
-#' @importFrom stringr str_split_1
-#' @importFrom stringr str_squish
-#' @importFrom stringr str_count
+#' @importFrom stringr str_split_1 str_squish str_count str_remove_all str_extract
+#' @importFrom utils tail
 
+nail_sort <- function(dataset, name_size = 3, stimulus_id = "individual",
+                      introduction = NULL, measure = NULL, model = "llama3.1",
+                      nb.clusters = 4, generate = FALSE, max.attempts = 5) {  # New parameter for max attempts
 
-nail_sort <- function(dataset, name_size = 3, stimulus_id = "stimulus", introduction = "", measure="", nb_max = 6, generate = FALSE) {
+  ppt_llm <- vector("list", ncol(dataset))
+  res_llm <- vector("list", ncol(dataset))
+  dta_sort <- dataset[, FALSE]  # Creates an empty data frame with same structure
 
-  res_llm <- list()
-  dta_sort = dataset[,FALSE]
+  # Ensure introduction and measure are not NULL to avoid concatenation issues
+  introduction <- ifelse(is.null(introduction), "Individuals are described by free comments.", introduction)
+  measure <- ifelse(is.null(measure), "the description was", measure)
 
-  for (j in c(1:dim(dataset)[2])){
-    dta_j = dataset[[j]]
-    liste = c()
+  for (j in seq_len(ncol(dataset))) {
+    dta_j <- dataset[[j]]
+    liste <- character(nrow(dataset))  # Preallocate for efficiency
 
-    for (i in c(1:dim(dataset)[1])){
-      texte_j = dta_j[i] |>
-        str_split_1(pattern = ';') |>
-        paste(sep = '', collapse = ', ')
-      liste = c(liste, glue('For ', stimulus_id, ' {i}, ', measure, ' \'{texte_j}\'.'))
+    for (i in seq_len(nrow(dataset))) {
+      texte_j <- stringr::str_split_1(dta_j[i], pattern = ";") |>
+        paste(collapse = ", ")  # Avoid unnecessary `sep = ""`
+      liste[i] <- glue::glue("For {stimulus_id} {i}, {measure} '{texte_j}'.")
     }
 
-    descr = paste(liste, sep = '', collapse = ' ')
-    ppt_q = glue('Please group the ', stimulus_id, 's into a minimum of 2 groups and a maximum of ', nb_max,' groups, such that ', stimulus_id, 's of a same group have the same description. Give the groups a short name. Without any justification, write for each ', stimulus_id, ' which group it belongs to, from the first one to the last one, accordingly to this exact format, in a single line without asterisks: "', stimulus_id,' 1 belongs to group "...", ', stimulus_id,' 2 belongs to group "...", ', stimulus_id,' 3 belongs to group "...",...')
-    ppt = paste(introduction, descr, ppt_q)
-    res_llm[[j]] <- ppt
-    grps <- ""
+    descr <- paste(liste, collapse = " ")  # More efficient concatenation
+    ppt_q <- glue::glue(
+      "Please categorize the {stimulus_id}s into groups while strictly ensuring that the total number of groups is between **2 and {nb.clusters}**. ",
+      "This is a hard constraint: **DO NOT exceed {nb.clusters} groups** and **DO NOT use fewer than 2 groups**. ",
+      "Each group should contain {stimulus_id}s with similar descriptions and have a short, meaningful name. ",
+      "DO NOT provide explanations, justifications, or any extra text. ",
+      "Strictly preserve the original order of the {stimulus_id}s in your response. ",
+      "Output the results in a single line, following this exact format:\n\n",
+      '"{stimulus_id} 1 belongs to group \"...\", {stimulus_id} 2 belongs to group \"...\", {stimulus_id} 3 belongs to group \"...\", ..."',
+      "\n\n**Failure to follow the formatting or group limit will result in an invalid response.**"
+    )
 
+    ppt <- paste(introduction, descr, ppt_q)
+    ppt_llm[[j]] <- ppt
+
+    grps <- NULL
     nb_words <- name_size
+    max_attempts_reached <- FALSE  # Flag to track if max attempts reached
 
-    if (generate == TRUE){
-      while(length(grps)!=dim(dataset)[1] | nb_words>(name_size+1)){
-        grps = generate('llama3', ppt, output = 'df')$response
-        grps <- tolower(grps)
-        grps <- grps |> str_split_1(pattern = c(glue(stimulus_id,' ')))
-        #print(grps)
-        #print(j)
+    if (generate) {
+      counter <- 0
 
-        if (length(grps)-(dim(dataset)[1]-1)>0){
-          grps <- grps[(length(grps)-(dim(dataset)[1]-1)):length(grps)]
+      while (is.null(grps) ||
+             length(grps) != nrow(dataset) ||
+             nb_words > (name_size + 1) ||
+             length(unique(grps)) > nb.clusters) {
+
+        counter <- counter + 1
+        if (counter > max.attempts) {
+          message(glue::glue("Column {j}: Maximum attempts ({max.attempts}) reached. Moving to next column."))
+          grps <- rep(NA, nrow(dataset))  # Return NA values if unsuccessful
+          max_attempts_reached <- TRUE  # Mark as failed due to max attempts
+          break
+        }
+
+        response <- tryCatch({
+          ollamar::generate(model, ppt, output = 'df')$response
+        }, error = function(e) NULL)  # Handle API failures
+
+        if (is.null(response)) next  # Retry if response is NULL
+
+        grps <- tolower(response) |>
+          stringr::str_split_1(pattern = glue::glue("{stimulus_id} "))  # More precise pattern matching
+
+        if (length(grps) >= nrow(dataset)) {
+          grps <- utils::tail(grps, nrow(dataset))  # Ensure correct number of groups
+
           numbers <- as.numeric(gsub("\\D+", "", grps))
-          grps <- grps[order(numbers)]
-          grps = grps[(length(grps)-(dim(dataset)[1]-1)):length(grps)] |>
-            str_split_i(pattern = "to group", i = -1) |>
-            str_squish() |>
-            remove_punctuation()
-          nb_words <- max(str_count(grps, "\\w+"))
+          grps <- grps[order(numbers)]  # Sort based on extracted numbers
+
+          grps <- grps |>
+            stringr::str_extract("to group \".*\"") |>  # Extract only the group name
+            stringr::str_remove_all("to group |\"") |>  # Clean up formatting
+            stringr::str_squish()
+
+          nb_words <- max(stringr::str_count(grps, "\\w+"))
         }
       }
-      dta_sort[,j] = grps
+
+      dta_sort[, j] <- grps
+      res_llm[[j]] <- response
+      colnames(dta_sort)[j] <- colnames(dataset)[j]
+
+      # Only print success message if max attempts were **NOT** reached
+      if (!max_attempts_reached) {
+        attempt_word <- ifelse(counter == 1, "attempt", "attempts")
+        message(glue::glue("Column {j} generated after {counter} {attempt_word}."))
+      }
     }
   }
-  return(list(prompt_llm = res_llm, dta_sort = dta_sort))
+
+  return(list(prompt_llm = ppt_llm, res_llm = res_llm, dta_sort = dta_sort))
 }

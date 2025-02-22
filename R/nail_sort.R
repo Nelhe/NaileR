@@ -13,6 +13,7 @@ remove_punctuation <- function(text) {
 #' @param stimulus_id the nature of the stimulus. Customizing it is highly recommended.
 #' @param introduction the introduction to the LLM prompt.
 #' @param measure the type of measure used in the experiment.
+#' @param request the request of the LLM prompt.
 #' @param model the model name ('llama3.1' by default).
 #' @param nb.clusters the maximum number of clusters the LLM can form per assessor.
 #' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
@@ -42,12 +43,24 @@ remove_punctuation <- function(text) {
 #' intro_beard <- gsub('\n', ' ', intro_beard) |>
 #' stringr::str_squish()
 #'
+#' req_beard <- "Each group should contain beards with descriptions
+#' that relate to a similar type of person - not
+#' necessarily the same person, but sharing common traits.
+#' Each group must have a short,
+#' meaningful name that characterizes the person."
+#' req_beard <- gsub('\n', ' ', req_beard) |>
+#' stringr::str_squish()
+#'
 #' res <- nail_sort(beard_wide[,1:5], name_size = 3,
 #' stimulus_id = "beard", introduction = intro_beard,
-#' measure = 'the description was', generate = TRUE)
+#' measure = 'the description was',
+#' request = req_beard,
+#' nb.clusters = 6,
+#' generate = TRUE)
 #'
-#' res$dta_sort
 #' cat(res$prompt_llm[[1]])
+#' cat(res$res_llm[[1]])
+#' res$dta_sort
 #' }
 
 
@@ -57,7 +70,7 @@ remove_punctuation <- function(text) {
 #' @importFrom utils tail
 
 nail_sort <- function(dataset, name_size = 3, stimulus_id = "individual",
-                      introduction = NULL, measure = NULL, model = "llama3.1",
+                      introduction = NULL, measure = NULL, request = NULL, model = "llama3.1",
                       nb.clusters = 4, generate = FALSE, max.attempts = 5) {  # New parameter for max attempts
 
   ppt_llm <- vector("list", ncol(dataset))
@@ -67,6 +80,7 @@ nail_sort <- function(dataset, name_size = 3, stimulus_id = "individual",
   # Ensure introduction and measure are not NULL to avoid concatenation issues
   introduction <- ifelse(is.null(introduction), "Individuals are described by free comments.", introduction)
   measure <- ifelse(is.null(measure), "the description was", measure)
+  request <- ifelse(is.null(request), "Each group should contain individuals with similar descriptions and have a short, meaningful name.", request)
 
   for (j in seq_len(ncol(dataset))) {
     dta_j <- dataset[[j]]
@@ -82,12 +96,13 @@ nail_sort <- function(dataset, name_size = 3, stimulus_id = "individual",
     ppt_q <- glue::glue(
       "Please categorize the {stimulus_id}s into groups while strictly ensuring that the total number of groups is between **2 and {nb.clusters}**. ",
       "This is a hard constraint: **DO NOT exceed {nb.clusters} groups** and **DO NOT use fewer than 2 groups**. ",
-      "Each group should contain {stimulus_id}s with similar descriptions and have a short, meaningful name. ",
+      #"Each group should contain {stimulus_id}s with similar descriptions and have a short, meaningful name. ",
       "DO NOT provide explanations, justifications, or any extra text. ",
       "Strictly preserve the original order of the {stimulus_id}s in your response. ",
       "Output the results in a single line, following this exact format:\n\n",
       '"{stimulus_id} 1 belongs to group \"...\", {stimulus_id} 2 belongs to group \"...\", {stimulus_id} 3 belongs to group \"...\", ..."',
-      "\n\n**Failure to follow the formatting or group limit will result in an invalid response.**"
+      "\n\n**Failure to follow the formatting or group limit will result in an invalid response.**",
+      "\n\n**{request}** "
     )
 
     ppt <- paste(introduction, descr, ppt_q)

@@ -10,6 +10,7 @@ nail_sort(
   stimulus_id = "individual",
   introduction = NULL,
   measure = NULL,
+  request = NULL,
   model = "llama3.1",
   nb.clusters = 4,
   generate = FALSE,
@@ -26,6 +27,8 @@ nail_sort(
 \item{introduction}{the introduction to the LLM prompt.}
 
 \item{measure}{the type of measure used in the experiment.}
+
+\item{request}{the request of the LLM prompt.}
 
 \item{model}{the model name ('llama3.1' by default).}
 
@@ -64,11 +67,23 @@ are as follows."
 intro_beard <- gsub('\n', ' ', intro_beard) |>
 stringr::str_squish()
 
+req_beard <- "Each group should contain beards with descriptions
+that relate to a similar type of person - not
+necessarily the same person, but sharing common traits.
+Each group must have a short,
+meaningful name that characterizes the person."
+req_beard <- gsub('\n', ' ', req_beard) |>
+stringr::str_squish()
+
 res <- nail_sort(beard_wide[,1:5], name_size = 3,
 stimulus_id = "beard", introduction = intro_beard,
-measure = 'the description was', generate = TRUE)
+measure = 'the description was',
+request = req_beard,
+nb.clusters = 6,
+generate = TRUE)
 
-res$dta_sort
 cat(res$prompt_llm[[1]])
+cat(res$res_llm[[1]])
+res$dta_sort
 }
 }

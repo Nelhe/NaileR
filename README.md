@@ -122,3 +122,9 @@ This package is under the GPL (>= 2) License. Details can be found [here](https:
 Sébastien Lê - sebastien.le@institut-agro.fr
 
 Project link: [https://github.com/Nelhe/NaileR](https://github.com/Nelhe/NaileR)
+
+## Acknowledgements
+
+This work has benefited from a government grant managed by the Agence Nationale de la Recherche under the France 2030 programme under the reference ANR-23-PESA-0005.
+
+Ce travail a bénéficié d'une aide de l'Etat gérée par l'Agence Nationale de la Recherche au titre de France 2030 portant la référence ANR-23-PESA-0005.

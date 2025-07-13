@@ -190,7 +190,9 @@ nail_qda <- function(dataset, formul, firstvar, lastvar = length(colnames(datase
                     request)
 
   conclusion <- ifelse(is.null(conclusion),
-                       sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all stimuli** (e.g., a summary of key contrasts).\n2. **A list of stimulus names you assigned** and their distinguishing features.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**."),
+                       if (!isolate.groups) sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all stimuli** (e.g., a summary of key contrasts).\n2. **A list of stimulus names you assigned** and their distinguishing features.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**.")
+                       else sprintf("# Final Summary Task\nAt the end, provide:\n1. **A description of the stimulus** (e.g., a summary of key characteristics).\n2. **A stimulus name you assigned** based on this description.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**."),
+                       #sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all stimuli** (e.g., a summary of key contrasts).\n2. **A list of stimulus names you assigned** and their distinguishing features.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**."),
                        conclusion)
 
   # Perform QDA analysis

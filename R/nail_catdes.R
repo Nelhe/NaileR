@@ -17,152 +17,293 @@ tidy_answer_catdes = function(texte){
   }
 }
 
-
 #' @importFrom dplyr mutate
 #' @importFrom dplyr filter
 #' @importFrom glue glue
 
-get_sentences_quali = function(res_cd, quali.sample, drop.negative){
-  res_cd = res_cd$category
-  ppts = list()
+get_sentences_quali <- function(res_cd, quali.sample, drop.negative) {
+  res_cd <- res_cd$category
+  ppts <- list()
 
-  for (i in c(1:length(names(res_cd)))){
-    res_cd[[i]] <- sample_numeric_distribution(as.data.frame(res_cd[[i]]), num_var_index = 5, sample_pct = quali.sample, method = "stratified", bins = 5)
-    res_cd2 = res_cd[[i]]
+  for (i in seq_along(res_cd)) {
+    group_name <- names(res_cd)[i]
+    res_mat <- as.data.frame(res_cd[[i]])
 
-    if (!is.null(res_cd2)){
+    # Check valid matrix
+    if (!is.data.frame(res_mat) || nrow(res_mat) == 0 || ncol(res_mat) == 0) {
+      message(glue::glue("Skipping group {group_name}: empty or invalid data (res_cd[[{i}]])"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-      res_cd_work = rownames(res_cd2) |>
-        sapply(tidy_answer_catdes) |>
-        t() |>
-        cbind(res_cd2) |>
-        as.data.frame() |>
-        select(V1, V2, v.test)
+    # Ensure numeric column exists
+    is_num_col <- sapply(res_mat, is.numeric)
+    if (!any(is_num_col)) {
+      message(glue::glue("Skipping group {group_name}: no numeric column found (res_cd[[{i}]])"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-      colnames(res_cd_work) = c('Variable', 'Level', 'v.test')
+    # Sampling step
+    num_index <- which(is_num_col)[1]
+    if (quali.sample < 1) {
+      res_cd[[i]] <- sample_numeric_distribution(
+        res_mat,
+        num_var_index = num_index,
+        sample_pct = quali.sample,
+        method = "stratified",
+        bins = 5,
+        return_matrix = FALSE
+      )
+    } else {
+      res_cd[[i]] <- res_mat
+    }
 
-      more = res_cd_work |>
-        filter(v.test > 0) |>
-        mutate(Variable = glue('"{Variable}"')) |>
-        mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
+    res_cd2 <- res_cd[[i]]
 
-      if (!drop.negative){
-        less = res_cd_work |>
-          filter(v.test < 0) |>
-          mutate(Variable = glue('"{Variable}"')) |>
-          mutate(Sentence = tolower(glue("* {Variable}: {Level}")))
-      } else less = ''
+    # Skip if bad structure
+    if (is.null(res_cd2) || !is.data.frame(res_cd2) ||
+        nrow(res_cd2) == 0 || is.null(rownames(res_cd2)) ||
+        !all(nzchar(rownames(res_cd2)))) {
+      message(glue::glue("Skipping group {group_name}: res_cd2 is NULL or malformed."))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-      ppt1 = ifelse(nrow(more) == 0,
-                    "",
-                    glue('Observations in this group are *more* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its strong association:
-{paste(more$Sentence, collapse = "\n")}'))
+    # Parse rownames
+    parsed_rows <- try(sapply(rownames(res_cd2), tidy_answer_catdes), silent = TRUE)
 
-      ppt2 = ifelse(nrow(less) == 0,
-                    "",
-                    glue('Observations in this group are *less* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its weak association:
-{paste(less$Sentence, collapse = "\n")}'))
+    if (inherits(parsed_rows, "try-error")) {
+      message(glue::glue("Skipping group {group_name}: error while parsing rownames -> {parsed_rows}"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-      ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
+    parsed_df <- as.data.frame(t(parsed_rows), stringsAsFactors = FALSE)
 
-    } else ppts[[names(res_cd)[i]]] = ''
+    if (ncol(parsed_df) != 2) {
+      message(glue::glue("Skipping group {group_name}: tidy_answer_catdes returned {ncol(parsed_df)} columns"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
+    colnames(parsed_df) <- c("Variable", "Level")
+
+    # Join with v.test
+    if (!"v.test" %in% colnames(res_cd2)) {
+      message(glue::glue("Skipping group {group_name}: v.test column missing in res_cd2"))
+      ppts[[group_name]] <- ""
+      next
+    }
+
+    res_cd_work <- cbind(parsed_df, v.test = res_cd2$v.test)
+
+    # Format positively associated categories
+    more <- res_cd_work |>
+      dplyr::filter(v.test > 0) |>
+      dplyr::mutate(Variable = glue::glue("\"{Variable}\"")) |>
+      dplyr::mutate(Sentence = tolower(glue::glue("* {Variable}: {Level}")))
+
+    # Format negatively associated categories
+    if (!drop.negative) {
+      less <- res_cd_work |>
+        dplyr::filter(v.test < 0) |>
+        dplyr::arrange(v.test) |>  # from most to least discriminant (most negative first)
+        dplyr::mutate(Variable = glue::glue("\"{Variable}\"")) |>
+        dplyr::mutate(Sentence = tolower(glue::glue("* {Variable}: {Level}")))
+    } else {
+      less <- NULL
+    }
+
+    # Build paragraphs
+    ppt1 <- if (nrow(more) > 0) {
+      glue::glue(
+        "Observations in this group are *more* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its strong association:\n{paste(more$Sentence, collapse = '\n')}"
+      )
+    } else ""
+
+    ppt2 <- if (!drop.negative && !is.null(less) && nrow(less) > 0) {
+      glue::glue(
+        "Observations in this group are *less* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its weak association (listed from most to least discriminant):\n{paste(less$Sentence, collapse = '\n')}"
+      )
+    } else ""
+
+    ppts[[group_name]] <- paste(ppt1, ppt2, sep = "\n")
   }
+
   return(ppts)
 }
-
 
 #' @importFrom dplyr select
 
-get_sentences_quanti = function(res_cd, quanti.sample, drop.negative){
+get_sentences_quanti <- function(res_cd, quanti.sample, drop.negative) {
+  res_cd <- res_cd$quanti
+  ppts <- list()
 
-  res_cd = res_cd$quanti
-  ppts = list()
+  for (i in seq_along(res_cd)) {
+    group_name <- names(res_cd)[i]
+    res_mat <- as.data.frame(res_cd[[i]])
 
-  for (i in c(1:length(names(res_cd)))){
+    # Vérification que le tableau est valide
+    if (!is.data.frame(res_mat) || nrow(res_mat) == 0 || ncol(res_mat) == 0) {
+      message(glue::glue("Skipping group {group_name}: empty or invalid data (res_cd[[{i}]])"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-    res_cd[[i]] <- sample_numeric_distribution(as.data.frame(res_cd[[i]]), num_var_index = 1, sample_pct = quanti.sample, method = "stratified", bins = 5)
+    # Détection d'une colonne numérique
+    is_num_col <- sapply(res_mat, is.numeric)
+    if (!any(is_num_col)) {
+      message(glue::glue("Skipping group {group_name}: no numeric column found (res_cd[[{i}]])"))
+      ppts[[group_name]] <- ""
+      next
+    }
 
-    if (!is.null(res_cd[[i]])){
+    num_index <- which(is_num_col)[1]
 
-      res_cd_work = res_cd[[i]] |>
-        as.data.frame() |>
-        select(v.test, p.value) |>
-        mutate(Variable = rownames(res_cd[[i]]) |>
-                 sapply(tidy_answer_catdes)) |>
-        mutate(Variable = glue('* {Variable}'))
+    # Échantillonnage si requis
+    if (quanti.sample < 1) {
+      res_cd[[i]] <- sample_numeric_distribution(
+        res_mat,
+        num_var_index = num_index,
+        sample_pct = quanti.sample,
+        method = "stratified",
+        bins = 5,
+        return_matrix = FALSE
+      )
+    } else {
+      res_cd[[i]] <- res_mat
+    }
 
-      left = res_cd_work$Variable[res_cd_work$v.test > 0] |>
-        paste(collapse = '\n')
+    res_cd2 <- res_cd[[i]]
 
-      if (!drop.negative){
-        right = res_cd_work$Variable[res_cd_work$v.test < 0] |>
-          paste(collapse = '\n')
-      } else right = ''
+    if (!is.null(res_cd2) && is.data.frame(res_cd2) && nrow(res_cd2) > 0) {
 
-      ppt1 = ifelse(nchar(left) == 0,
-                    '',
-                    glue('Observations in this group have quite *high* values for the following variables:
-                       {left}'))
+      # Vérification des colonnes requises
+      if (!all(c("v.test", "p.value") %in% colnames(res_cd2))) {
+        message(glue::glue("Skipping group {group_name}: missing v.test or p.value in res_cd2"))
+        ppts[[group_name]] <- ""
+        next
+      }
 
-      ppt2 = ifelse(nchar(right) == 0,
-                    '',
-                    glue('Observations in this group have quite *low* values for the following variables:
-                       {right}'))
+      # Création du tableau
+      res_cd_work <- res_cd2 |>
+        dplyr::select(v.test, p.value) |>
+        dplyr::mutate(Variable = rownames(res_cd2) |>
+                        sapply(tidy_answer_catdes)) |>
+        dplyr::mutate(Variable = glue::glue("* {Variable}"))
 
-      ppts[[names(res_cd)[i]]] = paste(ppt1, ppt2, sep = "\n")
+      # Variables avec valeurs élevées (v.test > 0)
+      left <- res_cd_work |>
+        dplyr::filter(v.test > 0) |>
+        dplyr::arrange(desc(v.test)) |>
+        dplyr::pull(Variable) |>
+        paste(collapse = "\n")
 
-    } else ppts[[names(res_cd)[i]]] = ''
+      # Variables avec valeurs faibles (v.test < 0)
+      if (!drop.negative) {
+        right <- res_cd_work |>
+          dplyr::filter(v.test < 0) |>
+          dplyr::arrange(v.test) |>  # De la plus discriminante à la moins
+          dplyr::pull(Variable) |>
+          paste(collapse = "\n")
+      } else {
+        right <- ""
+      }
+
+      # Génération du texte
+      ppt1 <- if (nchar(left) > 0) {
+        glue::glue("Observations in this group have quite *high* values for the following variables (listed from the most to the least discriminant):\n{left}")
+      } else ""
+
+      ppt2 <- if (nchar(right) > 0) {
+        glue::glue("Observations in this group have quite *low* values for the following variables (listed from the most to the least discriminant):\n{right}")
+      } else ""
+
+      ppts[[group_name]] <- paste(ppt1, ppt2, sep = "\n")
+    } else {
+      message(glue::glue("Skipping group {group_name}: res_cd2 is NULL or empty."))
+      ppts[[group_name]] <- ""
+    }
   }
 
   return(ppts)
 }
 
-
-get_prompt_catdes = function(res_cd, introduction, request, isolate.groups, quali.sample, quanti.sample, drop.negative){
-
-  if ("category" %in% names(res_cd)){
-    stces_quali = get_sentences_quali(res_cd, quali.sample, drop.negative)
-  } else stces_quali = list()
-
-  if ("quanti" %in% names(res_cd)){
-    stces_quanti = get_sentences_quanti(res_cd, quanti.sample, drop.negative)
-  } else stces_quanti = list()
-
-  if (nchar(stces_quali[1]) == 0 & nchar(stces_quanti[1]) == 0) stop('No significant differences between groups, execution was halted.')
-
-  all_groups = union(names(stces_quali), names(stces_quanti))
-
-  stces = c()
-
-  for (grp in all_groups){
-    qual = ifelse(is.null(stces_quali[[grp]]), '', stces_quali[[grp]])
-    quant = ifelse(is.null(stces_quanti[[grp]]), '', stces_quanti[[grp]])
-
-    ppt_grp = glue('## Group "{grp}":
-
-                   {qual}
-
-                   {quant}')
-
-    stces = c(stces, ppt_grp)
+get_prompt_catdes <- function(res_cd, introduction, request, isolate.groups, quali.sample, quanti.sample, drop.negative) {
+  if ("category" %in% names(res_cd)) {
+    stces_quali <- get_sentences_quali(res_cd, quali.sample, drop.negative)
+  } else {
+    stces_quali <- list()
   }
 
-  if (!isolate.groups) stces = paste(stces, collapse = '\n\n')
+  if ("quanti" %in% names(res_cd)) {
+    stces_quanti <- get_sentences_quanti(res_cd, quanti.sample, drop.negative)
+  } else {
+    stces_quanti <- list()
+  }
 
-  deb = glue('# Introduction
+  if (length(stces_quali) == 0 && length(stces_quanti) == 0) {
+    stop("No significant differences between groups, execution was halted.")
+  }
 
-             {introduction}
+  all_groups <- union(names(stces_quali), names(stces_quanti))
+  stces <- c()
 
-             # Task
+  for (grp in all_groups) {
+    qual <- stces_quali[[grp]]
+    quant <- stces_quanti[[grp]]
+    if (is.null(qual) || nchar(trimws(qual)) == 0) qual <- NULL
+    if (is.null(quant) || nchar(trimws(quant)) == 0) quant <- NULL
 
-             {request}
+    block_parts <- c(qual, quant)
+    block_parts <- block_parts[!sapply(block_parts, is.null)]
 
-             # Data
+    block <- paste(block_parts, collapse = "\n\n")
 
-             ')
+    if (nchar(block) > 0) {
+      ppt_grp <- glue::glue('## Group "{grp}":\n\n{block}')
+      stces <- c(stces, ppt_grp)
+    }
+  }
 
-  return(paste(deb, stces, sep = ''))
+  body <- if (isolate.groups) {
+    paste(stces, collapse = "\n\n---\n\n")
+  } else {
+    paste(stces, collapse = "\n\n")
+  }
+
+  header <- glue::glue(
+    "# Introduction\n\n{introduction}\n\n",
+    "# Task\n\n{request}\n\n",
+    "# Data\n\n"
+  )
+
+  if (!isolate.groups) {
+    return(paste0(header, body))
+  } else {
+    prompts <- list()
+    for (grp in all_groups) {
+      qual <- stces_quali[[grp]]
+      quant <- stces_quanti[[grp]]
+      if (is.null(qual) || nchar(trimws(qual)) == 0) qual <- NULL
+      if (is.null(quant) || nchar(trimws(quant)) == 0) quant <- NULL
+
+      block_parts <- c(qual, quant)
+      block_parts <- block_parts[!sapply(block_parts, is.null)]
+      block_parts <- block_parts[nzchar(trimws(block_parts))]
+
+      block <- paste(block_parts, collapse = "\n\n")
+
+      if (nchar(block) > 0) {
+        grp_intro <- glue::glue("# Introduction\n\n{introduction}\n\n")
+        grp_task  <- glue::glue("# Task\n\n{request}\n\n")
+        grp_data  <- glue::glue("# Data\n\n## Group \"{grp}\":\n\n{block}")
+        prompts[[grp]] <- paste0(grp_intro, grp_task, grp_data)
+      }
+    }
+    return(prompts)
+  }
 }
 
 #' @importFrom tibble rownames_to_column column_to_rownames

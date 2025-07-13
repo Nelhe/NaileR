@@ -1,0 +1,131 @@
+---
+title: "An introduction to the NaileR package"
+author: "Sébastien Lê"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{NaileR-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+`{NaileR}` is a small R package designed initially for interpreting continuous or categorical latent
+variables: typically, dimensions from an exploratory multivariate method, or a class
+variable from an unsupervised clustering algorithm. As who can do more can do less, `{NaileR}` can also
+interpret explicit measures regarding to the other variables of the data set.
+The rationale behind `{NaileR}` is to link `{FactoMineR}` on the one hand and `{ollamar}` on the
+other hand: `{FactoMineR}` integrates dimension reduction methods, such as *PCA*, *CA*,
+*MCA*, *MFA*, *hierarchical clustering*; `{ollamar}` enables R to query an open-source large
+language model (LLM) installed locally thanks to ollama (<https://ollama.com>).
+To do so, `{NaileR}` recodes relevant numerical indicators from `{FactoMineR}` into
+qualitative indicators that are then used to generate prompts directly usable by the
+LLM. This recoding is carried out through the prism of the statistical individuals.
+
+# How to describe and interpret a categorical variable automatically?
+
+## When the categorical variable is explicit
+
+In the following section we present an example of what `{NaileR}` can do in the case of an explicit and therefore measured categorical variable. The dataset we will use is the famous Fisher's Iris dataset. Let's say we are interested in the variable *species* and we want to know how this categorical variable can be described by the other variables in the dataset. As mentioned above, `{NaileR}` is partly based on `{FactoMineR}` functions, and in particular on two very important functions of that package, namely *catdes()* and *condes()*. The first function, *catdes()*, is designed to automatically describe a categorical variable, while the second is designed to describe a continuous variable.
+
+The `{NaileR}` package has two similar functions, both of which are extended using LLM: *nail_catdes()* and *nail_condes()*. For example, the parameters of the *nail_catdes()* function are partly the same as those of the *catdes()* function. You must specify the name of the dataset and the number of the column associated with the categorical/qualitative variable to be interpreted.
+
+To get interesting results from `{NaileR}`, it is essential to fill in two parameters: the *introduction* and the *request*. These two parameters are important because they allow us to build a prompt that is operational and adapted to the data set and the variables of interest.
+
+```{r eval=FALSE}
+library(NaileR)
+data(iris)
+
+intro_iris <- "A study measured various parts of iris flowers
+from 3 different species: setosa, versicolor and virginica.
+I will give you the results from this study.
+You will have to identify what sets these flowers apart."
+intro_iris <- gsub('\n', ' ', intro_iris) |>
+  stringr::str_squish()
+
+req_iris <- "Please explain what makes each species distinct.
+Also, tell me which species has the biggest flowers,
+and which species has the smallest. Is there any biological reason for this?"
+req_iris <- gsub('\n', ' ', req_iris) |>
+  stringr::str_squish()
+req_iris <- gsub('\n', ' ', req_iris) |>
+  stringr::str_squish()
+
+res_iris <- nail_catdes(iris,
+                        num.var = 5,
+                        model = "llama3.1",
+                        introduction = intro_iris,
+                        request = req_iris,
+                        generate = TRUE)
+```
+
+
+```{r setup}
+res_iris <- readRDS(system.file("extdata", "res_iris.rds", package = "NaileR"))
+formatted_text <- strwrap(res_iris$response, width = 80)
+print(formatted_text)
+```
+
+## When the categorical variable is latent
+
+
+```{r}
+library(NaileR)
+library(FactoMineR)
+data(waste)
+waste <- waste[-14]    # no variability on this question
+
+set.seed(1)
+res_mca_waste <- MCA(waste, quali.sup = c(1,2,50:76),
+                     ncp = 35, level.ventil = 0.05, graph = FALSE)
+plot.MCA(res_mca_waste, choix = "ind",
+         invisible = c("var", "quali.sup"), label = "none")
+res_hcpc_waste <- HCPC(res_mca_waste, nb.clust = 3, graph = FALSE)
+```
+
+```{r}
+don_clust_waste <- res_hcpc_waste$data.clust
+res_mca_waste <- MCA(don_clust_waste, quali.sup = c(1,2,50:77),
+                     ncp = 35, level.ventil = 0.05, graph = FALSE)
+plot.MCA(res_mca_waste, choix = "ind",
+         invisible = c("var", "quali.sup"), label = "none", habillage = 77)
+```
+
+```{r eval=FALSE}
+intro_waste <- 'These data were collected
+after a survey on food waste,
+with participants describing their habits.'
+intro_waste <- gsub('\n', ' ', intro_waste) |>
+  stringr::str_squish()
+
+req_waste <- 'Please summarize the characteristics of each group.
+Then, give each group a new name, based on your conclusions.
+Finally, give each group a grade between 0 and 10,
+based on how wasteful they are with food:
+0 being "not at all", 10 being "absolutely".'
+req_waste <- gsub('\n', ' ', req_waste) |>
+  stringr::str_squish()
+
+res_waste <- nail_catdes(don_clust_waste,
+                         num.var = ncol(don_clust_waste),
+                         introduction = intro_waste,
+                         request = req_waste,
+                         model = "llama3.1",
+                         drop.negative = TRUE,
+                         generate = TRUE)
+```
+
+```{r}
+res_waste <- readRDS(system.file("extdata", "res_waste.rds", package = "NaileR"))
+formatted_text <- strwrap(res_waste$response, width = 80)
+print(formatted_text)
+```
+

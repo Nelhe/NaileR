@@ -1,27 +1,19 @@
-
-#' @importFrom stringr str_split_1
-#' @importFrom stringr str_detect
-#' @importFrom stringr str_replace_all
-#' @importFrom stringr str_squish
-
-tidy_answer_catdes = function(texte){
-  split_mid = str_split_1(texte, '=')
-
-  if ((length(split_mid)) > 1 & str_detect(split_mid[length(split_mid)], '_')){
-    split_right = str_split_1(split_mid[2], '_')
-    return(split_right)
-
-  } else {
-    split_mid[1] = str_replace_all(split_mid[1], '\\.', ' ') |> str_squish()
-    return(split_mid)
-  }
-}
-
-#' @importFrom dplyr mutate
-#' @importFrom dplyr filter
+#' @importFrom dplyr mutate filter arrange desc pull select slice_sample group_by n ungroup
 #' @importFrom glue glue
+#' @importFrom tibble rownames_to_column column_to_rownames
+#' @importFrom stats quantile
+#' @importFrom rlang sym
+#' @importFrom FactoMineR catdes
 
+# ---------------------------------------------------------------------------
+# get_sentences_quali
+# ---------------------------------------------------------------------------
+#' @importFrom dplyr select filter
 get_sentences_quali <- function(res_cd, quali.sample, drop.negative) {
+  # This function formats the catdes$category output into
+  # a Markdown table.
+  # The 'drop.negative' flag pre-filters the table.
+
   res_cd <- res_cd$category
   ppts <- list()
 
@@ -29,14 +21,14 @@ get_sentences_quali <- function(res_cd, quali.sample, drop.negative) {
     group_name <- names(res_cd)[i]
     res_mat <- as.data.frame(res_cd[[i]])
 
-    # Check valid matrix
+    # Check valid matrix (same as original)
     if (!is.data.frame(res_mat) || nrow(res_mat) == 0 || ncol(res_mat) == 0) {
       message(glue::glue("Skipping group {group_name}: empty or invalid data (res_cd[[{i}]])"))
       ppts[[group_name]] <- ""
       next
     }
 
-    # Ensure numeric column exists
+    # Ensure numeric column exists (same as original)
     is_num_col <- sapply(res_mat, is.numeric)
     if (!any(is_num_col)) {
       message(glue::glue("Skipping group {group_name}: no numeric column found (res_cd[[{i}]])"))
@@ -44,10 +36,10 @@ get_sentences_quali <- function(res_cd, quali.sample, drop.negative) {
       next
     }
 
-    # Sampling step
+    # Sampling step (same as original)
     num_index <- which(is_num_col)[1]
     if (quali.sample < 1) {
-      res_cd[[i]] <- sample_numeric_distribution(
+      res_cd2 <- sample_numeric_distribution(
         res_mat,
         num_var_index = num_index,
         sample_pct = quali.sample,
@@ -56,87 +48,53 @@ get_sentences_quali <- function(res_cd, quali.sample, drop.negative) {
         return_matrix = FALSE
       )
     } else {
-      res_cd[[i]] <- res_mat
+      res_cd2 <- res_mat
     }
 
-    res_cd2 <- res_cd[[i]]
+    # --- REFACTORED PART ---
 
-    # Skip if bad structure
-    if (is.null(res_cd2) || !is.data.frame(res_cd2) ||
-        nrow(res_cd2) == 0 || is.null(rownames(res_cd2)) ||
-        !all(nzchar(rownames(res_cd2)))) {
-      message(glue::glue("Skipping group {group_name}: res_cd2 is NULL or malformed."))
+    # --- CORRECTION ---
+    # The actual column names from FactoMineR do NOT include (%%).
+    cols_to_show <- c("Cla/Mod", "Mod/Cla", "Global", "p.value", "v.test")
+    # --- END CORRECTION ---
+
+    # Ensure the columns exist before selecting
+    cols_exist <- cols_to_show[cols_to_show %in% colnames(res_cd2)]
+
+    if (length(cols_exist) == 0 || !"v.test" %in% colnames(res_cd2)) {
+      message(glue::glue("Skipping group {group_name}: no standard stat/v.test columns found."))
       ppts[[group_name]] <- ""
       next
     }
 
-    # Parse rownames
-    parsed_rows <- try(sapply(rownames(res_cd2), tidy_answer_catdes), silent = TRUE)
+    df_to_format <- res_cd2[, cols_exist, drop = FALSE]
 
-    if (inherits(parsed_rows, "try-error")) {
-      message(glue::glue("Skipping group {group_name}: error while parsing rownames -> {parsed_rows}"))
-      ppts[[group_name]] <- ""
-      next
+    # Apply drop.negative filter
+    if (isTRUE(drop.negative)) {
+      df_to_format <- dplyr::filter(df_to_format, .data$v.test > 0)
     }
 
-    parsed_df <- as.data.frame(t(parsed_rows), stringsAsFactors = FALSE)
-
-    if (ncol(parsed_df) != 2) {
-      message(glue::glue("Skipping group {group_name}: tidy_answer_catdes returned {ncol(parsed_df)} columns"))
-      ppts[[group_name]] <- ""
-      next
-    }
-
-    colnames(parsed_df) <- c("Variable", "Level")
-
-    # Join with v.test
-    if (!"v.test" %in% colnames(res_cd2)) {
-      message(glue::glue("Skipping group {group_name}: v.test column missing in res_cd2"))
-      ppts[[group_name]] <- ""
-      next
-    }
-
-    res_cd_work <- cbind(parsed_df, v.test = res_cd2$v.test)
-
-    # Format positively associated categories
-    more <- res_cd_work |>
-      dplyr::filter(v.test > 0) |>
-      dplyr::mutate(Variable = glue::glue("\"{Variable}\"")) |>
-      dplyr::mutate(Sentence = tolower(glue::glue("* {Variable}: {Level}")))
-
-    # Format negatively associated categories
-    if (!drop.negative) {
-      less <- res_cd_work |>
-        dplyr::filter(v.test < 0) |>
-        dplyr::arrange(v.test) |>  # from most to least discriminant (most negative first)
-        dplyr::mutate(Variable = glue::glue("\"{Variable}\"")) |>
-        dplyr::mutate(Sentence = tolower(glue::glue("* {Variable}: {Level}")))
-    } else {
-      less <- NULL
-    }
-
-    # Build paragraphs
-    ppt1 <- if (nrow(more) > 0) {
-      glue::glue(
-        "Observations in this group are *more* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its strong association:\n{paste(more$Sentence, collapse = '\n')}"
-      )
-    } else ""
-
-    ppt2 <- if (!drop.negative && !is.null(less) && nrow(less) > 0) {
-      glue::glue(
-        "Observations in this group are *less* likely to be associated with the following response categories. In this output, the name of the variable precedes the category that characterises our observations by its weak association (listed from most to least discriminant):\n{paste(less$Sentence, collapse = '\n')}"
-      )
-    } else ""
-
-    ppts[[group_name]] <- paste(ppt1, ppt2, sep = "\n")
+    # Call the new global formatting utility
+    # (Assumed to be in R/utils-formatting.R and imported)
+    ppts[[group_name]] <- format_stats_as_markdown(
+      df_stats = df_to_format,
+      title = "Characteristic Qualitative Variables"
+    )
+    # --- END REFACTORED PART ---
   }
 
   return(ppts)
 }
 
-#' @importFrom dplyr select
-
+# ---------------------------------------------------------------------------
+# get_sentences_quanti
+# ---------------------------------------------------------------------------
+#' @importFrom dplyr filter
 get_sentences_quanti <- function(res_cd, quanti.sample, drop.negative) {
+  # This function formats the catdes$quanti output into
+  # a Markdown table.
+  # The 'drop.negative' flag pre-filters the table.
+
   res_cd <- res_cd$quanti
   ppts <- list()
 
@@ -144,14 +102,14 @@ get_sentences_quanti <- function(res_cd, quanti.sample, drop.negative) {
     group_name <- names(res_cd)[i]
     res_mat <- as.data.frame(res_cd[[i]])
 
-    # Vérification que le tableau est valide
+    # Check valid matrix (same as original)
     if (!is.data.frame(res_mat) || nrow(res_mat) == 0 || ncol(res_mat) == 0) {
       message(glue::glue("Skipping group {group_name}: empty or invalid data (res_cd[[{i}]])"))
       ppts[[group_name]] <- ""
       next
     }
 
-    # Détection d'une colonne numérique
+    # Ensure numeric column exists (same as original)
     is_num_col <- sapply(res_mat, is.numeric)
     if (!any(is_num_col)) {
       message(glue::glue("Skipping group {group_name}: no numeric column found (res_cd[[{i}]])"))
@@ -159,11 +117,10 @@ get_sentences_quanti <- function(res_cd, quanti.sample, drop.negative) {
       next
     }
 
+    # Sampling step (same as original)
     num_index <- which(is_num_col)[1]
-
-    # Échantillonnage si requis
     if (quanti.sample < 1) {
-      res_cd[[i]] <- sample_numeric_distribution(
+      res_cd2 <- sample_numeric_distribution(
         res_mat,
         num_var_index = num_index,
         sample_pct = quanti.sample,
@@ -172,72 +129,56 @@ get_sentences_quanti <- function(res_cd, quanti.sample, drop.negative) {
         return_matrix = FALSE
       )
     } else {
-      res_cd[[i]] <- res_mat
+      res_cd2 <- res_mat
     }
 
-    res_cd2 <- res_cd[[i]]
+    # --- REFACTORED PART ---
 
-    if (!is.null(res_cd2) && is.data.frame(res_cd2) && nrow(res_cd2) > 0) {
+    # Select standard columns from catdes$quanti
+    # These names were correct, so no change is needed here.
+    cols_to_show <- c("Mean in category", "Overall mean", "sd in category", "Overall sd", "p.value", "v.test")
 
-      # Vérification des colonnes requises
-      if (!all(c("v.test", "p.value") %in% colnames(res_cd2))) {
-        message(glue::glue("Skipping group {group_name}: missing v.test or p.value in res_cd2"))
-        ppts[[group_name]] <- ""
-        next
-      }
+    cols_exist <- cols_to_show[cols_to_show %in% colnames(res_cd2)]
 
-      # Création du tableau
-      res_cd_work <- res_cd2 |>
-        dplyr::select(v.test, p.value) |>
-        dplyr::mutate(Variable = rownames(res_cd2) |>
-                        sapply(tidy_answer_catdes)) |>
-        dplyr::mutate(Variable = glue::glue("* {Variable}"))
-
-      # Variables avec valeurs élevées (v.test > 0)
-      left <- res_cd_work |>
-        dplyr::filter(v.test > 0) |>
-        dplyr::arrange(desc(v.test)) |>
-        dplyr::pull(Variable) |>
-        paste(collapse = "\n")
-
-      # Variables avec valeurs faibles (v.test < 0)
-      if (!drop.negative) {
-        right <- res_cd_work |>
-          dplyr::filter(v.test < 0) |>
-          dplyr::arrange(v.test) |>  # De la plus discriminante à la moins
-          dplyr::pull(Variable) |>
-          paste(collapse = "\n")
-      } else {
-        right <- ""
-      }
-
-      # Génération du texte
-      ppt1 <- if (nchar(left) > 0) {
-        glue::glue("Observations in this group have quite *high* values for the following variables (listed from the most to the least discriminant):\n{left}")
-      } else ""
-
-      ppt2 <- if (nchar(right) > 0) {
-        glue::glue("Observations in this group have quite *low* values for the following variables (listed from the most to the least discriminant):\n{right}")
-      } else ""
-
-      ppts[[group_name]] <- paste(ppt1, ppt2, sep = "\n")
-    } else {
-      message(glue::glue("Skipping group {group_name}: res_cd2 is NULL or empty."))
+    if (length(cols_exist) == 0 || !"v.test" %in% colnames(res_cd2)) {
+      message(glue::glue("Skipping group {group_name}: no standard quanti stat/v.test columns found."))
       ppts[[group_name]] <- ""
+      next
     }
+
+    df_to_format <- res_cd2[, cols_exist, drop = FALSE]
+
+    # Apply drop.negative filter
+    if (isTRUE(drop.negative)) {
+      df_to_format <- dplyr::filter(df_to_format, .data$v.test > 0)
+    }
+
+    # Call the new global formatting utility
+    # (Assumed to be in R/utils-formatting.R and imported)
+    ppts[[group_name]] <- format_stats_as_markdown(
+      df_stats = df_to_format,
+      title = "Characteristic Quantitative Variables"
+    )
+    # --- END REFACTORED PART ---
   }
 
   return(ppts)
 }
 
+# ---------------------------------------------------------------------------
+# get_prompt_catdes
+# ---------------------------------------------------------------------------
 get_prompt_catdes <- function(res_cd, introduction, request, isolate.groups, quali.sample, quanti.sample, drop.negative) {
+
   if ("category" %in% names(res_cd)) {
+    # 'drop.negative' argument is now passed down
     stces_quali <- get_sentences_quali(res_cd, quali.sample, drop.negative)
   } else {
     stces_quali <- list()
   }
 
   if ("quanti" %in% names(res_cd)) {
+    # 'drop.negative' argument is now passed down
     stces_quanti <- get_sentences_quanti(res_cd, quanti.sample, drop.negative)
   } else {
     stces_quanti <- list()
@@ -306,85 +247,9 @@ get_prompt_catdes <- function(res_cd, introduction, request, isolate.groups, qua
   }
 }
 
-#' @importFrom tibble rownames_to_column column_to_rownames
-#' @importFrom dplyr slice_sample group_by
-#' @importFrom stats quantile
-#' @importFrom rlang sym
-
-sample_numeric_distribution <- function(data, num_var_index, sample_pct, method = "stratified", bins = 5, return_matrix = TRUE, seed = NULL) {
-
-  # Extract variable name
-  num_var <- colnames(data)[num_var_index]
-
-  # Ensure numeric variable
-  if (!is.numeric(data[[num_var]])) {
-    stop("The selected column is not numeric.")
-  }
-
-  # Convert row names to a column to preserve them
-  data <- tibble::rownames_to_column(data, var = "OriginalRowName")
-
-  # Set seed for reproducibility if specified
-  if (!is.null(seed)) set.seed(seed)
-
-  # Calculate sample size based on percentage
-  sample_size <- max(1, round(nrow(data) * sample_pct))
-
-  if (method == "probability") {
-    # Ensure values are positive for probability weights
-    data$prob <- data[[num_var]] - min(data[[num_var]], na.rm = TRUE) + 1
-
-    # Normalize probabilities to sum to 1
-    data$prob <- data$prob / sum(data$prob, na.rm = TRUE)
-
-    # Sample rows with probability proportional to num_var
-    sampled_data <- data[sample(1:nrow(data), size = sample_size, prob = data$prob, replace = FALSE), ]
-
-  } else if (method == "stratified") {
-    # Ensure bins do not exceed unique values
-    bins <- min(bins, length(unique(data[[num_var]])) - 1)
-
-    # Handle case where all values are identical (avoid cut() failure)
-    if (bins < 1) {
-      warning("Not enough unique values for stratified sampling. Defaulting to random sampling.")
-      sampled_data <- dplyr::slice_sample(data, n = sample_size, replace = FALSE)
-    } else {
-      # Create bins using quantiles, ensuring unique breakpoints
-      breaks <- unique(quantile(data[[num_var]], probs = seq(0, 1, length.out = bins + 1), na.rm = TRUE))
-
-      # Avoid cut() failure due to non-unique breaks
-      if (length(breaks) <= 1) {
-        warning("Insufficient variation in data. Using random sampling.")
-        sampled_data <- dplyr::slice_sample(data, n = sample_size, replace = FALSE)
-      } else {
-        # Create bins
-        data$bin <- cut(data[[num_var]], breaks = breaks, include.lowest = TRUE, labels = FALSE)
-
-        # Sample proportionally from each bin
-        sampled_data <- data %>%
-          dplyr::group_by(bin) %>%
-          dplyr::filter(dplyr::n() > 0) %>%  # Avoid empty bins
-          dplyr::slice_sample(n = max(1, round(sample_size / bins)), replace = FALSE) %>%
-          dplyr::ungroup() %>%
-          dplyr::select(-bin)  # Remove bin column
-      }
-    }
-  } else {
-    stop("Invalid method. Choose 'probability' or 'stratified'.")
-  }
-
-  # Convert back to a matrix or return data frame
-  sampled_data <- sampled_data %>%
-    dplyr::arrange(dplyr::desc(.data[[num_var]])) %>%  # Correct dynamic reference
-    tibble::column_to_rownames(var = "OriginalRowName")
-
-  if (return_matrix) {
-    return(as.matrix(sampled_data))
-  } else {
-    return(sampled_data)
-  }
-}
-
+# ---------------------------------------------------------------------------
+# nail_catdes (Main Function)
+# ---------------------------------------------------------------------------
 #' Interpret a categorical latent variable
 #'
 #' Generate an LLM response to analyze a categorical latent variable.
@@ -393,20 +258,20 @@ sample_numeric_distribution <- function(data, num_var_index, sample_pct, method 
 #' @param num.var the index of the variable to be characterized.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
-#' @param model the model name ('llama3' by default).
+#' @param model the model name for Ollama (e.g., 'llama3').
 #' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.
 #' @param quali.sample from 0 to 1, the proportion of qualitative features that are randomly kept.
 #' @param quanti.sample from 0 to 1, the proportion of quantitative features that are randomly kept.
-#' @param drop.negative a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.
+#' @param drop.negative a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests).
 #' @param proba the significance threshold considered to characterize the categories (by default 0.05).
 #' @param row.w a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)
 #' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
+#' @param ... Additional arguments passed to 'ollamar::generate'
+#' (e.g., `temperature`, `seed`).
 #'
 #' @return A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
 #'
-#' @details This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
-#'
-#' Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
+#' @details This function (when generate=TRUE) sends a prompt to an Ollama LLM.
 #'
 #' @export
 #'
@@ -527,7 +392,6 @@ sample_numeric_distribution <- function(data, num_var_index, sample_pct, method 
 #' res_food[[2]]$response |> cat()
 #' res_food[[3]]$response |> cat()
 #' }
-
 nail_catdes = function(dataset, num.var,
                        introduction = NULL,
                        request = NULL,
@@ -538,38 +402,181 @@ nail_catdes = function(dataset, num.var,
                        drop.negative = FALSE,
                        proba = 0.05,
                        row.w = NULL,
-                       generate = FALSE){
+                       generate = FALSE,
+                       ...
+){
 
+  # Default introduction
+  if (is.null(introduction)) {
+    introduction <- "For this study, observations were grouped according to their similarities."
+  }
 
-  #if (is.null(request)) request <- "Based on the results, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
-  if (is.null(introduction)) introduction <- "For this study, observations were grouped according to their similarities."
+  # --- Inject the 'How to Read' Guide ---
+  GUIDE_CATDES <- paste(
+    "## How to Read the Tables",
+    "The tables show the characteristic features of each group.",
+    "",
+    "### Characteristic Qualitative Variables",
+    "* **Cla/Mod**: Percentage of individuals who selected this modality AND belong to this class.",
+    "* **Mod/Cla**: Percentage of individuals WITHIN this class who selected this modality.",
+    "* **Global**: Overall percentage of individuals (all classes) who selected this modality.",
+    "* **p.value**: Significance level of the test.",
+    "* **v.test**: Test value. A positive value (e.g., > +2) means the modality is overrepresented. A negative value (e.g., < -2) means it is underrepresented.",
+    "",
+    "### Characteristic Quantitative Variables",
+    "* **Mean in category**: The average value of the variable for this group.",
+    "* **Overall mean**: The average value of the variable for the entire dataset.",
+    "* **sd in category**: The standard deviation of the variable for this group.",
+    "* **Overall sd**: The standard deviation of the variable for the entire dataset.",
+    "* **p.value**: Significance level of the test.",
+    "* **v.test**: Test value. A positive value means the group has a significantly higher mean. A negative value means a significantly lower mean.",
+    sep = "\n"
+  )
+  introduction <- paste(introduction, GUIDE_CATDES, sep = "\n\n---\n\n")
+  # --- END Guide ---
 
-  if (isolate.groups == F){
+  # Default request logic
+  if (isolate.groups == FALSE){
     if (is.null(request)) request <- "Based on the results, please describe what characterize the observations of each group and what set them apart from the other groups. Then, based on these characteristics, give each group a new name."
   } else {
     if (is.null(request)) request <- "Based on the results, please describe what characterize the observations of this group and what make them so special. Then, based on these characteristics, give the group a new name."
   }
 
+  # Run FactoMineR analysis
   res_cd = FactoMineR::catdes(dataset, num.var = num.var, proba = proba, row.w = row.w)
 
-  ppt = get_prompt_catdes(res_cd, introduction = introduction, request = request,
-                          isolate.groups = isolate.groups, quali.sample = quali.sample,
-                          quanti.sample = quanti.sample, drop.negative = drop.negative)
+  # --- Handle 'stop()' gracefully ---
 
-  #if (!generate) return(data.frame(prompt = ppt))
+  # 1. We use tryCatch to capture the "stop()" call
+  ppt <- tryCatch({
+    get_prompt_catdes(
+      res_cd,
+      introduction = introduction,
+      request = request,
+      isolate.groups = isolate.groups,
+      quali.sample = quali.sample,
+      quanti.sample = quanti.sample,
+      drop.negative = drop.negative
+    )
+  },
+  # 2. This 'error' function is triggered IF get_prompt_catdes stops
+  error = function(e) {
+    # Check if it's the specific error we expect
+    if (grepl("No significant differences", conditionMessage(e))) {
+      # If so, return a special marker instead of crashing
+      return("NAILER_NO_RESULTS_FOUND")
+    } else {
+      # If it's a *different* error, let it crash (to debug)
+      stop(e)
+    }
+  })
+
+  # 3. Check if our special marker was returned
+  if (identical(ppt, "NAILER_NO_RESULTS_FOUND")) {
+
+    no_results_message <- "*No significant differences were found between the groups at this probability threshold.*"
+
+    if (generate) {
+      # If generating, stop with a friendly message (not an error)
+      message("Execution halted: No significant differences found. Nothing to generate.")
+
+      # Return an empty, valid object
+      if (isolate.groups) {
+        return(list())
+      } else {
+        return(data.frame(
+          model = model,
+          created_at = Sys.time(),
+          response = "No significant differences found.",
+          done = TRUE,
+          prompt = no_results_message,
+          stringsAsFactors = FALSE
+        ))
+      }
+    } else {
+      # If generate=FALSE, return the prompt with the "no results" message
+      header <- glue::glue(
+        "# Introduction\n\n{introduction}\n\n",
+        "# Task\n\n{request}\n\n",
+        "# Data\n\n"
+      )
+      return(paste0(header, no_results_message))
+    }
+  }
+  # --- END MODIFICATION ---
+
+  # If ppt is NOT the error marker, the function continues as normal
   if (!generate) return(ppt)
 
-  if (isolate.groups == F){
-    res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
+  # --- CORRECTED LLM CALL (Ollama-only) ---
+
+  # 1. Capture additional arguments passed to '...'
+  extra_args <- list(...)
+
+  # 2. Filter for valid ollamar arguments only
+  valid_ollama_opts <- c("temperature", "top_p", "top_k", "seed",
+                         "system", "template", "context", "keep_alive",
+                         "stream", "format")
+
+  ollama_api_options <- extra_args[names(extra_args) %in% valid_ollama_opts]
+
+  if (isolate.groups == FALSE) {
+
+    # 3. Build the full argument list for do.call
+    call_args <- c(
+      list(
+        model = model,
+        prompt = ppt,
+        output = 'df' # Using 'df' as in your original code
+      ),
+      ollama_api_options # Add filtered options like temperature, seed
+    )
+
+    # 4. Call ollamar::generate safely
+    res_llm <- tryCatch({
+      do.call(ollamar::generate, call_args)
+    }, error = function(e) {
+      stop(paste("Ollama API call (generate=TRUE) failed:", conditionMessage(e)))
+    })
+
     res_llm$prompt = ppt
     return(res_llm)
+
   } else {
+    # 'ppt' is a LIST of prompts
     list_rep = list()
-    for (prpt in ppt){
-      res_llm = ollamar::generate(model = model, prompt = prpt, output = 'df')
+
+    for (i in seq_along(ppt)) {
+      prpt <- ppt[[i]]
+
+      # 3. Build argument list for the loop
+      call_args_loop <- c(
+        list(
+          model = model,
+          prompt = prpt,
+          output = 'df'
+        ),
+        ollama_api_options
+      )
+
+      # 4. Call ollamar::generate safely in loop
+      res_llm <- tryCatch({
+        do.call(ollamar::generate, call_args_loop)
+      }, error = function(e) {
+        stop(paste("Ollama API call (generate=TRUE, isolate.groups=TRUE) failed:", conditionMessage(e)))
+      })
+
       res_llm$prompt = prpt
-      list_rep[[length(list_rep) + 1]] = res_llm
+
+      # Use the name from the 'ppt' list to add the element
+      if (!is.null(names(ppt)) && names(ppt)[i] != "") {
+        list_rep[[names(ppt)[i]]] <- res_llm
+      } else {
+        # Fallback if there are no names
+        list_rep[[length(list_rep) + 1]] <- res_llm
+      }
     }
     return(list_rep)
   }
+  # --- END CORRECTED LLM CALL ---
 }

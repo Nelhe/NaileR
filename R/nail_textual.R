@@ -1,60 +1,112 @@
+#' @importFrom dplyr filter select arrange desc
+#' @importFrom glue glue glue_collapse
+#' @importFrom tibble rownames_to_column
+#' @importFrom utils globalVariables
 
-#' @importFrom dplyr mutate
-#' @importFrom glue glue
+# ---------------------------------------------------------------------------
+# get_sentences_textual (MODIFIED)
+# ---------------------------------------------------------------------------
+#' @importFrom glue glue glue_collapse
+get_sentences_textual = function(dataset, num.var, num.text, sample.pct){
 
-get_sentences = function(dataset, num.var, num.text){
+  var_name <- colnames(dataset)[num.var]
+  text_name <- colnames(dataset)[num.text]
+
+  if (!is.factor(dataset[[var_name]])) {
+    dataset[[var_name]] <- as.factor(dataset[[var_name]])
+  }
+
+  grouped_data <- split(dataset, dataset[[var_name]])
 
   ppts = list()
-  for (i in 1:nlevels(dataset[,num.var])){
 
-    dataset_work = dataset[dataset[,num.var]==levels(dataset[,num.var])[i],] |>
-      as.data.frame() |>
-      mutate(Text_clean = dataset[dataset[,num.var]==levels(dataset[,num.var])[i],num.text]) |>
-      mutate(Text_clean = glue('* {Text_clean}'))
+  for (grp_name in names(grouped_data)) {
 
-    corpus = dataset_work$Text_clean |>
-      paste(collapse = '\n')
+    group_df <- grouped_data[[grp_name]]
 
-    ppts[[levels(dataset[,num.var])[i]]] = paste(corpus,sep="\n")
+    corpus <- group_df[[text_name]]
+    corpus <- corpus[!is.na(corpus) & nzchar(trimws(corpus))]
+
+    if (length(corpus) == 0) {
+      ppts[[grp_name]] <- "This group has **no textual responses** to display."
+      next
+    }
+
+    total_responses <- length(corpus)
+    header <- ""
+
+    # --- MODIFIED Sampling Logic ---
+    if (sample.pct < 1.0) {
+      # Calculer la taille de l'echantillon, avec un minimum de 1
+      sample_size <- max(1, round(total_responses * sample.pct))
+      corpus_sampled <- sample(corpus, sample_size)
+
+      header <- glue::glue("Showing a sample of **{length(corpus_sampled)}** out of **{total_responses}** total responses for this group ({sample.pct * 100}% sample):")
+
+    } else {
+      corpus_sampled <- corpus
+      header <- glue::glue("Showing all **{total_responses}** responses for this group:")
+    }
+    # --- END MODIFICATION ---
+
+    corpus_md <- glue::glue_collapse(glue::glue("* {corpus_sampled}"), sep = "\n")
+
+    ppts[[grp_name]] <- paste(header, corpus_md, sep = "\n\n")
   }
+
   return(ppts)
 }
 
+# ---------------------------------------------------------------------------
+# get_prompt_textual (MODIFIED)
+# ---------------------------------------------------------------------------
+#' @importFrom glue glue
+get_prompt_textual = function(dataset, num.var, num.text,
+                              introduction, request, conclusion,
+                              isolate.groups, sample.pct){ # <- Changed
 
-get_prompt_textual = function(dataset, num.var, num.text, introduction, request, isolate.groups){
+  sentences_list <- get_sentences_textual(dataset, num.var, num.text, sample.pct) # <- Changed
 
-  sentences = list()
-  sentences = get_sentences(dataset, num.var = num.var, num.text = num.text)
+  if (length(sentences_list) == 0 || all(nchar(sentences_list) == 0))
+    stop("No textual data found to process, execution was halted.")
 
-  all_groups = names(sentences)
-
-  stces = c()
+  all_groups <- names(sentences_list)
+  stces <- c()
 
   for (grp in all_groups){
-    sent = ifelse(is.null(sentences[[grp]]), '', sentences[[grp]])
+    sent = ifelse(is.null(sentences_list[[grp]]), '', sentences_list[[grp]])
 
-    ppt_grp = glue('## Group "{grp}":
+    ppt_grp = glue::glue(
+      "## **Group '{grp}'**:\n\n",
+      "{sent}",
+      .trim = TRUE
+    )
 
-                   {sent}')
-
-    stces = c(stces, ppt_grp)
+    stces <- c(stces, ppt_grp)
   }
 
-  if (!isolate.groups) stces = paste(stces, collapse = '\n\n')
+  header <- glue::glue(
+    "# Introduction - Objective\n\n",
+    "{introduction}\n\n",
+    "# Task\n\n",
+    "{request}\n\n",
+    "---\n\n",
+    "# Data\n\n"
+  )
 
-  deb = glue('# Introduction
+  if (!isolate.groups) {
+    body <- paste(stces, collapse = "\n\n---\n\n")
+    return(paste(header, body, "\n\n", conclusion, sep = ""))
 
-             {introduction}
-
-             # Task
-
-             {request}
-
-             # Data
-
-             ')
-
-  return(paste(deb, stces, sep = ''))
+  } else {
+    prompts_list <- list()
+    for (i in seq_along(stces)) {
+      grp_name <- names(sentences_list)[i]
+      grp_body <- stces[i]
+      prompts_list[[grp_name]] <- paste(header, grp_body, "\n\n", conclusion, sep = "")
+    }
+    return(prompts_list)
+  }
 }
 
 #' Interpret a group based on answers to open-ended questions
@@ -66,9 +118,13 @@ get_prompt_textual = function(dataset, num.var, num.text, introduction, request,
 #' @param num.text the index of the textual variable that characterizes the categorical variable of interest.
 #' @param introduction the introduction for the LLM prompt.
 #' @param request the request made to the LLM.
+#' @param conclusion the conclusion for the LLM prompt.
 #' @param model the model name ('llama3' by default).
 #' @param isolate.groups a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.
+#' @param sample.pct The proportion (0.0 to 1.0) of textual responses to include *per group*. Default is 1.0 (100%).
 #' @param generate a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.
+#' @param ... Additional arguments passed to 'ollamar::generate'
+#' (e.g., `temperature`, `seed`).
 #'
 #' @return A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
 #'
@@ -333,40 +389,155 @@ get_prompt_textual = function(dataset, num.var, num.text, introduction, request,
 #' cat(res_nail_textual_rorschach$prompt)
 #' cat(res_nail_textual_rorschach$response)
 #' }
-
+#'
+#' @importFrom glue glue
+#' @export
 nail_textual = function(dataset, num.var,
                         num.text,
                         introduction = NULL,
                         request = NULL,
+                        conclusion = NULL,
                         model = 'llama3',
                         isolate.groups = TRUE,
-                        generate = FALSE){
+                        sample.pct = 1.0, # <- MODIFIED (default = 100%)
+                        generate = FALSE,
+                        ...){
 
-  if (is.null(introduction)) introduction <- "For this study, individuals answered an open-ended question. These individuals were grouped according to their answer to that question."
-
-  if (isolate.groups == F){
-    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of each group and what set them apart from the other groups. Then, based on these characteristics, give each group a new name."
-  } else {
-    if (is.null(request)) request <- "Based on the results, please describe what characterize the individuals of this group and what make them so special. Then, based on these characteristics, give the group a new name."
+  # --- Defaults ---
+  if (is.null(introduction)) {
+    introduction <- "For this study, individuals answered an open-ended question. These individuals were grouped into different categories."
   }
 
-  ppt = get_prompt_textual(dataset, num.var = num.var, num.text = num.text, isolate.groups = isolate.groups,
-                           introduction = introduction, request = request)
+  if (is.null(request)) {
+    if (!isolate.groups) {
+      request <- "Based on the raw textual responses, please describe what characterizes the individuals of each group and what sets them apart from the other groups. Then, based on these characteristics, give each group a new name."
+    } else {
+      request <- "Based on the raw textual responses, please describe what characterizes the individuals of this group and what makes them so special. Then, based on these characteristics, give the group a new name."
+    }
+  }
 
-  #if (!generate) return(data.frame(prompt = ppt))
+  if (is.null(conclusion)) {
+    if (!isolate.groups) {
+      conclusion <- sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all groups**.\n2. **A list of group names you assigned**.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**.")
+    } else {
+      conclusion <- sprintf("# Final Summary Task\nAt the end, provide:\n1. **A description of the group**.\n2. **A group name you assigned**.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**.")
+    }
+  }
+
+  # --- "How to Read" Guide ---
+  GUIDE_TEXTUAL <- paste(
+    "## How to Read the Data",
+    "The data provided below is a *sample* of the raw, verbatim responses from individuals within each group.",
+    "Each bullet point (`*`) represents one person's answer.",
+    "Your task is to synthesize these qualitative responses to understand the profile of the group.",
+    sep = "\n"
+  )
+
+  introduction <- paste(glue::glue(introduction),
+                        glue::glue(GUIDE_TEXTUAL),
+                        sep = "\n\n---\n\n")
+
+  # --- Handle 'stop()' gracefully ---
+  ppt <- tryCatch({
+    get_prompt_textual(
+      dataset = dataset,
+      num.var = num.var,
+      num.text = num.text,
+      introduction = introduction,
+      request = request,
+      conclusion = conclusion,
+      isolate.groups = isolate.groups,
+      sample.pct = sample.pct # <- MODIFIED
+    )
+  },
+  error = function(e) {
+    if (grepl("No textual data found", conditionMessage(e))) {
+      return("NAILER_NO_RESULTS_FOUND")
+    } else {
+      stop(e)
+    }
+  })
+
+  # --- Handle "No Results" Case ---
+  if (identical(ppt, "NAILER_NO_RESULTS_FOUND")) {
+
+    no_results_message <- "*No textual data was found for the specified groups.*"
+
+    if (generate) {
+      message("Execution halted: No textual data found. Nothing to generate.")
+      if (isolate.groups) {
+        return(list())
+      } else {
+        return(data.frame(
+          model = model,
+          response = "No textual data found.",
+          prompt = no_results_message,
+          stringsAsFactors = FALSE
+        ))
+      }
+    } else {
+      header <- glue::glue(
+        "# Introduction - Objective\n\n{introduction}\n\n",
+        "# Task\n\n{request}\n\n",
+        "---\n\n",
+        "# Data\n\n"
+      )
+      return(paste0(header, no_results_message))
+    }
+  }
+
+  # --- Handle generate = FALSE ---
   if (!generate) return(ppt)
 
-  if (isolate.groups == F){
-    res_llm = ollamar::generate(model = model, prompt = ppt, output = 'df')
-    res_llm$prompt = ppt
-    return(res_llm)
+  # --- Handle generate = TRUE (with results) ---
+
+  extra_args <- list(...)
+  valid_ollama_opts <- c("temperature", "top_p", "top_k", "seed",
+                         "system", "template", "context", "keep_alive",
+                         "stream", "format")
+  ollama_api_options <- extra_args[names(extra_args) %in% valid_ollama_opts]
+
+  if (!isolate.groups) {
+
+    call_args <- c(
+      list(
+        model = model,
+        prompt = ppt,
+        output = "text"
+      ),
+      ollama_api_options
+    )
+
+    res_llm <- tryCatch({
+      do.call(ollamar::generate, call_args)
+    }, error = function(e) {
+      stop(paste("Ollama API call (generate=TRUE) failed:", conditionMessage(e)))
+    })
+
+    return(list(prompt = ppt, response = res_llm, model = model))
+
   } else {
-    list_rep = list()
-    for (prpt in ppt){
-      res_llm = ollamar::generate(model = model, prompt = prpt, output = 'df')
-      res_llm$prompt = prpt
-      list_rep[[length(list_rep) + 1]] = res_llm
-    }
+    list_rep <- lapply(names(ppt), function(grp_name) {
+      prpt <- ppt[[grp_name]]
+
+      call_args_loop <- c(
+        list(
+          model = model,
+          prompt = prpt,
+          output = "text"
+        ),
+        ollama_api_options
+      )
+
+      res_llm <- tryCatch({
+        do.call(ollamar::generate, call_args_loop)
+      }, error = function(e) {
+        stop(paste("Ollama API call (generate=TRUE, isolate.groups=TRUE) failed:", conditionMessage(e)))
+      })
+
+      return(list(prompt = prpt, response = res_llm, model = model))
+    })
+    names(list_rep) <- names(ppt)
     return(list_rep)
   }
 }

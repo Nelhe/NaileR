@@ -1,6 +1,6 @@
 Package: NaileR
 Title: Interpreting Latent Variables with AI
-Version: 1.2.3
+Version: 2.0.0
 Authors@R: c(
     person("Nel", "Hervé", role = 'aut'),
     person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',
@@ -20,12 +20,14 @@ Imports:
     magrittr,
     tibble,
     rlang,
-    SensoMineR
+    SensoMineR,
+    httr2,
+    knitr,
+    jsonlite
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1.0)
 LazyData: true
-Suggests: 
-    knitr,
+Suggests:
     rmarkdown
 VignetteBuilder: knitr

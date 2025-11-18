@@ -10,9 +10,12 @@ nail_textual(
   num.text,
   introduction = NULL,
   request = NULL,
+  conclusion = NULL,
   model = "llama3",
   isolate.groups = TRUE,
-  generate = FALSE
+  sample.pct = 1,
+  generate = FALSE,
+  ...
 )
 }
 \arguments{
@@ -26,11 +29,18 @@ nail_textual(
 
 \item{request}{the request made to the LLM.}
 
+\item{conclusion}{the conclusion for the LLM prompt.}
+
 \item{model}{the model name ('llama3' by default).}
 
 \item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.}
 
+\item{sample.pct}{The proportion (0.0 to 1.0) of textual responses to include \emph{per group}. Default is 1.0 (100\%).}
+
 \item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
+
+\item{...}{Additional arguments passed to 'ollamar::generate'
+(e.g., \code{temperature}, \code{seed}).}
 }
 \value{
 A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
@@ -298,4 +308,5 @@ res_nail_textual_rorschach <- nail_textual(rorschach_10, num.var = 1,
 cat(res_nail_textual_rorschach$prompt)
 cat(res_nail_textual_rorschach$response)
 }
+
 }

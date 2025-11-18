@@ -8,11 +8,15 @@ nail_descfreq(
   dataset,
   introduction = NULL,
   request = NULL,
+  conclusion = NULL,
   model = "llama3",
   isolate.groups = FALSE,
+  sample.pct = 1,
+  drop.negative = FALSE,
   by.quali = NULL,
   proba = 0.05,
-  generate = FALSE
+  generate = FALSE,
+  ...
 )
 }
 \arguments{
@@ -22,15 +26,24 @@ nail_descfreq(
 
 \item{request}{the request made to the LLM.}
 
+\item{conclusion}{the conclusion for the LLM prompt.}
+
 \item{model}{the model name ('llama3' by default).}
 
 \item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per row. Recommended if the contingency table has a great number of rows.}
+
+\item{sample.pct}{from 0 to 1, the proportion of descriptive features that are randomly kept.}
+
+\item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests).}
 
 \item{by.quali}{a factor used to merge the data from different rows of the contingency table; by default NULL and each row is characterized.}
 
 \item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
 
 \item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
+
+\item{...}{Additional arguments passed to 'ollamar::generate'
+(e.g., \code{temperature}, \code{seed}).}
 }
 \value{
 A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
@@ -140,4 +153,5 @@ res_children <- nail_descfreq(children,
 
 cat(res_children$response)
 }
+
 }

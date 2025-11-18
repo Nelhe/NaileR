@@ -16,7 +16,8 @@ nail_catdes(
   drop.negative = FALSE,
   proba = 0.05,
   row.w = NULL,
-  generate = FALSE
+  generate = FALSE,
+  ...
 )
 }
 \arguments{
@@ -28,7 +29,7 @@ nail_catdes(
 
 \item{request}{the request made to the LLM.}
 
-\item{model}{the model name ('llama3' by default).}
+\item{model}{the model name for Ollama (e.g., 'llama3').}
 
 \item{isolate.groups}{a boolean that indicates whether to give the LLM a single prompt, or one prompt per category. Recommended with long catdes results.}
 
@@ -36,13 +37,16 @@ nail_catdes(
 
 \item{quanti.sample}{from 0 to 1, the proportion of quantitative features that are randomly kept.}
 
-\item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests). Recommended with long catdes results.}
+\item{drop.negative}{a boolean that indicates whether to drop negative v.test values for interpretation (keeping only positive v.tests).}
 
 \item{proba}{the significance threshold considered to characterize the categories (by default 0.05).}
 
 \item{row.w}{a vector of integers corresponding to an optional row weights (by default, a vector of 1 for uniform row weights)}
 
 \item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
+
+\item{...}{Additional arguments passed to 'ollamar::generate'
+(e.g., \code{temperature}, \code{seed}).}
 }
 \value{
 A data frame, or a list of data frames, containing the LLM's prompt and response (if generate = TRUE).
@@ -51,9 +55,7 @@ A data frame, or a list of data frames, containing the LLM's prompt and response
 Generate an LLM response to analyze a categorical latent variable.
 }
 \details{
-This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
-
-Additionally, if isolate.groups = TRUE, you will need an introduction and a request that take into account the fact that only one group is analyzed at a time.
+This function (when generate=TRUE) sends a prompt to an Ollama LLM.
 }
 \examples{
 \dontrun{

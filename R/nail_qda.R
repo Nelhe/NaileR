@@ -1,46 +1,115 @@
-
-#' @importFrom dplyr mutate pull arrange
+#' @importFrom dplyr mutate filter arrange select
 #' @importFrom glue glue
+#' @importFrom knitr kable
+#' @importFrom tibble rownames_to_column
+#' @importFrom utils globalVariables
+
+# Set global variables to avoid R CMD check NOTES
+utils::globalVariables(c(".data", "p.value", "v.test"))
 
 get_sentences_qda <- function(res_cd, drop.negative) {
   res_cd <- res_cd$quanti
-  ppts <- list()
+  ppts <- list() # Stores the Markdown strings for each group
 
   for (i in seq_along(names(res_cd))) {
-    if (!is.null(res_cd[[i]])) {
+    grp_name <- names(res_cd)[i]
+    res_df <- res_cd[[i]]
 
-      res_cd_work <- res_cd[[i]] |>
-        as.data.frame() |>
-        select(v.test, p.value) |>
-        mutate(Variable = rownames(res_cd[[i]]) |> sapply(tidy_answer_catdes)) |>
-        mutate(Variable = glue("- **{Variable}**"))
+    # --- Data Preparation ---
+    # Initialize empty dataframes to ensure logic works even if res_df is NULL
+    res_cd_work_left <- data.frame(Variable=character(), Coeff=numeric(), `Adjust mean`=numeric(), p.value=numeric(), v.test=numeric(), check.names=FALSE)
+    res_cd_work_right <- data.frame(Variable=character(), Coeff=numeric(), `Adjust mean`=numeric(), p.value=numeric(), v.test=numeric(), check.names=FALSE)
 
-      res_cd_work_left <- res_cd_work |> filter(v.test > 0)
-      res_cd_work_right <- res_cd_work |> filter(v.test < 0) |> arrange(v.test)
+    if (!is.null(res_df) && nrow(as.data.frame(res_df)) > 0) {
 
-      left <- res_cd_work_left |>
-        mutate(Variable = glue("{Variable} (p-value = {formatC(p.value, format = 'e', digits = 2)})")) |>
-        pull(Variable) |>
-        paste(collapse = "\n")
+      # Prepare the working dataframe
+      res_cd_work <- as.data.frame(res_cd[[i]]) |>
+        tibble::rownames_to_column(var = "Variable") |>
+        select(Variable, .data$Coeff, .data$`Adjust mean`, p.value, v.test)
 
-      right <- if (!drop.negative) {
-        res_cd_work_right |>
-          mutate(Variable = glue("{Variable} (p-value = {formatC(p.value, format = 'e', digits = 2)})")) |>
-          pull(Variable) |>
-          paste(collapse = "\n")
-      } else ""
+      # 1. Split data: Higher than average (v.test > 0)
+      res_cd_work_left <- res_cd_work |>
+        filter(v.test > 0) |>
+        arrange(p.value) # Sort by ascending p.value (most significant first)
 
-      ppt1 <- ifelse(nchar(left) > 0, glue("#### ** Higher than Average (Most Discriminative First)**\n{left}"), "")
-      ppt2 <- ifelse(nchar(right) > 0, glue("#### ** Lower than Average (Most Discriminative First)**\n{right}"), "")
-
-      ppts[[names(res_cd)[i]]] <- paste(ppt1, ppt2, sep = "\n\n")
-    } else {
-      ppts[[names(res_cd)[i]]] <- ""
+      # 2. Split data: Lower than average (v.test < 0)
+      res_cd_work_right <- res_cd_work |>
+        filter(v.test < 0) |>
+        arrange(p.value) # Sort by ascending p.value
     }
-  }
+
+    # --- NEW LOGIC BLOCK ---
+
+    has_positive_results <- nrow(res_cd_work_left) > 0
+    has_negative_results <- nrow(res_cd_work_right) > 0
+
+    # CASE 1: No results to show based on criteria
+    if (!has_positive_results && (drop.negative || !has_negative_results)) {
+
+      if (drop.negative && has_negative_results) {
+        # No positive, but negatives exist and are hidden.
+        ppts[[grp_name]] <- paste(
+          "This stimulus has **no significant sensory attributes higher than the average** (at the p <= 0.05 level).",
+          "(Note: Attributes significantly lower than the average were found but are hidden because `drop.negative` is TRUE.)",
+          sep = "\n"
+        )
+      } else if (drop.negative) {
+        # No positive, and no negatives to hide (drop.negative is still the policy).
+        ppts[[grp_name]] <- paste(
+          "This stimulus has **no significant sensory attributes higher than the average** (at the p <= 0.05 level).",
+          "(Note: Attributes lower than the average are excluded from this analysis.)",
+          sep = "\n"
+        )
+      } else {
+        # No positive AND no negative. The truly neutral product.
+        ppts[[grp_name]] <- "This stimulus has **no significant sensory attributes** (neither higher nor lower than the average) that distinguish it from the other products (at the p <= 0.05 level)."
+      }
+
+    } else {
+
+      # CASE 2: There are results to show.
+
+      ppt1 <- ""
+      if (has_positive_results) {
+        table_left <- knitr::kable(res_cd_work_left,
+                                   digits = 2,
+                                   format = "pipe",
+                                   align = c('l', 'r', 'r', 'r', 'r'))
+        ppt1 <- glue::glue(
+          "#### ** Higher than Average (Most Significant First)**\n\n",
+          paste(table_left, collapse = "\n")
+        )
+      } else {
+        # This implies !drop.negative and has_negative_results must be true
+        ppt1 <- "This stimulus has no sensory attributes significantly **higher** than the average."
+      }
+
+      ppt2 <- ""
+      if (!drop.negative) {
+        if (has_negative_results) {
+          table_right <- knitr::kable(res_cd_work_right,
+                                      digits = 2,
+                                      format = "pipe",
+                                      align = c('l', 'r', 'r', 'r', 'r'))
+          ppt2 <- glue::glue(
+            "\n\n#### ** Lower than Average (Most Significant First)**\n\n",
+            paste(table_right, collapse = "\n")
+          )
+        } else {
+          # This implies has_positive_results must be true
+          ppt2 <- "\n\nThis stimulus has no sensory attributes significantly **lower** than the average."
+        }
+      }
+
+      ppts[[grp_name]] <- paste0(ppt1, ppt2)
+    }
+  } # --- End of for loop ---
+
   return(ppts)
 }
 
+
+#' @importFrom glue glue
 get_prompt_qda <- function(res_cd, introduction, request, conclusion, isolate.groups, drop.negative) {
 
   stces_quanti <- if ("quanti" %in% names(res_cd)) get_sentences_qda(res_cd, drop.negative) else list()
@@ -54,7 +123,7 @@ get_prompt_qda <- function(res_cd, introduction, request, conclusion, isolate.gr
   for (grp in all_groups) {
     quant <- ifelse(is.null(stces_quanti[[grp]]), "", stces_quanti[[grp]])
 
-    ppt_grp <- glue(
+    ppt_grp <- glue::glue(
       "## **Stimulus '{grp}'**:\n",
       "### **Key Sensory Attributes (Compared to the Average)**\n\n",
       "{quant}",
@@ -64,9 +133,9 @@ get_prompt_qda <- function(res_cd, introduction, request, conclusion, isolate.gr
     stces <- c(stces, ppt_grp)
   }
 
-  if (!isolate.groups) stces <- paste(stces, collapse = "\n\n")
+  if (!isolate.groups) stces <- paste(stces, collapse = "\n\n---\n\n") # Added horizontal rule
 
-  deb <- glue(
+  deb <- glue::glue(
     "# Introduction - Objective\n\n",
     "{introduction}\n\n",
     "# Task\n\n",
@@ -77,7 +146,6 @@ get_prompt_qda <- function(res_cd, introduction, request, conclusion, isolate.gr
 
   return(paste(deb, stces, "\n\n", conclusion, sep = ""))
 }
-
 
 #' Interpret QDA data
 #'
@@ -173,7 +241,7 @@ get_prompt_qda <- function(res_cd, introduction, request, conclusion, isolate.gr
 #' }
 
 #' @importFrom SensoMineR decat
-
+#' @export
 nail_qda <- function(dataset, formul, firstvar, lastvar = length(colnames(dataset)),
                      introduction = NULL, request = NULL, conclusion = NULL, model = "llama3",
                      isolate.groups = FALSE, drop.negative = FALSE, proba = 0.05, generate = FALSE) {
@@ -192,26 +260,46 @@ nail_qda <- function(dataset, formul, firstvar, lastvar = length(colnames(datase
   conclusion <- ifelse(is.null(conclusion),
                        if (!isolate.groups) sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all stimuli** (e.g., a summary of key contrasts).\n2. **A list of stimulus names you assigned** and their distinguishing features.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**.")
                        else sprintf("# Final Summary Task\nAt the end, provide:\n1. **A description of the stimulus** (e.g., a summary of key characteristics).\n2. **A stimulus name you assigned** based on this description.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**."),
-                       #sprintf("# Final Summary Task\nAt the end, provide:\n1. **A comparison of all stimuli** (e.g., a summary of key contrasts).\n2. **A list of stimulus names you assigned** and their distinguishing features.\n\n# Output format\nYour output must be **formatted using valid Quarto Markdown**."),
                        conclusion)
 
-  # Perform QDA analysis
+  # --- MODIFICATION: Inject the 'How-to-Read' Guide ---
+  GUIDE_DECAT <- paste(
+    "## How to Read the Tables",
+    "The data shows which sensory attributes are associated with each stimulus, compared to the average.",
+    "Only attributes with a p-value <= {proba} are shown.",
+    "",
+    "* **Variable**: The sensory attribute (e.g., 'Bitterness').",
+    "* **Coeff**: The coefficient from the linear model, indicating the direction of the association.",
+    "* **Adjust mean**: The adjusted mean score for this stimulus on this attribute.",
+    "* **Vtest**: A test value indicating the strength and direction of the association. A high positive value means 'significantly above average'. A low negative value means 'significantly below average'.",
+    "* **p.value**: The significance level. Low p-values indicate a reliable association.",
+    sep = "\n"
+  )
+  # 'glue' is used here to insert the 'proba' value into the guide
+  introduction <- paste(glue::glue(introduction),
+                        glue::glue(GUIDE_DECAT, proba = proba),
+                        sep = "\n\n---\n\n")
+  # --- END OF MODIFICATION ---
+
+  # Perform QDA analysis (unchanged)
   res_cd <- SensoMineR::decat(dataset, formul = formul, firstvar = firstvar,
                               lastvar = lastvar, proba = proba, graph = FALSE)
 
   names(res_cd)[6] <- "quanti"
 
-  # Ensure column names are correctly labeled
+  # Ensure column names are correctly labeled (unchanged)
   for (i in seq_along(res_cd$quanti)) {
-    colnames(res_cd$quanti[[i]])[3:4] <- c("p.value", "v.test")
+    if (!is.null(res_cd$quanti[[i]])) { # Add a null check
+      colnames(res_cd$quanti[[i]])[3:4] <- c("p.value", "v.test")
+    }
   }
 
-  # Generate the structured prompt
+  # Generate the structured prompt (unchanged)
   ppt <- get_prompt_qda(res_cd, introduction, request, conclusion, isolate.groups, drop.negative)
 
   if (!generate) return(ppt)
 
-  # Generate LLM response using Ollama API
+  # Generate LLM response using Ollama API (unchanged)
   if (!isolate.groups) {
     res_llm <- ollamar::generate(model = model, prompt = ppt, output = "text")
     return(list(prompt = ppt, response = res_llm, model = model))

@@ -15,7 +15,8 @@ nail_condes(
   sample.pct = 1,
   weights = NULL,
   proba = 0.05,
-  generate = FALSE
+  generate = FALSE,
+  ...
 )
 }
 \arguments{
@@ -27,11 +28,11 @@ nail_condes(
 
 \item{request}{the request made to the LLM.}
 
-\item{model}{the model name ('llama3' by default).}
+\item{model}{the model name (e.g., 'llama3').}
 
 \item{quanti.threshold}{the threshold above (resp. below) which a scaled variable is considered significantly above (resp.below) the average. Used when converting continuous variables to categorical ones.}
 
-\item{quanti.cat}{a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "above average", "below average" and "average".}
+\item{quanti.cat}{a vector of the 3 possible categories for continuous variables converted to categorical ones according to the threshold. Default is "Significantly above average", "Significantly below average", "Average".}
 
 \item{sample.pct}{the proportion of features to be sampled.}
 
@@ -40,6 +41,9 @@ nail_condes(
 \item{proba}{the significance threshold considered to characterize the category (by default 0.05).}
 
 \item{generate}{a boolean that indicates whether to generate the LLM response. If FALSE, the function only returns the prompt.}
+
+\item{...}{Additional arguments passed to 'ollamar::generate'
+(e.g., \code{temperature}, \code{seed}).}
 }
 \value{
 A data frame containing the LLM's prompt and response (if generate = TRUE).
@@ -48,7 +52,7 @@ A data frame containing the LLM's prompt and response (if generate = TRUE).
 Generate an LLM response to analyze a continuous latent variable.
 }
 \details{
-This function directly sends a prompt to an LLM. Therefore, to get a consistent answer, we highly recommend to customize the parameters introduction and request and add all relevant information on your data for the LLM. We also recommend renaming the columns with clear, unshortened and unambiguous names.
+This function (when generate=TRUE) sends a prompt to an Ollama LLM.
 }
 \examples{
 \dontrun{
@@ -190,4 +194,5 @@ res_beard <- ollamar::generate(model = 'llama3', prompt = ppt, output = 'text')
 
 cat(res_beard)
 }
+
 }
